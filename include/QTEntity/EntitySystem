@@ -1,8 +1,9 @@
 #pragma once
 
 #include <QTEntity/Export>
-#include <QObject>
 #include <QTEntity/Component>
+#include <QTEntity/DataTypes>
+#include <QObject>
 
 namespace qte
 {

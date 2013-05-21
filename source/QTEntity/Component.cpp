@@ -10,5 +10,3 @@ namespace qte
 	{
 	}
 }
-
-#include "moc_Component.cpp"

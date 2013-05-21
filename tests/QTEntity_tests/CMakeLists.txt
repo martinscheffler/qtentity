@@ -1,6 +1,8 @@
 include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
+  ${CMAKE_SOURCE_DIR}/include/
+  ${CMAKE_BINARY_DIR}/source/QTEntity
 )
+
 
 set(QTENTITY_TESTS test_entitysystem.cpp)
 add_executable(qtentity_tests ${QTENTITY_TESTS})

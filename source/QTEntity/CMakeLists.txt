@@ -18,7 +18,7 @@ set(LIB_PUBLIC_HEADERS
 
 set(LIB_SOURCES
   ${SOURCE_PATH}/Component.cpp
-#  main.cpp
+
 )
 
 add_library(${LIBRARY_NAME} SHARED ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES})
