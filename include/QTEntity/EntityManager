@@ -1,0 +1,58 @@
+#pragma once
+
+#include <QTEntity/EntitySystem>
+#include <QMap>
+#include <QString>
+
+namespace qte
+{
+
+    class EntityManager
+    {
+    public:
+
+        typedef QMap<QString,EntitySystem*> EntitySystemStore;
+
+        EntityManager()
+            : _entityCounter(1)
+        {
+        }
+
+        EntityId createEntity()
+        {
+            EntityId eid = _entityCounter.fetchAndAddRelaxed(1);
+            return eid;
+        }
+
+        template <typename T>
+        bool getES(T*& es) const;
+
+        void addEntitySystem(EntitySystem* es)
+        {
+            QString cn = es->metaObject()->className();
+             Q_ASSERT(!_systems.contains(cn) && "Entity system already added to entity manager");
+            _systems[cn] = es;
+        }
+
+    private:
+        EntitySystemStore _systems;
+        QAtomicInt _entityCounter;
+    };
+
+
+    template <typename T>
+    bool EntityManager::getES(T*& es) const
+    {
+        QString cn = T::staticMetaObject.className();
+        EntitySystemStore::const_iterator i = _systems.constFind(cn);
+        if(i == _systems.end())
+        {
+            es = NULL;
+            return false;
+        }
+        EntitySystem* s = i.value();
+        Q_ASSERT(dynamic_cast<T*>(s) != NULL);
+        es = static_cast<T*>(s);
+        return true;
+    }
+}

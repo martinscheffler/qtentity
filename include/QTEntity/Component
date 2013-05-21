@@ -1,0 +1,15 @@
+#pragma once
+
+#include <QObject>
+
+namespace qte
+{
+    class Component : public QObject
+    {
+
+        Q_OBJECT
+
+    public:
+        virtual ~Component() {}
+    };
+}

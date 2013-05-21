@@ -1,0 +1,22 @@
+#pragma once
+
+#include <QObject>
+#include <QTEntity/Component>
+
+namespace qte
+{
+    class EntitySystem : public QObject
+    {
+
+        Q_OBJECT
+
+    public:
+
+        virtual ~EntitySystem() {}
+
+        virtual Component* get(EntityId) const = 0;
+        virtual Component* create(EntityId) = 0;
+        virtual bool destroy(EntityId) = 0;
+
+    };
+}
