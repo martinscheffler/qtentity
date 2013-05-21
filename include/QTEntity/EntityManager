@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QTEntity/Export>
 #include <QTEntity/EntitySystem>
 #include <QMap>
 #include <QString>
@@ -7,7 +8,7 @@
 namespace qte
 {
 
-    class EntityManager
+    class QTENTITY_EXPORT EntityManager
     {
     public:
 

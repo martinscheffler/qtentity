@@ -1,11 +1,12 @@
 #pragma once
 
+#include <QTEntity/Export>
 #include <QObject>
 #include <QTEntity/Component>
 
 namespace qte
 {
-    class EntitySystem : public QObject
+    class QTENTITY_EXPORT EntitySystem : public QObject
     {
 
         Q_OBJECT

@@ -1,15 +1,17 @@
 #pragma once
 
 #include <QObject>
+#include <QTEntity/Export>
 
 namespace qte
 {
-    class Component : public QObject
+    class QTENTITY_EXPORT Component : public QObject
     {
-
         Q_OBJECT
 
     public:
-        virtual ~Component() {}
+		Component();
+        virtual ~Component();
+
     };
 }

@@ -23,7 +23,7 @@ class EntitySystemImpl : public qte::EntitySystem
 public:
     typedef QHash<qte::EntityId, T*> ComponentStore;
 
-    bool getComponent(qte::EntityId id, T* component) const
+    bool getComponent(qte::EntityId id, T*& component) const
     {
         typename ComponentStore::const_iterator i = _components.find(id);
         if(i == _components.end())
