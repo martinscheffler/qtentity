@@ -12,7 +12,7 @@ namespace qte
     {
     public:
 
-        typedef QMap<QString,EntitySystem*> EntitySystemStore;
+        typedef QMap<const QMetaObject*,EntitySystem*> EntitySystemStore;
 
         EntityManager();
 		~EntityManager();
@@ -24,8 +24,11 @@ namespace qte
             return eid;
         }
 
+        /*template <typename T>
+        bool getES(T*& es) const;*/
+
         template <typename T>
-        bool getES(T*& es) const;
+        bool getComponent(EntityId id, T*& component) const;
 
         void addEntitySystem(EntitySystem* es);
 
@@ -35,7 +38,7 @@ namespace qte
     };
 
 
-    template <typename T>
+    /*template <typename T>
     bool EntityManager::getES(T*& es) const
     {
         QString cn = T::staticMetaObject.className();
@@ -48,6 +51,27 @@ namespace qte
         EntitySystem* s = i.value();
         Q_ASSERT(dynamic_cast<T*>(s) != NULL);
         es = static_cast<T*>(s);
+        return true;
+    }*/
+
+    template <typename T>
+    bool EntityManager::getComponent(EntityId id, T*& component) const
+    {
+        const QMetaObject* mo = &T::staticMetaObject;
+        EntitySystemStore::const_iterator i = _systems.constFind(mo);
+        if(i == _systems.end())
+        {
+            component = NULL;
+            return false;
+        }
+        EntitySystem* s = i.value();
+        Component* c = s->getComponent(id);
+        if(c == NULL)
+        {
+            component = NULL;
+            return false;
+        }
+        component = qobject_cast<T*>(c);
         return true;
     }
 }

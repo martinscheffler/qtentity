@@ -19,6 +19,8 @@ set(LIB_PUBLIC_HEADERS
 set(LIB_SOURCES
   ${SOURCE_PATH}/Component.cpp
   ${SOURCE_PATH}/EntityManager.cpp
+  ${SOURCE_PATH}/EntitySystem.cpp
+  ${SOURCE_PATH}/main.cpp
 )
 
 set(MOC_INPUT

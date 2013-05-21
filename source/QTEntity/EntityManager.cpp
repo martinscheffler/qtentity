@@ -11,10 +11,10 @@ namespace qte
 	{
 	}
 
-	void EntityManager::addEntitySystem(EntitySystem* es)
+    void EntityManager::addEntitySystem(EntitySystem* es)
     {
-        QString cn = es->metaObject()->className();
-            Q_ASSERT(!_systems.contains(cn) && "Entity system already added to entity manager");
-        _systems[cn] = es;
+        const QMetaObject* mo = &es->componentMetaObject();
+        Q_ASSERT(!_systems.contains(mo) && "Entity system already added to entity manager");
+        _systems[mo] = es;
     }
 }
