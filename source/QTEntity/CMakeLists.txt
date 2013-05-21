@@ -18,10 +18,17 @@ set(LIB_PUBLIC_HEADERS
 
 set(LIB_SOURCES
   ${SOURCE_PATH}/Component.cpp
-
+  ${SOURCE_PATH}/EntityManager.cpp
 )
 
-add_library(${LIBRARY_NAME} SHARED ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES})
+set(MOC_INPUT
+   ${HEADER_PATH}/Component
+   ${HEADER_PATH}/EntitySystem
+)
+
+QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})
+
+add_library(${LIBRARY_NAME} SHARED ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} ${MOC_SOURCES})
 
 qt5_use_modules(${LIBRARY_NAME} Widgets)
 

@@ -14,10 +14,9 @@ namespace qte
 
         typedef QMap<QString,EntitySystem*> EntitySystemStore;
 
-        EntityManager()
-            : _entityCounter(1)
-        {
-        }
+        EntityManager();
+		~EntityManager();
+            
 
         EntityId createEntity()
         {
@@ -28,12 +27,7 @@ namespace qte
         template <typename T>
         bool getES(T*& es) const;
 
-        void addEntitySystem(EntitySystem* es)
-        {
-            QString cn = es->metaObject()->className();
-             Q_ASSERT(!_systems.contains(cn) && "Entity system already added to entity manager");
-            _systems[cn] = es;
-        }
+        void addEntitySystem(EntitySystem* es);
 
     private:
         EntitySystemStore _systems;
