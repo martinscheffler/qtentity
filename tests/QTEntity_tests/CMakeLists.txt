@@ -6,8 +6,8 @@ include_directories(
 
 set(QTENTITY_TESTS_HDR
     test_entitysystem.h
-	test_entitymanager.h
-    
+    test_entitymanager.h
+    test_readerwriterjson.h
 )
 
 set(QTENTITY_TESTS_SRC

@@ -13,11 +13,13 @@ set(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/DataTypes
   ${HEADER_PATH}/EntityManager
   ${HEADER_PATH}/EntitySystem
+  ${HEADER_PATH}/ReaderWriterJSON
 )
 
 set(LIB_SOURCES
   ${SOURCE_PATH}/EntityManager.cpp
   ${SOURCE_PATH}/EntitySystem.cpp
+  ${SOURCE_PATH}/ReaderWriterJSON.cpp
 )
 
 set(MOC_INPUT

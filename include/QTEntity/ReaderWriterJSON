@@ -1,0 +1,17 @@
+#pragma once
+
+#include <QTEntity/Export>
+#include <QJsonObject>
+#include <QObject>
+
+namespace qte
+{
+
+    class QTENTITY_EXPORT ReaderWriterJSON
+    {
+    public:
+        static QJsonObject componentToJSON(const QObject&);
+        static QJsonValue variantToJSON(const QVariant&);
+    };
+
+}
