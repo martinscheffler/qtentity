@@ -2,7 +2,7 @@
 
 #include <QTEntity/Export>
 #include <QTEntity/EntitySystem>
-#include <QMap>
+#include <QHash>
 #include <QString>
 
 namespace qte
@@ -12,66 +12,82 @@ namespace qte
     {
     public:
 
-        typedef QMap<const QMetaObject*,EntitySystem*> EntitySystemStore;
+        typedef QHash<const QMetaObject*,EntitySystem*> EntitySystemStore;
 
         EntityManager();
-		~EntityManager();
-            
+		~EntityManager();            
 
-        EntityId createEntity()
-        {
-            EntityId eid = _entityCounter.fetchAndAddRelaxed(1);
-            return eid;
-        }
+        EntityId createEntity();
 
-        /*template <typename T>
-        bool getES(T*& es) const;*/
+        template <typename T>
+        bool getEntitySystem(T*& out) const;
 
         template <typename T>
         bool getComponent(EntityId id, T*& component) const;
 
+        template <typename T>
+        bool createComponent(EntityId id, T*& component) const;
+
+        template <typename T>
+        bool getOrCreateComponent(EntityId id, T*& component) const;
+
         void addEntitySystem(EntitySystem* es);
+        bool removeEntitySystem(EntitySystem* es);
+
+        EntitySystem* getSystemByComponentType(const QMetaObject& componentMetaObject) const;
+        EntitySystem* getSystemBySystemType(const QMetaObject& systemMetaObject) const;
 
     private:
-        EntitySystemStore _systems;
+        EntitySystemStore _systemsByComponentType;
+        EntitySystemStore _systemsBySystemType;
         QAtomicInt _entityCounter;
     };
 
 
-    /*template <typename T>
-    bool EntityManager::getES(T*& es) const
+    template <typename T>
+    bool EntityManager::getEntitySystem(T*& out) const
     {
-        QString cn = T::staticMetaObject.className();
-        EntitySystemStore::const_iterator i = _systems.constFind(cn);
-        if(i == _systems.end())
-        {
-            es = NULL;
-            return false;
-        }
-        EntitySystem* s = i.value();
-        Q_ASSERT(dynamic_cast<T*>(s) != NULL);
-        es = static_cast<T*>(s);
-        return true;
-    }*/
+        EntitySystem* es = this->getSystemBySystemType(T::staticMetaObject);
+        out = qobject_cast<T*>(es);
+        return (out != nullptr);
+    }
 
     template <typename T>
     bool EntityManager::getComponent(EntityId id, T*& component) const
     {
-        const QMetaObject* mo = &T::staticMetaObject;
-        EntitySystemStore::const_iterator i = _systems.constFind(mo);
-        if(i == _systems.end())
+        EntitySystem* s = this->getSystemByComponentType(T::staticMetaObject);
+        QObject* c;
+        if(s == nullptr || nullptr == (c = s->getComponent(id)))
         {
-            component = NULL;
-            return false;
-        }
-        EntitySystem* s = i.value();
-        Component* c = s->getComponent(id);
-        if(c == NULL)
-        {
-            component = NULL;
+            component = nullptr;
             return false;
         }
         component = qobject_cast<T*>(c);
         return true;
+    }
+
+    template <typename T>
+    bool EntityManager::createComponent(EntityId id, T*& component) const
+    {
+        EntitySystem* s = this->getSystemByComponentType(T::staticMetaObject);
+
+        if(s == nullptr || s->hasComponent(id)) return false;
+
+        component = qobject_cast<T*>(s->createComponent(id));
+        return component != nullptr;
+    }
+
+    template <typename T>
+    bool EntityManager::getOrCreateComponent(EntityId id, T*& component) const
+    {
+        EntitySystem* s = this->getSystemByComponentType(T::staticMetaObject);
+
+        if(s == nullptr) return false;
+        component = qobject_cast<T*>(s->getComponent(id));
+
+        if(component != nullptr) return true;
+
+        component = qobject_cast<T*>(s->createComponent(id));
+        return (component != nullptr);
     }
 }

@@ -5,7 +5,7 @@
 
 namespace qte
 {
-    class QTENTITY_EXPORT Component : public QObject
+   /* class QTENTITY_EXPORT Component : public QObject
     {
         Q_OBJECT
 
@@ -13,5 +13,5 @@ namespace qte
 		Component();
         virtual ~Component();
 
-    };
+    };*/
 }

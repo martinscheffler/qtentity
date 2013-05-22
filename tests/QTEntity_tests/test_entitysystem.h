@@ -5,7 +5,7 @@
 
 using namespace qte;
 
-class Transform : public qte::Component
+class Transform : public QObject
 {
     Q_OBJECT
 
@@ -23,7 +23,7 @@ class TransformSystem : public qte::EntitySystem
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE TransformSystem()
+    TransformSystem()
         : qte::EntitySystem(Transform::staticMetaObject)
     {
     }
@@ -42,7 +42,7 @@ private slots:
         qte::EntityManager em;
         TransformSystem* ts = new TransformSystem();
         em.addEntitySystem(ts);
-        ts->create(1);
+        ts->createComponent(1);
 
         Transform* test;
         bool success = em.getComponent(1, test);

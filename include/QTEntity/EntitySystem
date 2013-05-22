@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QTEntity/Export>
-#include <QTEntity/Component>
 #include <QTEntity/DataTypes>
 #include <QObject>
 #include <QHash>
@@ -12,35 +11,37 @@ namespace qte
     {
 
     public:
-        typedef QHash<EntityId, Component*> ComponentStore;
+        typedef QHash<EntityId, QObject*> ComponentStore;
 
         EntitySystem(const QMetaObject& componentMeta);
         virtual ~EntitySystem();
 
 
-        Component* getComponent(EntityId id) const
+        virtual QObject* getComponent(EntityId id) const
         {
             ComponentStore::const_iterator i = _components.find(id);
             if(i == _components.end())
             {
-                return NULL;
+                return nullptr;
             }
             return i.value();
         }
 
-
-
-        Component* create(EntityId id)
+        bool hasComponent(EntityId id) const
         {
-            if(getComponent(id) != NULL) return NULL;
-            QObject* obj = _componentMetaObject->newInstance();
-            Component* c = qobject_cast<Component*>(obj);
-            Q_ASSERT(c != NULL);
-            _components[id] = c;
-            return c;
+            return (this->getComponent(id) != nullptr);
         }
 
-        bool destroy(EntityId id)
+        virtual QObject* createComponent(EntityId id)
+        {
+            if(getComponent(id) != nullptr) return nullptr;
+            QObject* obj = _componentMetaObject->newInstance();            
+            Q_ASSERT(obj != nullptr && "Could not construct component. Have you declared a default constructor with Q_INVOKABLE?");
+            _components[id] = obj;
+            return obj;
+        }
+
+        virtual bool destroy(EntityId id)
         {
             ComponentStore::iterator i = _components.find(id);
             if(i == _components.end()) return false;
@@ -57,66 +58,4 @@ namespace qte
         ComponentStore _components;
     };
 
-    /*template <>
-    Component* EntitySystem::get(EntityId id) const
-    {
-        typename ComponentStore::const_iterator i = _components.find(id);
-        if(i == _components.end())
-        {
-            return NULL;
-        }
-        return i.value();
-    }*/
-/*
-    template <typename T>
-    class EntitySystemImpl : public EntitySystem
-    {
-    public:
-        typedef QHash<EntityId, T*> ComponentStore;
-
-        EntitySystemImpl(const QMetaObject& mo)
-            : EntitySystem(mo)
-        {
-        }
-
-        bool getComponent(EntityId id, T*& component) const
-        {
-            typename ComponentStore::const_iterator i = _components.find(id);
-            if(i == _components.end())
-            {
-                component = NULL;
-                return false;
-            }
-            component = i.value();
-            return true;
-        }
-
-        virtual Component* get(EntityId id) const
-        {
-            T* c;
-            if(getComponent(id, c)) return c;
-            return NULL;
-        }
-
-        virtual qte::Component* create(EntityId id)
-        {
-            if(get(id) != NULL) return NULL;
-            T* t = new T();
-            _components[id] = t;
-            return t;
-        }
-
-        virtual bool destroy(EntityId id)
-        {
-            typename ComponentStore::iterator i = _components.find(id);
-            if(i == _components.end()) return false;
-            delete i.value();
-            _components.erase(i);
-            return true;
-        }
-
-    private:
-
-        ComponentStore _components;
-    };*/
 }

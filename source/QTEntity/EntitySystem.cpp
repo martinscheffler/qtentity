@@ -9,6 +9,10 @@ namespace qte
 
     EntitySystem::~EntitySystem()
 	{
+        foreach(QObject* c, _components)
+        {
+            delete c;
+        }
 	}
 
     const QMetaObject& EntitySystem::componentMetaObject() const

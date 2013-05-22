@@ -2,11 +2,11 @@
 
 namespace qte
 {
-	Component::Component()
+    /*Component::Component()
 	{
 	}
 
 	Component::~Component()
 	{
-	}
+    }*/
 }
