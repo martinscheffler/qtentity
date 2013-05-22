@@ -7,49 +7,59 @@
 
 namespace qte
 {
+    /**
+     * @brief EntitySystem objects hold a number of components
+     * which are basic QObject instances. Components are referenced
+     * by an integer handle, the entity id.
+     */
     class QTENTITY_EXPORT EntitySystem : public QObject
     {
 
     public:
+        // data type of storage
         typedef QHash<EntityId, QObject*> ComponentStore;
 
+        /**
+         * @brief EntitySystem constructor.
+         * @param componentMeta the QMetaObject of the QObject subclass that
+         *                      this entity system uses as components
+         */
         EntitySystem(const QMetaObject& componentMeta);
+
         virtual ~EntitySystem();
 
+        /**
+         * @brief getComponent Return component associated with passed id
+         * @param id EntityId of component to fetch
+         * @return component or nullptr if it does not exist
+         */
+        virtual QObject* getComponent(EntityId id) const;
 
-        virtual QObject* getComponent(EntityId id) const
-        {
-            ComponentStore::const_iterator i = _components.find(id);
-            if(i == _components.end())
-            {
-                return nullptr;
-            }
-            return i.value();
-        }
+        /**
+         * @brief hasComponent returns true if a component is associated with passed id
+         * @param id EntityId of component to check
+         * @return true if exists
+         */
+        bool hasComponent(EntityId id) const;
 
-        bool hasComponent(EntityId id) const
-        {
-            return (this->getComponent(id) != nullptr);
-        }
+        /**
+         * @brief createComponent Construct a component from meta type.
+         * @throw runtime_exception
+         * @param id Entity id to associate it with
+         * @return newly constructed component
+         */
+        virtual QObject* createComponent(EntityId id);
 
-        virtual QObject* createComponent(EntityId id)
-        {
-            if(getComponent(id) != nullptr) return nullptr;
-            QObject* obj = _componentMetaObject->newInstance();            
-            Q_ASSERT(obj != nullptr && "Could not construct component. Have you declared a default constructor with Q_INVOKABLE?");
-            _components[id] = obj;
-            return obj;
-        }
+        /**
+         * @brief destroyComponent remove component from system and destruct it
+         * @param id Entity id of component to destruc
+         * @return true if component existed, else false
+         */
+        virtual bool destructComponent(EntityId id);
 
-        virtual bool destroy(EntityId id)
-        {
-            ComponentStore::iterator i = _components.find(id);
-            if(i == _components.end()) return false;
-            delete i.value();
-            _components.erase(i);
-            return true;
-        }
-
+        /**
+         * @return  meta object type of component class
+         */
         const QMetaObject& componentMetaObject() const;
 
     private:

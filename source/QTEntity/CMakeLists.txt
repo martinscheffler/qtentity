@@ -10,21 +10,17 @@ set(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/QTEntity)
 set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(LIB_PUBLIC_HEADERS
-  ${HEADER_PATH}/Component
   ${HEADER_PATH}/DataTypes
   ${HEADER_PATH}/EntityManager
   ${HEADER_PATH}/EntitySystem
 )
 
 set(LIB_SOURCES
-  ${SOURCE_PATH}/Component.cpp
   ${SOURCE_PATH}/EntityManager.cpp
   ${SOURCE_PATH}/EntitySystem.cpp
-  ${SOURCE_PATH}/main.cpp
 )
 
 set(MOC_INPUT
-   ${HEADER_PATH}/Component
    ${HEADER_PATH}/EntitySystem
 )
 

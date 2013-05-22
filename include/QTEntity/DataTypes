@@ -1,7 +1,9 @@
 #pragma once
 
+#include <cstdint>
+
 namespace qte
 {
-    typedef unsigned int EntityId;
+    typedef uint32_t EntityId;
 }
 

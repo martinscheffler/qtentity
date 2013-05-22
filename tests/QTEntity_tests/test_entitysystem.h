@@ -37,18 +37,29 @@ class EntitySystemTest: public QObject
     Q_OBJECT
 private slots:
 
-    void createTest()
+    void createAndFetch()
     {
-        qte::EntityManager em;
-        TransformSystem* ts = new TransformSystem();
-        em.addEntitySystem(ts);
-        ts->createComponent(1);
+        TransformSystem ts;
+        QObject* c = ts.createComponent(1);
+        QObject* c2 = ts.getComponent(1);
+        QVERIFY(c == c2);
+        QVERIFY(ts.hasComponent(1));
 
-        Transform* test;
-        bool success = em.getComponent(1, test);
-        QVERIFY(success);
-
+        QObject* c3 = ts.getComponent(2);
+        QVERIFY(c3 == nullptr);
     }
 
+    void destruct()
+    {
+        TransformSystem ts;
+        QObject* c = ts.createComponent(1);
+        QObject* c2 = ts.getComponent(1);
+        QVERIFY(c == c2);
+        QVERIFY(ts.hasComponent(1));
+        ts.destructComponent(1);
+        QVERIFY(!ts.hasComponent(1));
+        QObject* c3 = ts.getComponent(1);
+        QVERIFY(c3 == nullptr);
+    }
 
 };

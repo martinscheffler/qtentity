@@ -3,41 +3,136 @@
 #include <QTEntity/Export>
 #include <QTEntity/EntitySystem>
 #include <QHash>
-#include <QString>
+#include <QDebug>
 
 namespace qte
 {
-
+    /**
+     * @brief The EntityManager class holds a number of entity systems, which hold components.
+     * EntityManager holds all entity systems in a data structure.
+     * It offers methods to add and remove entity systems, also
+     * convenience methods to get, add or remove components from its systems.
+     * Also the entity manager assigns entity IDs which are basically integers counting up.
+     */
     class QTENTITY_EXPORT EntityManager
     {
     public:
 
+        // data type for entity system container
         typedef QHash<const QMetaObject*,EntitySystem*> EntitySystemStore;
 
         EntityManager();
 		~EntityManager();            
 
-        EntityId createEntity();
+        /**
+         * @brief createEntity is a thread-safe method returning
+         *        integers, starting with 1 and counting up from there.
+         * @return a new entity id
+         */
+        EntityId createEntityId();
 
+        /**
+         * Templated method to get an entity system.
+         * Usage:
+         * MyEntitySystem* sys;
+         * if(em.getEntitySystem(es)) {...}
+         * @param out receives pointer to entity system
+         * @return true if entity system was found.
+         */
         template <typename T>
         bool getEntitySystem(T*& out) const;
 
+        /**
+         * Templated method to get an existing component.
+         * If component was not fonud then component is set to nullptr
+         * Usage:
+         * MyComponent* comp;
+         * if(em.getComponent(entityId, comp)) {...}
+         * @param id Entity id of component to fetch
+         * @param component receives pointer to component if found
+         * @return true if component was found, else false
+         */
         template <typename T>
         bool getComponent(EntityId id, T*& component) const;
 
+        /**
+         * Templated method to create a new component.
+         * If component already exists or can not be created then component is set to nullptr
+         * and method returns false.
+         *
+         * Usage:
+         * MyComponent* comp;
+         * if(em.createComponent(entityId, comp)) {...}
+         * @param id Entity id of component to create
+         * @param component receives pointer to newly created component
+         * @return true if component could be created, else false
+         */
         template <typename T>
         bool createComponent(EntityId id, T*& component) const;
 
+        /**
+         * Templated method to fetch existing component or create a new one if it is not found.
+         * If component can not be created then component is set to nullptr
+         * and method returns false.
+         * Usage:
+         * MyComponent* comp;
+         * if(em.getOrCreateComponent(entityId, comp)) {...}
+         * @param id Entity id of component to get or create
+         * @param component receives pointer existing or to newly created component
+         * @return true if component could be found or created, else false
+         */
         template <typename T>
         bool getOrCreateComponent(EntityId id, T*& component) const;
 
+        /**
+         * @brief Add an entity system to the entity manager.
+         * The entity manager takes ownership of the system, it is
+         * deleted when entity manager is deleted.
+         * @throw runtime_error if entity system already in manager
+         */
         void addEntitySystem(EntitySystem* es);
+
+        /**
+         * @brief removeEntitySystem removes entity system from manager.
+         * The user takes ownership of the entity system after it is removed from entity manager.
+         * @param es remove entity system of this type
+         * @return false if entity system was not in manager in the first place,
+         *          true if it could be removed.
+         */
         bool removeEntitySystem(EntitySystem* es);
 
+        /**
+         * @brief hasEntitySystem returns true if an entity system of given type
+         *        is present.
+         * @return true if exists
+         */
+        bool hasEntitySystem(EntitySystem* es);
+
+        /**
+         * @brief getSystemByComponentType returns an entity system that holds components
+         *        that are of the type described in the passed QMetaObject.
+         * @return nullptr if not found, else the system
+         */
         EntitySystem* getSystemByComponentType(const QMetaObject& componentMetaObject) const;
+
+        /**
+         * @brief getSystemBySystemType returns an entity system of type described
+         * by the passed QMetaObject.
+         * @return nullptr if not found, else the system
+         */
         EntitySystem* getSystemBySystemType(const QMetaObject& systemMetaObject) const;
 
+        /**
+         * @brief createComponentByType Creates a new component of given type and
+         *        assigns it to id.
+         * @param meta type of component to create
+         * @return component that was created.
+         */
+        QObject* createComponentByType(EntityId id, const QMetaObject& componentMetaObject) const;
+
     private:
+
+
         EntitySystemStore _systemsByComponentType;
         EntitySystemStore _systemsBySystemType;
         QAtomicInt _entityCounter;
@@ -51,6 +146,7 @@ namespace qte
         out = qobject_cast<T*>(es);
         return (out != nullptr);
     }
+
 
     template <typename T>
     bool EntityManager::getComponent(EntityId id, T*& component) const
@@ -66,16 +162,15 @@ namespace qte
         return true;
     }
 
+
     template <typename T>
     bool EntityManager::createComponent(EntityId id, T*& component) const
     {
-        EntitySystem* s = this->getSystemByComponentType(T::staticMetaObject);
-
-        if(s == nullptr || s->hasComponent(id)) return false;
-
-        component = qobject_cast<T*>(s->createComponent(id));
+        QObject* obj = this->createComponentByType(id, T::staticMetaObject);
+        component = qobject_cast<T*>(obj);
         return component != nullptr;
     }
+
 
     template <typename T>
     bool EntityManager::getOrCreateComponent(EntityId id, T*& component) const

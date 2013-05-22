@@ -71,6 +71,7 @@ private slots:
         MocEntitySystem* es2;
         bool success = em.getEntitySystem(es2);
         QVERIFY(success);
+        QVERIFY(em.hasEntitySystem(es));
         QVERIFY(es == es2);
     }
 
@@ -79,19 +80,33 @@ private slots:
         EntityManager em;
         auto es = new MocEntitySystem();
         em.addEntitySystem(es);
-        es->createComponent(1);
-        MocComponent* comp;
-        bool success = em.getComponent(1, comp);
+        MocComponent *comp, *comp2;
+        em.createComponent(1, comp);
+
+        bool success = em.getComponent(1, comp2);
         QVERIFY(success);
-        QVERIFY(comp == es->getComponent(1));
+        QVERIFY(comp == comp2);
     }
 
-    void createEntity()
+    void getOrCreateComponent()
     {
         EntityManager em;
-        EntityId eid = em.createEntity();
+        auto es = new MocEntitySystem();
+        em.addEntitySystem(es);
+        MocComponent *comp, *comp2;
+        em.getOrCreateComponent(1, comp);
+
+        bool success = em.getOrCreateComponent(1, comp2);
+        QVERIFY(success);
+        QVERIFY(comp == comp2);
+    }
+
+    void createEntityId()
+    {
+        EntityManager em;
+        EntityId eid = em.createEntityId();
         QVERIFY(1 == eid);
-        EntityId eid2 = em.createEntity();
+        EntityId eid2 = em.createEntityId();
         QVERIFY(2 == eid2);
     }
 
