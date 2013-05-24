@@ -4,6 +4,7 @@
 #include <QTEntity/DataTypes>
 #include <QObject>
 #include <QHash>
+#include <QVariantMap>
 
 namespace qte
 {
@@ -14,6 +15,7 @@ namespace qte
      */
     class QTENTITY_EXPORT EntitySystem : public QObject
     {
+        Q_OBJECT
 
     public:
         // data type of storage
@@ -45,13 +47,22 @@ namespace qte
         /**
          * @brief createComponent Construct a component from meta type.
          * @throw runtime_exception
+         *
+         * If you override this method then please make sure that you emit componentCreated() when
+         * a component was created
+         *
          * @param id Entity id to associate it with
+         * @param properties A map of property values to apply to component before adding it to system
+         *                   Format is: { name of QMetaProperty => value to set }
          * @return newly constructed component
          */
-        virtual QObject* createComponent(EntityId id);
+        virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap());
 
         /**
          * @brief destroyComponent remove component from system and destruct it
+         * If you override this method then please make sure that you emit componentAboutToDestruct() before
+         * a component is destroyed
+         *
          * @param id Entity id of component to destruc
          * @return true if component existed, else false
          */
@@ -61,6 +72,21 @@ namespace qte
          * @return  meta object type of component class
          */
         const QMetaObject& componentMetaObject() const;
+
+    signals:
+
+        void componentCreated(EntityId, QObject*);
+        void componentAboutToDestruct(EntityId, QObject*);
+
+    protected:
+
+        /**
+         * Loops through properties of QObject and assigns values from properties map
+         * if they are set
+         * @param obj Write values to properties of this object
+         * @param Read these properties
+         */
+        static void applyParameters(QObject* obj, const QVariantMap& properties);
 
     private:
 

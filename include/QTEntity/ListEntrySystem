@@ -1,0 +1,24 @@
+#pragma once
+
+#include <QTEntity/Export>
+#include <QTEntity/EntitySystem>
+#include <QObject>
+
+namespace qte
+{
+
+    class QTENTITY_EXPORT ListEntry : public QObject
+    {
+
+    };
+
+
+    class QTENTITY_EXPORT ListEntrySystem : public EntitySystem
+    {
+
+    public:
+        ListEntrySystem();
+
+    };
+
+}

@@ -63,5 +63,10 @@ private slots:
         QVERIFY(expected == txt);
     }
 
+    void braceInitializer()
+    {
+        QVariantMap bla;
+        bla = {{"hello", "world"}, {"hello", "world"}};
+    }
 
 };

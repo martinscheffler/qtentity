@@ -65,10 +65,12 @@ namespace qte
          * if(em.createComponent(entityId, comp)) {...}
          * @param id Entity id of component to create
          * @param component receives pointer to newly created component
+         * @param properties A map of property values to apply to component before adding it to system
+         *                   Format is: { name of QMetaProperty => value to set }
          * @return true if component could be created, else false
          */
         template <typename T>
-        bool createComponent(EntityId id, T*& component) const;
+        bool createComponent(EntityId id, T*& component, const QVariantMap& properties = QVariantMap()) const;
 
         /**
          * Templated method to fetch existing component or create a new one if it is not found.
@@ -79,10 +81,13 @@ namespace qte
          * if(em.getOrCreateComponent(entityId, comp)) {...}
          * @param id Entity id of component to get or create
          * @param component receives pointer existing or to newly created component
+         * @param properties A map of property values to apply to component before adding it to system
+         *                   Format is: { name of QMetaProperty => value to set }
+         *                   This is ignored if component already exists!
          * @return true if component could be found or created, else false
          */
         template <typename T>
-        bool getOrCreateComponent(EntityId id, T*& component) const;
+        bool getOrCreateComponent(EntityId id, T*& component, const QVariantMap& properties = QVariantMap()) const;
 
         /**
          * @brief Add an entity system to the entity manager.
@@ -125,10 +130,14 @@ namespace qte
         /**
          * @brief createComponentByType Creates a new component of given type and
          *        assigns it to id.
-         * @param meta type of component to create
+         * @param id assign component to this Id
+         * @param componentMetaObject type of component to create
+         * @param properties A map of property values to apply to component before adding it to system
+         *                   Format is: { name of QMetaProperty => value to set }
          * @return component that was created.
          */
-        QObject* createComponentByType(EntityId id, const QMetaObject& componentMetaObject) const;
+        QObject* createComponentByType(EntityId id, const QMetaObject& componentMetaObject,
+                                       const QVariantMap& properties) const;
 
     private:
 
@@ -164,16 +173,16 @@ namespace qte
 
 
     template <typename T>
-    bool EntityManager::createComponent(EntityId id, T*& component) const
+    bool EntityManager::createComponent(EntityId id, T*& component, const QVariantMap& properties) const
     {
-        QObject* obj = this->createComponentByType(id, T::staticMetaObject);
+        QObject* obj = this->createComponentByType(id, T::staticMetaObject, properties);
         component = qobject_cast<T*>(obj);
         return component != nullptr;
     }
 
 
     template <typename T>
-    bool EntityManager::getOrCreateComponent(EntityId id, T*& component) const
+    bool EntityManager::getOrCreateComponent(EntityId id, T*& component, const QVariantMap& properties) const
     {
         EntitySystem* s = this->getSystemByComponentType(T::staticMetaObject);
 
@@ -182,7 +191,7 @@ namespace qte
 
         if(component != nullptr) return true;
 
-        component = qobject_cast<T*>(s->createComponent(id));
+        component = qobject_cast<T*>(s->createComponent(id, properties));
         return (component != nullptr);
     }
 }

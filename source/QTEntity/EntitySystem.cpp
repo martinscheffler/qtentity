@@ -1,5 +1,6 @@
 #include <QTEntity/EntitySystem>
 #include <QDebug>
+#include <QMetaProperty>
 #include <stdexcept>
 
 namespace qte
@@ -21,7 +22,7 @@ namespace qte
 
     QObject* EntitySystem::getComponent(EntityId id) const
     {
-        ComponentStore::const_iterator i = _components.find(id);
+        auto i = _components.find(id);
         if(i == _components.end())
         {
             return nullptr;
@@ -35,28 +36,40 @@ namespace qte
         return (this->getComponent(id) != nullptr);
     }
 
-    QObject* EntitySystem::createComponent(EntityId id)
+
+    QObject* EntitySystem::createComponent(EntityId id, const QVariantMap& propertyVals)
     {
+        // check if component already exists
         if(getComponent(id) != nullptr)
         {
             throw std::runtime_error("Component already existss!");
         }
+
+        // use QMetaObject to construct new instance
         QObject* obj = _componentMetaObject->newInstance();
+
+        // out of memory?
         if(obj == nullptr)
         {
             qCritical() << "Could not construct component. Have you declared a default constructor with Q_INVOKABLE?";
             throw std::runtime_error("Component could not be constructed.");
         }
 
+        applyParameters(obj, propertyVals);
+
+        // store
         _components[id] = obj;
+
+        emit componentCreated(id, obj);
         return obj;
     }
 
 
     bool EntitySystem::destructComponent(EntityId id)
-    {
-        ComponentStore::iterator i = _components.find(id);
+    {        
+        auto i = _components.find(id);
         if(i == _components.end()) return false;
+        emit componentAboutToDestruct(id, i.value());
         delete i.value();
         _components.erase(i);
         return true;
@@ -66,5 +79,34 @@ namespace qte
     const QMetaObject& EntitySystem::componentMetaObject() const
     {
         return *_componentMetaObject;
+    }
+
+
+    void EntitySystem::applyParameters(QObject* obj, const QVariantMap& properties)
+    {
+        if(properties.empty()) return;
+
+        const QMetaObject* meta = obj->metaObject();
+        for(int i = 0; i < meta->propertyCount(); ++i)
+        {
+            QMetaProperty prop = meta->property(i);
+            if(!prop.isWritable())
+            {
+                qWarning() << "Trying to initialize a non-writable property. Name is: " << prop.name();
+            }
+            else
+            {
+                auto var = properties.find(prop.name());
+                if(var != properties.end())
+                {
+                    bool success = prop.write(obj, var.value());
+                    if(!success)
+                    {
+                        qWarning() << "Could not set property. Name is: " << prop.name();
+                    }
+                }
+            }
+        }
+
     }
 }

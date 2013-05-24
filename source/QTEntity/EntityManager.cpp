@@ -73,7 +73,8 @@ namespace qte
     }
 
 
-    QObject* EntityManager::createComponentByType(EntityId id, const QMetaObject& componentMetaObject) const
+    QObject* EntityManager::createComponentByType(EntityId id, const QMetaObject& componentMetaObject,
+                                                  const QVariantMap& props) const
     {
         EntitySystem* s = this->getSystemByComponentType(componentMetaObject);
 
@@ -83,7 +84,7 @@ namespace qte
         }
         try
         {
-            QObject* component = s->createComponent(id);
+            QObject* component = s->createComponent(id, props);
             return component;
         }
         catch(std::bad_alloc&)
