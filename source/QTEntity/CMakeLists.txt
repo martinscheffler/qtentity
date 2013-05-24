@@ -26,6 +26,7 @@ set(LIB_SOURCES
 
 set(MOC_INPUT
    ${HEADER_PATH}/EntitySystem
+   ${HEADER_PATH}/ListEntrySystem
 )
 
 QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})

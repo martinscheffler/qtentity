@@ -8,6 +8,7 @@
 
 namespace qte
 {
+
     /**
      * @brief EntitySystem objects hold a number of components
      * which are basic QObject instances. Components are referenced
@@ -37,6 +38,9 @@ namespace qte
          */
         virtual QObject* getComponent(EntityId id) const;
 
+        template <typename T>
+        bool getComponent(EntityId id, T*& component) const;
+
         /**
          * @brief hasComponent returns true if a component is associated with passed id
          * @param id EntityId of component to check
@@ -59,7 +63,7 @@ namespace qte
         virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap());
 
         /**
-         * @brief destroyComponent remove component from system and destruct it
+         * @brief destructComponent remove component from system and destruct it
          * If you override this method then please make sure that you emit componentAboutToDestruct() before
          * a component is destroyed
          *
@@ -88,10 +92,24 @@ namespace qte
          */
         static void applyParameters(QObject* obj, const QVariantMap& properties);
 
+        /**
+         * @brief Override this if you want to call a custom constructor
+         *        on your component
+         */
+        virtual QObject* createObjectInstance();
+
     private:
 
         const QMetaObject* _componentMetaObject;
         ComponentStore _components;
     };
+
+    template <typename T>
+    bool EntitySystem::getComponent(EntityId id, T*& component) const
+    {
+        QObject* obj = this->getComponent(id);
+        component = qobject_cast<T*>(obj);
+        return (component != NULL);
+    }
 
 }

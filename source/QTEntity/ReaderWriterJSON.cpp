@@ -1,4 +1,7 @@
 #include <QTEntity/ReaderWriterJSON>
+
+#include <QJsonArray>
+#include <QTEntity/EntityManager>
 #include <QMetaProperty>
 #include <QColor>
 #include <QVector2D>
@@ -8,7 +11,7 @@
 
 namespace qte
 {
-    QJsonObject ReaderWriterJSON::componentToJSON(const QObject& component)
+    QJsonObject ReaderWriterJSON::componentToJson(const QObject& component)
     {
         QJsonObject ret;
         const QMetaObject* meta = component.metaObject();
@@ -16,21 +19,58 @@ namespace qte
         for(int i = 0; i < count; ++i)
         {
             QMetaProperty prop = meta->property(i);
-            int utype = prop.userType();
+
             QString name = prop.name();
 
             if(name != "objectName")
             {
                 QVariant val = prop.read(&component);
-                ret.insert(name, variantToJSON(val));
+                ret.insert(name, variantToJson(val));
             }
         }
         return ret;
     }
 
-    QJsonValue ReaderWriterJSON::variantToJSON(const QVariant& variant)
+    QJsonValue ReaderWriterJSON::variantToJson(const QVariant& variant)
     {
-        int t = variant.type();
+        int t = variant.userType();
+
+        // check if a vector of QObjects is stored in the variant
+        if(t == qMetaTypeId<qte::PropertyObjects>())
+        {
+            QJsonArray arr;
+            PropertyObjects objs = variant.value<PropertyObjects>();
+
+            // for each object in vector, create a JSON object and
+            // set its content by parsing the QObject's properties recursively
+            foreach(PropertyObjectPointer obj, objs)
+            {
+                const QMetaObject* meta = obj->metaObject();
+
+                QJsonObject qobj;
+
+                // write class name of QObject to JSON param
+                qobj.insert("classname", QString(meta->className()));
+
+                // convert the properties of the QObject
+                for(unsigned int i = 0; i < meta->propertyCount(); ++i)
+                {
+                    QMetaProperty prop = meta->property(i);
+
+                    if(!prop.isStored()) continue;
+
+                    // don't encode object name to JSON
+                    if(QString(prop.name()) == "objectName") continue;
+
+                    QVariant val = prop.read(obj.data());
+                    qobj.insert(prop.name(), variantToJson(val));
+                }
+                arr.push_back(qobj);
+            }
+            return arr;
+        }
+
+        // Can handle the rest of the types static
         switch(t)
         {
         case qMetaTypeId<QColor>(): {
@@ -51,7 +91,20 @@ namespace qte
         }
         }
 
+        // unhandled variant types go to Qt provided method
         return QJsonValue::fromVariant(variant);
+    }
 
+
+    bool ReaderWriterJSON::jsonToComponent(EntityManager& em, EntityId id, const QJsonObject& json)
+    {
+        /*QJsonObject::const_iterator n = json.find("classname");
+        if(n == json.end()) return false;
+        QString classname = *n;
+        QMetaType::Type id = QMetaType::type(classname);
+        if(id == 0)
+        {
+            return false;
+        }*/
     }
 }

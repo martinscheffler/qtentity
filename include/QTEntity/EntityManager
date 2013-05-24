@@ -141,7 +141,6 @@ namespace qte
 
     private:
 
-
         EntitySystemStore _systemsByComponentType;
         EntitySystemStore _systemsBySystemType;
         QAtomicInt _entityCounter;

@@ -1,9 +1,32 @@
 #pragma once
 
 #include <cstdint>
+#include <QObject>
+#include <QSharedPointer>
+#include <QVector>
 
 namespace qte
 {
+    /**
+     * @brief EntityId identifies an entity.
+     * Each entity is identified by a unique EntityId. The id is assigned
+     * at runtime and is completely arbitrary. All components are indexed by
+     * this entity id.
+     */
     typedef uint32_t EntityId;
+
+    /**
+     * @brief PropertyObjectPointer Pointer to a QObject. This is used in PropertyObjects.
+     */
+    typedef QSharedPointer<QObject> PropertyObjectPointer;
+
+    /**
+     * @brief PropertyObjects A vector of QObjects.
+     * Used as data type for array properties in components.
+     * Entries need not be of the same QObject class.
+     */
+    typedef QVector<PropertyObjectPointer> PropertyObjects;
 }
 
+Q_DECLARE_METATYPE(qte::EntityId)
+Q_DECLARE_METATYPE(qte::PropertyObjects)

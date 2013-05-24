@@ -46,7 +46,7 @@ namespace qte
         }
 
         // use QMetaObject to construct new instance
-        QObject* obj = _componentMetaObject->newInstance();
+        QObject* obj = this->createObjectInstance();
 
         // out of memory?
         if(obj == nullptr)
@@ -79,6 +79,12 @@ namespace qte
     const QMetaObject& EntitySystem::componentMetaObject() const
     {
         return *_componentMetaObject;
+    }
+
+
+    QObject* EntitySystem::createObjectInstance()
+    {
+        return _componentMetaObject->newInstance();
     }
 
 

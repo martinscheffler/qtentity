@@ -1,17 +1,27 @@
 #pragma once
 
+#include <QTEntity/DataTypes>
 #include <QTEntity/Export>
 #include <QJsonObject>
 #include <QObject>
 
 namespace qte
 {
+    class EntityManager;
 
     class QTENTITY_EXPORT ReaderWriterJSON
     {
     public:
-        static QJsonObject componentToJSON(const QObject&);
-        static QJsonValue variantToJSON(const QVariant&);
+
+        /**
+         * @brief componentToJson returns a Json object from QObject.
+         * Adds an entry classname.
+         * @return
+         */
+        static QJsonObject componentToJson(const QObject&);
+        static QJsonValue variantToJson(const QVariant&);
+
+        static bool jsonToComponent(EntityManager& em, EntityId id, const QJsonObject& json);
     };
 
 }

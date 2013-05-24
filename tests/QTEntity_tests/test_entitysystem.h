@@ -1,6 +1,6 @@
 #include <QtTest/QtTest>
 #include <QtCore/QObject>
-#include <QtGui/QVector3D>
+#include <QtGui/QVector2D>
 #include <QTEntity/EntityManager>
 
 using namespace qte;
@@ -28,14 +28,6 @@ public:
 };
 
 
-class TransformSystem : public qte::EntitySystem
-{
-    Q_OBJECT
-public:
-    TransformSystem() : qte::EntitySystem(Transform::staticMetaObject) {}
-};
-
-
 class EntitySystemTest: public QObject
 {
     Q_OBJECT
@@ -43,8 +35,9 @@ private slots:
 
     void createAndFetch()
     {
-        TransformSystem ts;
+        qte::EntitySystem ts(Transform::staticMetaObject);
         QObject* c = ts.createComponent(1, {{"myint", 666}, {"myvec2", QVector2D(77.0,88.0)}});
+
         QObject* c2 = ts.getComponent(1);
         QVERIFY(c == c2);
         QVERIFY(ts.hasComponent(1));
@@ -62,7 +55,7 @@ private slots:
 
     void destruct()
     {
-        TransformSystem ts;
+        qte::EntitySystem ts(Transform::staticMetaObject);
         QObject* c = ts.createComponent(1);
         QObject* c2 = ts.getComponent(1);
         QVERIFY(c == c2);
