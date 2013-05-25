@@ -1,0 +1,18 @@
+#pragma once
+
+#include <QMainWindow>
+#include "ui_MainWindow.h"
+#include <QtEntity/EntityManager>
+
+class MainWindow : public QMainWindow, public Ui_MainWindow
+{
+    Q_OBJECT
+
+public:
+
+    MainWindow();
+
+private:
+    qte::EntityManager _entityManager;
+};
+

@@ -26,6 +26,7 @@ private slots:
         QVERIFY(entry != nullptr);
     }
 
+
     void entityRemovedIsCalled()
     {
         MetaDataSystem ls;

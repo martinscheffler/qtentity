@@ -8,3 +8,4 @@ find_package(Qt5Widgets REQUIRED)
 
 add_subdirectory(source)
 add_subdirectory(tests)
+add_subdirectory(examples)

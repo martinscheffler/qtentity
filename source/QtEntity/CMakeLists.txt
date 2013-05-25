@@ -32,7 +32,8 @@ QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})
 
 add_library(${LIBRARY_NAME} SHARED ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} ${MOC_SOURCES})
 
-qt5_use_modules(${LIBRARY_NAME} Widgets)
+#widgets is needed for QColor and other data types:
+qt5_use_modules(${LIBRARY_NAME} Core Widgets)
 
 # generate export macro file in build folder
 include (GenerateExportHeader)
