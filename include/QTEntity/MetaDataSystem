@@ -1,0 +1,77 @@
+#pragma once
+
+#include <QTEntity/Export>
+#include <QTEntity/EntitySystem>
+#include <QObject>
+
+namespace qte
+{
+    class MetaDataSystem;
+
+    class QTENTITY_EXPORT MetaData : public QObject
+    {
+        Q_OBJECT
+        Q_PROPERTY(QString name READ name WRITE setName USER true)
+        Q_PROPERTY(QString additionalInfo READ additionalInfo WRITE setAdditionalInfo USER true)
+
+     public:
+        MetaData(EntityId id, MetaDataSystem*);
+
+        /**
+         * Set entity name (human readable identifier)
+         * Causes MetaDataSystem to emit entityChanged signal
+         **/
+        void setName(const QString& name);
+
+        /**
+         * Get entity name (human readable identifier)
+         **/
+        QString name() const  { return _name; }
+
+        /**
+         * Set additional info to be displayed in a table.
+         * Format: key1=value2;key2=value2;...
+         * Causes MetaDataSystem to emit entityChanged signal
+         **/
+        void setAdditionalInfo(const QString& info);
+
+        /**
+         * Get additional info to be displayed in a table.
+         * Format: key1=value2;key2=value2;...
+         **/
+        QString additionalInfo() const  { return _info; }
+
+
+    private:
+        EntityId _entityId;
+        QString _name;
+        QString _info;
+        MetaDataSystem* _system;
+    };
+
+
+    class QTENTITY_EXPORT MetaDataSystem : public EntitySystem
+    {
+        Q_OBJECT
+
+    public:
+        MetaDataSystem();
+
+        // override to emit signal for creating entity list entry
+        virtual QObject* createComponent(EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;
+
+        // override to call ListEntry constructor passing it pointer to this
+        virtual QObject* createObjectInstance(EntityId id) override;
+
+        // override to emit signal for removing entity list entry
+        virtual bool destructComponent(EntityId id) override;
+
+    signals:
+
+        void entityAdded(EntityId id, QString name, QString additionalInfo);
+        void entityRemoved(EntityId id);
+        void entityChanged(EntityId id, QString name, QString additionalInfo);
+
+    };
+
+}

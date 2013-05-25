@@ -13,20 +13,20 @@ set(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/DataTypes
   ${HEADER_PATH}/EntityManager
   ${HEADER_PATH}/EntitySystem
-  ${HEADER_PATH}/ListEntrySystem
+  ${HEADER_PATH}/MetaDataSystem
   ${HEADER_PATH}/ReaderWriterJSON
 )
 
 set(LIB_SOURCES
   ${SOURCE_PATH}/EntityManager.cpp
   ${SOURCE_PATH}/EntitySystem.cpp
-  ${SOURCE_PATH}/ListEntrySystem.cpp
+  ${SOURCE_PATH}/MetaDataSystem.cpp
   ${SOURCE_PATH}/ReaderWriterJSON.cpp
 )
 
 set(MOC_INPUT
    ${HEADER_PATH}/EntitySystem
-   ${HEADER_PATH}/ListEntrySystem
+   ${HEADER_PATH}/MetaDataSystem
 )
 
 QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})

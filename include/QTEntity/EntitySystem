@@ -96,7 +96,7 @@ namespace qte
          * @brief Override this if you want to call a custom constructor
          *        on your component
          */
-        virtual QObject* createObjectInstance();
+        virtual QObject* createObjectInstance(EntityId id);
 
     private:
 
