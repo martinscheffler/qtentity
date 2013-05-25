@@ -1,7 +1,7 @@
 #include <QtTest/QtTest>
 #include <QtCore/QObject>
 
-#include <QTEntity/EntityManager>
+#include <QtEntity/EntityManager>
 
 using namespace qte;
 

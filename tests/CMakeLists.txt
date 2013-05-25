@@ -1,1 +1,1 @@
-add_subdirectory(QTEntity_tests)
+add_subdirectory(QtEntity_tests)

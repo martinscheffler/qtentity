@@ -1,4 +1,4 @@
-#include <QTEntity/EntityManager>
+#include <QtEntity/EntityManager>
 #include <stdexcept>
 #include <new>
 

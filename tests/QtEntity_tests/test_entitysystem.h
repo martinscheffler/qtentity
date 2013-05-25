@@ -1,7 +1,7 @@
 #include <QtTest/QtTest>
 #include <QtCore/QObject>
 #include <QtGui/QVector2D>
-#include <QTEntity/EntityManager>
+#include <QtEntity/EntityManager>
 
 using namespace qte;
 

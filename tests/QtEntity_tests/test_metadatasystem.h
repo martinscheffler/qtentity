@@ -1,7 +1,7 @@
 #include <QtTest/QtTest>
 #include <QtCore/QObject>
 
-#include <QTEntity/MetaDataSystem>
+#include <QtEntity/MetaDataSystem>
 
 using namespace qte;
 

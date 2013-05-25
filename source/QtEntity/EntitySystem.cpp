@@ -1,4 +1,4 @@
-#include <QTEntity/EntitySystem>
+#include <QtEntity/EntitySystem>
 #include <QDebug>
 #include <QMetaProperty>
 #include <stdexcept>

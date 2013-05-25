@@ -4,8 +4,8 @@
 #include <QtGui/QVector3D>
 #include <QtGui/QVector4D>
 #include <QtGui/QColor>
-#include <QTEntity/EntityManager>
-#include <QTEntity/ReaderWriterJSON>
+#include <QtEntity/EntityManager>
+#include <QtEntity/ReaderWriterJSON>
 
 using namespace qte;
 

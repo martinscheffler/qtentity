@@ -1,7 +1,7 @@
-#include <QTEntity/ReaderWriterJSON>
+#include <QtEntity/ReaderWriterJSON>
 
 #include <QJsonArray>
-#include <QTEntity/EntityManager>
+#include <QtEntity/EntityManager>
 #include <QMetaProperty>
 #include <QColor>
 #include <QVector2D>

@@ -1,1 +1,1 @@
-add_subdirectory(QTEntity)
+add_subdirectory(QtEntity)

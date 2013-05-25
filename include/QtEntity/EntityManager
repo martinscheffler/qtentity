@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QTEntity/Export>
-#include <QTEntity/EntitySystem>
+#include <QtEntity/Export>
+#include <QtEntity/EntitySystem>
 #include <QHash>
 #include <QDebug>
 

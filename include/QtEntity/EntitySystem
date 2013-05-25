@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QTEntity/Export>
-#include <QTEntity/DataTypes>
+#include <QtEntity/Export>
+#include <QtEntity/DataTypes>
 #include <QObject>
 #include <QHash>
 #include <QVariantMap>

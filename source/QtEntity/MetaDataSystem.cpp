@@ -1,4 +1,4 @@
-#include <QTEntity/MetaDataSystem>
+#include <QtEntity/MetaDataSystem>
 
 namespace qte
 {

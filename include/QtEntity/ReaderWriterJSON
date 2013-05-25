@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QTEntity/DataTypes>
-#include <QTEntity/Export>
+#include <QtEntity/DataTypes>
+#include <QtEntity/Export>
 #include <QJsonObject>
 #include <QObject>
 
