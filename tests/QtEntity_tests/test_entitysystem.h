@@ -3,7 +3,7 @@
 #include <QtGui/QVector2D>
 #include <QtEntity/EntityManager>
 
-using namespace qte;
+using namespace QtEntity;
 
 class Transform : public QObject
 {
@@ -35,7 +35,7 @@ private slots:
 
     void createAndFetch()
     {
-        qte::EntitySystem ts(Transform::staticMetaObject);
+        EntitySystem ts(Transform::staticMetaObject);
         QObject* c = ts.createComponent(1, {{"myint", 666}, {"myvec2", QVector2D(77.0,88.0)}});
 
         QObject* c2 = ts.getComponent(1);
@@ -55,7 +55,7 @@ private slots:
 
     void destruct()
     {
-        qte::EntitySystem ts(Transform::staticMetaObject);
+        EntitySystem ts(Transform::staticMetaObject);
         QObject* c = ts.createComponent(1);
         QObject* c2 = ts.getComponent(1);
         QVERIFY(c == c2);

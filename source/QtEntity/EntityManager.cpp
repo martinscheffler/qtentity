@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <new>
 
-namespace qte
+namespace QtEntity
 {
 	EntityManager::EntityManager()
 		: _entityCounter(1)

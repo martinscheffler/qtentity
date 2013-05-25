@@ -5,7 +5,7 @@
 #include <QHash>
 #include <QDebug>
 
-namespace qte
+namespace QtEntity
 {
     /**
      * @brief The EntityManager class holds a number of entity systems, which hold components.

@@ -13,6 +13,6 @@ public:
     MainWindow();
 
 private:
-    qte::EntityManager _entityManager;
+    QtEntity::EntityManager _entityManager;
 };
 

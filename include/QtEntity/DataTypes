@@ -5,7 +5,7 @@
 #include <QSharedPointer>
 #include <QVector>
 
-namespace qte
+namespace QtEntity
 {
     /**
      * @brief EntityId identifies an entity.
@@ -28,5 +28,5 @@ namespace qte
     typedef QVector<PropertyObjectPointer> PropertyObjects;
 }
 
-Q_DECLARE_METATYPE(qte::EntityId)
-Q_DECLARE_METATYPE(qte::PropertyObjects)
+Q_DECLARE_METATYPE(QtEntity::EntityId)
+Q_DECLARE_METATYPE(QtEntity::PropertyObjects)

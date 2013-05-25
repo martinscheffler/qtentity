@@ -1,6 +1,6 @@
 #include <QtEntity/MetaDataSystem>
 
-namespace qte
+namespace QtEntity
 {
     MetaData::MetaData(EntityId id, MetaDataSystem* ls)
         : _entityId(id)

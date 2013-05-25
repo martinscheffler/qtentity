@@ -7,7 +7,7 @@
 #include <QtEntity/EntityManager>
 #include <QtEntity/ReaderWriterJSON>
 
-using namespace qte;
+using namespace QtEntity;
 
 
 class TestObj1 : public QObject
@@ -38,7 +38,7 @@ class DataHolder : public QObject
     Q_PROPERTY(QVector3D myvec3 READ myVec3 WRITE setMyVec3 USER true)
     Q_PROPERTY(QVector4D myvec4 READ myVec4 WRITE setMyVec4 USER true)
     Q_PROPERTY(QColor mycolor READ myColor WRITE setMyColor USER true)
-    Q_PROPERTY(qte::PropertyObjects myobjects READ myObjects WRITE setMyObjects USER true)
+    Q_PROPERTY(PropertyObjects myobjects READ myObjects WRITE setMyObjects USER true)
 
 public:
     Q_INVOKABLE DataHolder() {}
@@ -58,8 +58,8 @@ public:
     void setMyInt(qint32 v) { _myint = v; }
     qint32 myInt() const  { return _myint; }
 
-    void setMyObjects(const qte::PropertyObjects& v) { _myobjects = v; }
-    qte::PropertyObjects myObjects() const  { return _myobjects; }
+    void setMyObjects(const PropertyObjects& v) { _myobjects = v; }
+    PropertyObjects myObjects() const  { return _myobjects; }
 
 private:
     QVector2D _myvec2;
@@ -67,7 +67,7 @@ private:
     QVector4D _myvec4;
     QColor _mycolor;
     qint32 _myint;
-    qte::PropertyObjects _myobjects;
+    PropertyObjects _myobjects;
 };
 
 
@@ -79,9 +79,9 @@ private slots:
 
     void metatype()
     {
-        int id = qMetaTypeId<qte::PropertyObjects>();
+        int id = qMetaTypeId<PropertyObjects>();
 
-        qte::PropertyObjects objs;
+        PropertyObjects objs;
         QVariant v = QVariant::fromValue(objs);
         int usertype = v.userType();
         QVERIFY(id == usertype);
@@ -93,9 +93,9 @@ private slots:
         DataHolder dh;
         dh.setMyInt(666);
         dh.setMyVec3(QVector3D(-1,0,354));
-        qte::PropertyObjects objs;
-        objs.push_back(qte::PropertyObjectPointer(new TestObj1()));
-        objs.push_back(qte::PropertyObjectPointer(new TestObj2()));
+        PropertyObjects objs;
+        objs.push_back(PropertyObjectPointer(new TestObj1()));
+        objs.push_back(PropertyObjectPointer(new TestObj2()));
         dh.setMyObjects(objs);
 
         QJsonObject obj = ReaderWriterJSON::componentToJson(dh);

@@ -5,7 +5,7 @@
 #include <QJsonObject>
 #include <QObject>
 
-namespace qte
+namespace QtEntity
 {
     class EntityManager;
 

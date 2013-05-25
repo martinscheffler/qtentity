@@ -9,7 +9,7 @@
 #include <QVector4D>
 #include <QDebug>
 
-namespace qte
+namespace QtEntity
 {
     QJsonObject ReaderWriterJSON::componentToJson(const QObject& component)
     {
@@ -37,7 +37,7 @@ namespace qte
         int t = variant.userType();
 
         // check if a vector of QObjects is stored in the variant
-        if(t == qMetaTypeId<qte::PropertyObjects>())
+        if(t == qMetaTypeId<QtEntity::PropertyObjects>())
         {
             QJsonArray arr;
             PropertyObjects objs = variant.value<PropertyObjects>();

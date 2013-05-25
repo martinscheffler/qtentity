@@ -3,7 +3,7 @@
 
 #include <QtEntity/EntityManager>
 
-using namespace qte;
+using namespace QtEntity;
 
 class MocComponent : public QObject
 {

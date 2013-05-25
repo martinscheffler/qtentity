@@ -6,7 +6,7 @@
 #include <QHash>
 #include <QVariantMap>
 
-namespace qte
+namespace QtEntity
 {
 
     /**

@@ -3,7 +3,7 @@
 #include <QMetaProperty>
 #include <stdexcept>
 
-namespace qte
+namespace QtEntity
 {
     EntitySystem::EntitySystem(const QMetaObject& componentMeta)
         : _componentMetaObject(&componentMeta)

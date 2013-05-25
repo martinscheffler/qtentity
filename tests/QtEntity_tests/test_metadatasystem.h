@@ -3,7 +3,7 @@
 
 #include <QtEntity/MetaDataSystem>
 
-using namespace qte;
+using namespace QtEntity;
 
 class MetaDataSystemTest: public QObject
 {
