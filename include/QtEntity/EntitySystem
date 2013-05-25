@@ -79,7 +79,14 @@ namespace qte
 
     signals:
 
+        /**
+         * Gets emitted when a component was just created and added to the system
+         */
         void componentCreated(EntityId, QObject*);
+
+        /**
+         * Gets emitted right before component is removed from system and deleted
+         */
         void componentAboutToDestruct(EntityId, QObject*);
 
     protected:

@@ -15,12 +15,28 @@ namespace qte
 
         /**
          * @brief componentToJson returns a Json object from QObject.
-         * Adds an entry classname.
+         * Adds an entry 'classname' with type name of component.
          * @return
          */
         static QJsonObject componentToJson(const QObject&);
+
+        /**
+         * @brief variantToJson converts a single variant to Json.
+         * This handles QColor, QVector[2|3|4]D.
+         * Special case: Variants of type PropertyObjects.
+         * These are converted to arrays of objects.
+         * @return the converted Json object
+         */
         static QJsonValue variantToJson(const QVariant&);
 
+        /**
+         * Create a component from 'classname' value in passed Json object.
+         * Sets values of the component to values of passed json object.
+         * @param em Entity manager that contains entity system handling classname
+         * @param id Entity to which component should be added
+         * @param json Json object containing values for componennt
+         * @return true if success
+         */
         static bool jsonToComponent(EntityManager& em, EntityId id, const QJsonObject& json);
     };
 

@@ -31,6 +31,7 @@ namespace qte
         return ret;
     }
 
+
     QJsonValue ReaderWriterJSON::variantToJson(const QVariant& variant)
     {
         int t = variant.userType();
@@ -98,6 +99,7 @@ namespace qte
 
     bool ReaderWriterJSON::jsonToComponent(EntityManager& em, EntityId id, const QJsonObject& json)
     {
+        qCritical() << "Not implemented!";
         /*QJsonObject::const_iterator n = json.find("classname");
         if(n == json.end()) return false;
         QString classname = *n;
