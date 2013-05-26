@@ -1,0 +1,29 @@
+#pragma once
+
+#include <QtEntity/EntityManager>
+#include <QObject>
+#include <QTimer>
+
+class Game : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    Game();
+
+    QtEntity::EntityManager& entityManager() { return _entityManager; }
+
+public slots:
+
+    void run();
+    void end();
+
+private:
+
+    void step(int frameNumber, int totalTime, int delta);
+    QtEntity::EntityManager _entityManager;
+    bool _isRunning;
+
+};
+

@@ -26,6 +26,15 @@ namespace QtEntity
      * Entries need not be of the same QObject class.
      */
     typedef QVector<PropertyObjectPointer> PropertyObjects;
+
+    /**
+     * @brief This has to be called once in an application to make data types
+     * available for signal/slot connections
+     */
+    inline void registerMetaTypes()
+    {
+        qRegisterMetaType<QtEntity::EntityId>("QtEntity::EntityId");
+    }
 }
 
 Q_DECLARE_METATYPE(QtEntity::EntityId)

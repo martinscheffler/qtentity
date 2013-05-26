@@ -1,0 +1,44 @@
+#pragma once
+
+#include <QtEntity/EntitySystem>
+#include <QRect>
+
+class Physical : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(QPoint position READ position WRITE setPosition USER true)
+    Q_PROPERTY(QPoint size READ size WRITE setSize USER true)
+    Q_PROPERTY(QPoint velocity READ velocity WRITE setVelocity USER true)
+
+public:
+
+    Q_INVOKABLE Physical() {}
+
+    void setPosition(const QPoint& p) { _position = p; }
+    QPoint position() const { return _position; }
+
+    void setSize(const QPoint& s) { _size = s; }
+    QPoint size() const { return _size; }
+
+    void setVelocity(const QPoint& v) { _velocity = v; }
+    QPoint velocity() const { return _velocity; }
+
+private:
+
+    QPoint _position;
+    QPoint _size;
+    QPoint _velocity;
+};
+
+
+class PhysicalSystem : public QtEntity::EntitySystem
+{
+    Q_OBJECT
+
+public:
+    PhysicalSystem();
+
+    void step(int delta);
+
+};

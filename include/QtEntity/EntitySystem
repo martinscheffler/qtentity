@@ -8,6 +8,8 @@
 
 namespace QtEntity
 {
+    // fwd declaration
+    class EntityManager;
 
     /**
      * @brief EntitySystem objects hold a number of components
@@ -30,6 +32,14 @@ namespace QtEntity
         EntitySystem(const QMetaObject& componentMeta);
 
         virtual ~EntitySystem();
+
+        /**
+         * This is called by entity manager when system is added to entity manager
+         */
+        void setEntityManager(EntityManager* em)
+        {
+            _entityManager = em;
+        }
 
         /**
          * @brief getComponent Return component associated with passed id
@@ -77,17 +87,37 @@ namespace QtEntity
          */
         const QMetaObject& componentMetaObject() const;
 
+        /**
+         * Return begin iterator of component container
+         */
+        virtual ComponentStore::iterator begin() { return _components.begin(); }
+
+        /**
+         * Return end iterator of component container
+         */
+        virtual ComponentStore::iterator end() { return _components.end(); }
+
+        /**
+         * Return begin iterator of component container
+         */
+        virtual ComponentStore::const_iterator begin() const { return _components.begin(); }
+
+        /**
+         * Return end iterator of component container
+         */
+        virtual ComponentStore::const_iterator end() const { return _components.end(); }
+
     signals:
 
         /**
          * Gets emitted when a component was just created and added to the system
          */
-        void componentCreated(EntityId, QObject*);
+        void componentCreated(QtEntity::EntityId, QObject*);
 
         /**
          * Gets emitted right before component is removed from system and deleted
          */
-        void componentAboutToDestruct(EntityId, QObject*);
+        void componentAboutToDestruct(QtEntity::EntityId, QObject*);
 
     protected:
 
@@ -103,8 +133,13 @@ namespace QtEntity
          * @brief Override this if you want to call a custom constructor
          *        on your component
          */
-        virtual QObject* createObjectInstance(EntityId id);
+        virtual QObject* createObjectInstance(EntityId id, const QVariantMap& propertyVals);
 
+        /**
+         * The entity manager that this entity system is assigned to.
+         * Is NULL if entity system was never added
+         */
+        EntityManager* _entityManager;
     private:
 
         const QMetaObject* _componentMetaObject;

@@ -2,7 +2,11 @@
 
 #include <QMainWindow>
 #include "ui_MainWindow.h"
-#include <QtEntity/EntityManager>
+#include <QtEntity/DataTypes>
+#include <QThread>
+
+class Game;
+class Renderer;
 
 class MainWindow : public QMainWindow, public Ui_MainWindow
 {
@@ -12,7 +16,16 @@ public:
 
     MainWindow();
 
+protected slots:
+
+    void entityAdded(QtEntity::EntityId id, QString name, QString additionalInfo);
+    void entityChanged(QtEntity::EntityId id, QString name, QString additionalInfo);
+    void entityRemoved(QtEntity::EntityId id);
+
 private:
-    QtEntity::EntityManager _entityManager;
+
+    //QThread _gameThread;
+    Game* _game;
+    Renderer* _renderer;
 };
 

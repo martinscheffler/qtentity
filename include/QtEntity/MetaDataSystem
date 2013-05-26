@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtEntity/Export>
+#include <QtEntity/DataTypes>
 #include <QtEntity/EntitySystem>
 #include <QObject>
 
@@ -15,7 +16,7 @@ namespace QtEntity
         Q_PROPERTY(QString additionalInfo READ additionalInfo WRITE setAdditionalInfo USER true)
 
      public:
-        MetaData(EntityId id, MetaDataSystem*);
+        MetaData(EntityId id, const QString& name, const QString& info, MetaDataSystem*);
 
         /**
          * Set entity name (human readable identifier)
@@ -60,17 +61,18 @@ namespace QtEntity
         // override to emit signal for creating entity list entry
         virtual QObject* createComponent(EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;
 
-        // override to call ListEntry constructor passing it pointer to this
-        virtual QObject* createObjectInstance(EntityId id) override;
-
         // override to emit signal for removing entity list entry
         virtual bool destructComponent(EntityId id) override;
 
+    protected:
+        // override to call ListEntry constructor passing it pointer to this
+        virtual QObject* createObjectInstance(EntityId id, const QVariantMap& propertyVals) override;
+
     signals:
 
-        void entityAdded(EntityId id, QString name, QString additionalInfo);
-        void entityRemoved(EntityId id);
-        void entityChanged(EntityId id, QString name, QString additionalInfo);
+        void entityAdded(QtEntity::EntityId id, QString name, QString additionalInfo);
+        void entityRemoved(QtEntity::EntityId id);
+        void entityChanged(QtEntity::EntityId id, QString name, QString additionalInfo);
 
     };
 

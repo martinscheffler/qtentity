@@ -2,11 +2,12 @@
 
 namespace QtEntity
 {
-    MetaData::MetaData(EntityId id, MetaDataSystem* ls)
+    MetaData::MetaData(EntityId id, const QString& name, const QString& info, MetaDataSystem* ls)
         : _entityId(id)
+        , _name(name)
+        , _info(info)
         , _system(ls)
     {
-
     }
 
 
@@ -15,13 +16,21 @@ namespace QtEntity
         if(_name != name)
         {
             _name = name;
-            QMetaObject::invokeMethod(_system, "entityChanged", Q_ARG(EntityId, _entityId),
+            QMetaObject::invokeMethod(_system, "entityChanged", Q_ARG(QtEntity::EntityId, _entityId),
                 Q_ARG(QString, _name), Q_ARG(QString, _info));
         }
     }
 
 
-    void MetaData::setAdditionalInfo(const QString& info) { _info = info; }
+    void MetaData::setAdditionalInfo(const QString& info)
+    {
+        if(_info != info)
+        {
+            _info = info;
+            QMetaObject::invokeMethod(_system, "entityChanged", Q_ARG(QtEntity::EntityId, _entityId),
+                Q_ARG(QString, _name), Q_ARG(QString, _info));
+        }
+    }
 
 
     MetaDataSystem::MetaDataSystem()
@@ -46,9 +55,11 @@ namespace QtEntity
     }
 
 
-    QObject* MetaDataSystem::createObjectInstance(EntityId id)
+    QObject* MetaDataSystem::createObjectInstance(EntityId id, const QVariantMap& propertyVals)
     {
-        return new MetaData(id, this);
+        QString name = propertyVals["name"].toString();
+        QString info = propertyVals["additionalInfo"].toString();
+        return new MetaData(id, name, info, this);
     }
 
 

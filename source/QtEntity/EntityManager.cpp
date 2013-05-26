@@ -35,6 +35,7 @@ namespace QtEntity
         }
         _systemsBySystemType.insert(es->metaObject(), es);
         _systemsByComponentType.insert(mo, es);
+        es->setEntityManager(this);
     }
 
 

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/assets">
+        <file>spaceArt.svg</file>
+        <file>space.jpg</file>
+    </qresource>
+</RCC>

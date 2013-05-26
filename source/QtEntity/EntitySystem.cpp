@@ -6,7 +6,8 @@
 namespace QtEntity
 {
     EntitySystem::EntitySystem(const QMetaObject& componentMeta)
-        : _componentMetaObject(&componentMeta)
+        : _entityManager(NULL)
+        , _componentMetaObject(&componentMeta)
     {
     }
 
@@ -46,7 +47,7 @@ namespace QtEntity
         }
 
         // use QMetaObject to construct new instance
-        QObject* obj = this->createObjectInstance(id);
+        QObject* obj = this->createObjectInstance(id, propertyVals);
 
         // out of memory?
         if(obj == nullptr)
@@ -54,8 +55,6 @@ namespace QtEntity
             qCritical() << "Could not construct component. Have you declared a default constructor with Q_INVOKABLE?";
             throw std::runtime_error("Component could not be constructed.");
         }
-
-        applyParameters(obj, propertyVals);
 
         // store
         _components[id] = obj;
@@ -82,9 +81,11 @@ namespace QtEntity
     }
 
 
-    QObject* EntitySystem::createObjectInstance(EntityId id)
+    QObject* EntitySystem::createObjectInstance(EntityId id, const QVariantMap& propertyVals)
     {
-        return _componentMetaObject->newInstance();
+        QObject* obj = _componentMetaObject->newInstance();
+        applyParameters(obj, propertyVals);
+        return obj;
     }
 
 
@@ -96,6 +97,7 @@ namespace QtEntity
         for(int i = 0; i < meta->propertyCount(); ++i)
         {
             QMetaProperty prop = meta->property(i);
+
             if(!prop.isWritable())
             {
                 qWarning() << "Trying to initialize a non-writable property. Name is: " << prop.name();

@@ -1,0 +1,27 @@
+#pragma once
+
+#include <QWidget>
+
+class RendererImpl;
+
+typedef uintptr_t RenderHandle;
+
+class Renderer : public QWidget
+{
+public:
+
+    Renderer(QWidget* parent);
+
+    // create a shape with given texture and position, returns an identifier
+    RenderHandle createShape(const QPixmap& pic, const QPointF& pos, int zindex);
+
+    // destroy shape previously created with createShape
+    void destroyShape(RenderHandle identifier);
+
+    // update transform of shape previously created with createShape
+    void updateShape(RenderHandle identifier, const QPointF& pos, int zindex);
+
+private:
+    RendererImpl* _impl;
+};
+
