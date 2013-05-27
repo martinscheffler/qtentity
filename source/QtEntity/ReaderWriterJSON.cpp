@@ -54,7 +54,7 @@ namespace QtEntity
                 qobj.insert("classname", QString(meta->className()));
 
                 // convert the properties of the QObject
-                for(unsigned int i = 0; i < meta->propertyCount(); ++i)
+                for(int i = 0; i < meta->propertyCount(); ++i)
                 {
                     QMetaProperty prop = meta->property(i);
 
@@ -70,26 +70,25 @@ namespace QtEntity
             }
             return arr;
         }
-
-        // Can handle the rest of the types static
-        switch(t)
-        {
-        case qMetaTypeId<QColor>(): {
+		else if(t == qMetaTypeId<QColor>())
+		{
             QColor c = variant.value<QColor>();
             return QString("%1,%2,%3,%4").arg(c.red()).arg(c.green()).arg(c.blue()).arg(c.alpha());
         }
-        case qMetaTypeId<QVector2D>(): {
+		else if(t == qMetaTypeId<QVector2D>())
+		{
             QVector2D v2 = variant.value<QVector2D>();
             return QString("%1,%2").arg(v2.x()).arg(v2.y());
         }
-        case qMetaTypeId<QVector3D>(): {
+        else if(t == qMetaTypeId<QVector3D>())
+		{
             QVector3D v3 = variant.value<QVector3D>();
             return QString("%1,%2,%3").arg(v3.x()).arg(v3.y()).arg(v3.z());
         }
-        case qMetaTypeId<QVector4D>(): {
+        else if(t == qMetaTypeId<QVector4D>())
+		{
             QVector4D v4 = variant.value<QVector4D>();
-            return QString("%1,%2,%3,%4").arg(v4.x()).arg(v4.y()).arg(v4.z()).arg(v4.w());
-        }
+            return QString("%1,%2,%3,%4").arg(v4.x()).arg(v4.y()).arg(v4.z()).arg(v4.w());        
         }
 
         // unhandled variant types go to Qt provided method
@@ -100,6 +99,7 @@ namespace QtEntity
     bool ReaderWriterJSON::jsonToComponent(EntityManager& em, EntityId id, const QJsonObject& json)
     {
         qCritical() << "Not implemented!";
+		return false;
         /*QJsonObject::const_iterator n = json.find("classname");
         if(n == json.end()) return false;
         QString classname = *n;

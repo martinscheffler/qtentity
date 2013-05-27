@@ -36,7 +36,11 @@ private slots:
     void createAndFetch()
     {
         EntitySystem ts(Transform::staticMetaObject);
-        QObject* c = ts.createComponent(1, {{"myint", 666}, {"myvec2", QVector2D(77.0,88.0)}});
+
+		QVariantMap m;
+		m["myint"] = 666;
+		m["myvec2"] =  QVector2D(77.0,88.0);
+        QObject* c = ts.createComponent(1, m);
 
         QObject* c2 = ts.getComponent(1);
         QVERIFY(c == c2);

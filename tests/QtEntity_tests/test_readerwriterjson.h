@@ -102,7 +102,7 @@ private slots:
         QJsonDocument doc(obj);
 
         QString txt = doc.toJson(QJsonDocument::Compact);
-        QString expected = R"({"mycolor": "0,0,0,255","myint": 666,"myobjects": [{"classname": "TestObj1","propint": 0},{"classname": "TestObj2"}],"myvec2": "0,0","myvec3": "-1,0,354","myvec4": "0,0,0,0"})";
+        QString expected = "{\"mycolor\": \"0,0,0,255\",\"myint\": 666,\"myobjects\": [{\"classname\": \"TestObj1\",\"propint\": 0},{\"classname\": \"TestObj2\"}],\"myvec2\": \"0,0\",\"myvec3\": \"-1,0,354\",\"myvec4\": \"0,0,0,0\"}";
         QVERIFY(expected == txt);
     }
 

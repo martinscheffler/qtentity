@@ -50,7 +50,11 @@ void Game::step(int frameNumber, int totalTime, int delta)
     {
         QtEntity::EntityId id = _entityManager.createEntityId();
         QtEntity::MetaData* metadata;
-        _entityManager.createComponent(id, metadata, {{"name", QString("Entity_%1").arg(id)}, {"additionalInfo", "LoadedFrom=code;bla=blu"}});
+
+		QVariantMap m;
+		m["name"] = QString("Entity_%1").arg(id);
+		m["additionalInfo"] = "LoadedFrom=code;bla=blu";
+        _entityManager.createComponent(id, metadata, m);
         _entityManager.getComponent(1, metadata);
         metadata->setAdditionalInfo(QString("LoadedFrom=%1").arg(frameNumber));
     }

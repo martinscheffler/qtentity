@@ -53,7 +53,7 @@ namespace QtEntity
         _systemsBySystemType.erase(i);
 
         // assert that system is in both maps
-        EntitySystemStore::iterator j = _systemsByComponentType.find(&i.value()->componentMetaObject());
+        EntitySystemStore::iterator j = _systemsByComponentType.find(&es->componentMetaObject());
         Q_ASSERT(j != _systemsByComponentType.end());
         _systemsByComponentType.erase(j);
         return true;
