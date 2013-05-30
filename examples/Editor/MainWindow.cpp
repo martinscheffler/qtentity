@@ -8,11 +8,17 @@
 MainWindow::MainWindow()
 {
     setupUi(this);
-    resize(800, 600);
+
 
     QtEntity::registerMetaTypes();
 
-    _game = new Game();
+
+    QHBoxLayout* layout = new QHBoxLayout();
+    _rendererPos->setLayout(layout);
+    _renderer = new Renderer(_rendererPos);
+    layout->addWidget(_renderer);
+
+    _game = new Game(_renderer);
 
     QtEntity::MetaDataSystem* ms;
     _game->entityManager().getEntitySystem(ms);
@@ -25,19 +31,16 @@ MainWindow::MainWindow()
     connect(&_gameThread, &QThread::started, _game, &Game::run);
     _gameThread.start();*/
 
-    QHBoxLayout* layout = new QHBoxLayout();
-    _rendererPos->setLayout(layout);
-    _renderer = new Renderer(_rendererPos);
-    layout->addWidget(_renderer);
+    adjustSize();
 
-    _renderer->createShape(QPixmap(":/assets/space.jpg"), QPointF(0,0), -10);
+    setFocusPolicy(Qt::StrongFocus);
 
-    QPixmap pic(":/assets/spaceArt.svg");
-    QPixmap ship = pic.copy(QRect(374,360,106,90));
+}
 
-    _renderer->createShape(ship, QPointF(0,0), 1);
-    _renderer->createShape(ship, QPointF(320,240), 1);
 
+void MainWindow::keyPressEvent ( QKeyEvent * event )
+{
+    _game->keyPressEvent(event);
 }
 
 
@@ -74,7 +77,7 @@ void MainWindow::entityRemoved(QtEntity::EntityId id)
     for(int i = 0; i < _entities->rowCount(); ++i)
     {
         QTableWidgetItem* item = _entities->item(i, 0);
-        if(item && item->data(Qt::UserRole).toInt() == id)
+        if(item && item->data(Qt::UserRole).toUInt() == id)
         {
             _entities->removeRow(i);
             return;
@@ -91,7 +94,7 @@ void MainWindow::entityChanged(QtEntity::EntityId id, QString name, QString addi
     for(int i = 0; i < _entities->rowCount(); ++i)
     {
         QTableWidgetItem* item = _entities->item(i, 0);
-        if(item && item->data(Qt::UserRole).toInt() == id)
+        if(item && item->data(Qt::UserRole).toUInt() == id)
         {
             _entities->item(i, 1)->setText(name);
 

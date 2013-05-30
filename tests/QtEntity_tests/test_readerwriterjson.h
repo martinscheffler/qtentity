@@ -110,7 +110,6 @@ private slots:
     void decode()
     {
         int tid = qMetaTypeId<TestObj1*>();
-        const char* tname = QMetaType::typeName(tid);
         int id = QMetaType::type("TestObj1*");
         QVERIFY (id != QMetaType::UnknownType);
         QCOMPARE(id, tid);

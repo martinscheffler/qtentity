@@ -12,10 +12,6 @@ public:
     RendererImpl(QWidget* parent)
         : QGraphicsView(parent)
     {
-        setMaximumSize(640, 480);
-        resize(640, 480);
-        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setScene(&_scene);
         _scene.setSceneRect(0, 0, 640, 480);
     }

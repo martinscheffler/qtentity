@@ -41,7 +41,6 @@ namespace QtEntity
 
     bool EntityManager::hasEntitySystem(EntitySystem* es)
     {
-        const QMetaObject* mo = &es->componentMetaObject();
         return _systemsBySystemType.contains(es->metaObject());
     }
 

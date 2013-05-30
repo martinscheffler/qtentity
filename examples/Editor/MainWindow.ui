@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>861</width>
-    <height>537</height>
+    <width>992</width>
+    <height>644</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,20 +47,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QWidget" name="_rendererPos" native="true">
-      <property name="minimumSize">
-       <size>
-        <width>640</width>
-        <height>480</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>640</width>
-        <height>480</height>
-       </size>
-      </property>
-     </widget>
+     <widget class="QWidget" name="_rendererPos" native="true"/>
     </item>
    </layout>
   </widget>
@@ -69,7 +56,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>861</width>
+     <width>992</width>
      <height>19</height>
     </rect>
    </property>

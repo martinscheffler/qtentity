@@ -3,6 +3,9 @@
 #include <QtEntity/EntityManager>
 #include <QObject>
 #include <QTimer>
+#include <QKeyEvent>
+
+class Renderer;
 
 class Game : public QObject
 {
@@ -10,9 +13,11 @@ class Game : public QObject
 
 public:
 
-    Game();
+    Game(Renderer*);
 
     QtEntity::EntityManager& entityManager() { return _entityManager; }
+
+    void keyPressEvent ( QKeyEvent * event );
 
 public slots:
 
@@ -22,8 +27,11 @@ public slots:
 private:
 
     void step(int frameNumber, int totalTime, int delta);
+    void keyLeft();
+    void keyRight();
     QtEntity::EntityManager _entityManager;
     bool _isRunning;
+    Renderer* _renderer;
 
 };
 
