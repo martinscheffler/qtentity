@@ -3,7 +3,7 @@
 #include "BulletSystem"
 #include "DamageSystem"
 #include "Renderer"
-#include "PhysicalSystem"
+#include "EnemySystem"
 #include "ShapeSystem"
 #include <QtEntity/MetaDataSystem>
 #include <QCoreApplication>
