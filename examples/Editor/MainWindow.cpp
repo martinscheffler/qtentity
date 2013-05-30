@@ -3,7 +3,7 @@
 #include "Game"
 #include "Renderer"
 #include <QtEntity/DataTypes>
-#include <QtEntity/MetaDataSystem>
+#include "MetaDataSystem"
 
 
 MainWindow::MainWindow()
@@ -20,11 +20,11 @@ MainWindow::MainWindow()
     _game = new Game(_renderer);
 
     // connect signals of meta data system to entity list
-    QtEntity::MetaDataSystem* ms;
+    MetaDataSystem* ms;
     _game->entityManager().getEntitySystem(ms);
-    connect(ms, &QtEntity::MetaDataSystem::entityAdded, this, &MainWindow::entityAdded);
-    connect(ms, &QtEntity::MetaDataSystem::entityRemoved, this, &MainWindow::entityRemoved);
-    connect(ms, &QtEntity::MetaDataSystem::entityChanged, this, &MainWindow::entityChanged);
+    connect(ms, &MetaDataSystem::entityAdded,   this, &MainWindow::entityAdded);
+    connect(ms, &MetaDataSystem::entityRemoved, this, &MainWindow::entityRemoved);
+    connect(ms, &MetaDataSystem::entityChanged, this, &MainWindow::entityChanged);
 
     // setup game tick
 #ifdef RUN_GAME_IN_THREAD

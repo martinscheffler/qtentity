@@ -5,7 +5,7 @@
 #include "Renderer"
 #include "EnemySystem"
 #include "ShapeSystem"
-#include <QtEntity/MetaDataSystem>
+#include "MetaDataSystem"
 #include <QCoreApplication>
 #include <QTime>
 #include <QThread>
@@ -15,7 +15,7 @@ Game::Game(Renderer* renderer)
     , _renderer(renderer)
     , _bulletsys(new BulletSystem())
     , _damagesys(new DamageSystem())
-    , _metasys(new QtEntity::MetaDataSystem())
+    , _metasys(new MetaDataSystem())
     , _enemysys(new EnemySystem())
     , _shapesys(new ShapeSystem(renderer))
     , _leftpressed(false)
@@ -78,7 +78,7 @@ void Game::createPlayer()
         _entityManager.createComponent(_playerid, shape, m);
     }
     {
-        QtEntity::MetaData* metadata;
+        MetaData* metadata;
         QVariantMap m;
         m["name"] = QString("Player");
         m["additionalInfo"] = "prefab=player";
@@ -107,7 +107,7 @@ void Game::createEnemy()
         _entityManager.createComponent(id, shape, m);
     }
     {
-        QtEntity::MetaData* metadata;
+        MetaData* metadata;
         QVariantMap m;
         m["name"] = QString("Enemy").arg(id);
         m["additionalInfo"] = "prefab=enemy";
