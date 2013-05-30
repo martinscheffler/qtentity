@@ -5,31 +5,37 @@
 #include <QtEntity/DataTypes>
 #include <QtEntity/MetaDataSystem>
 
+
 MainWindow::MainWindow()
+    : _timer(nullptr)
 {
     setupUi(this);
 
-
     QtEntity::registerMetaTypes();
 
-
-    QHBoxLayout* layout = new QHBoxLayout();
-    _rendererPos->setLayout(layout);
+    _rendererPos->setLayout(new QHBoxLayout());
     _renderer = new Renderer(_rendererPos);
-    layout->addWidget(_renderer);
+    _rendererPos->layout()->addWidget(_renderer);
 
     _game = new Game(_renderer);
 
+    // connect signals of meta data system to entity list
     QtEntity::MetaDataSystem* ms;
     _game->entityManager().getEntitySystem(ms);
     connect(ms, &QtEntity::MetaDataSystem::entityAdded, this, &MainWindow::entityAdded);
     connect(ms, &QtEntity::MetaDataSystem::entityRemoved, this, &MainWindow::entityRemoved);
     connect(ms, &QtEntity::MetaDataSystem::entityChanged, this, &MainWindow::entityChanged);
 
-    // game can run in separate thread, but QGraphicsView can't
-    /*_game->moveToThread(&_gameThread);
+    // setup game tick
+#ifdef RUN_GAME_IN_THREAD
+    _game->moveToThread(&_gameThread);
     connect(&_gameThread, &QThread::started, _game, &Game::run);
-    _gameThread.start();*/
+    _gameThread.start();
+#else
+    _timer = new QTimer(this);
+    connect(_timer, &QTimer::timeout, this, &MainWindow::stepGame);
+    _timer->start((int)(1000.0 / 60.0));
+#endif
 
     adjustSize();
 
@@ -44,6 +50,25 @@ void MainWindow::keyPressEvent ( QKeyEvent * event )
 }
 
 
+void MainWindow::keyReleaseEvent ( QKeyEvent * event )
+{
+    _game->keyReleaseEvent(event);
+}
+
+MainWindow::~MainWindow()
+{
+}
+
+
+int frameNumber = 0;
+void MainWindow::stepGame()
+{
+    ++frameNumber;
+    _game->step(frameNumber, frameNumber * 60, 60);
+}
+
+
+// insert entry into entity list
 void MainWindow::entityAdded(QtEntity::EntityId id, QString name, QString additionalInfo)
 {
     _entities->setSortingEnabled(false);
@@ -72,6 +97,7 @@ void MainWindow::entityAdded(QtEntity::EntityId id, QString name, QString additi
 }
 
 
+// remove entry from entity list
 void MainWindow::entityRemoved(QtEntity::EntityId id)
 {
     for(int i = 0; i < _entities->rowCount(); ++i)
@@ -87,6 +113,7 @@ void MainWindow::entityRemoved(QtEntity::EntityId id)
 }
 
 
+// update entry in entity list
 void MainWindow::entityChanged(QtEntity::EntityId id, QString name, QString additionalInfo)
 {
     _entities->setSortingEnabled(false);

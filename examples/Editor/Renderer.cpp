@@ -14,13 +14,12 @@ public:
     {
         setScene(&_scene);
         _scene.setSceneRect(0, 0, 640, 480);
+        setFocusPolicy(Qt::NoFocus);
     }
 
     // create a shape with given texture and transform, returns an identifier
     RenderHandle createShape(const QPixmap& pic, const QPointF& pos, int zindex)
     {
-        //QPixmap pm(texpath);
-        //QPixmap sub = pm.copy(uv);
         QGraphicsPixmapItem* item = _scene.addPixmap(pic);
         item->setPos(pos);
         item->setZValue(zindex);

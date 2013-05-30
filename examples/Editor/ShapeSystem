@@ -17,13 +17,13 @@ public:
 
     Shape(Renderer* renderer, const QPoint& pos, const QString& path, int zIndex, const QRect& subtex);
 
-    void setPosition(const QPoint& p) { _position = p; }
+    void setPosition(const QPoint& p);
     QPoint position() const { return _position; }
 
     void setPath(const QString& path) { _path = path; buildShape();}
     QString path() const { return _path; }
 
-    void setZIndex(int i) { _zindex = i; buildShape(); }
+    void setZIndex(int i);
     int zIndex() const { return _zindex; }
 
     void setSubtex(const QRect& v) { _subtex = v; buildShape(); }

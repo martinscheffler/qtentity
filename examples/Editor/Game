@@ -7,6 +7,17 @@
 
 class Renderer;
 
+class Renderer;
+class BulletSystem;
+class EnemySystem;
+class ShapeSystem;
+class DamageSystem;
+
+namespace QtEntity
+{
+    class MetaDataSystem;
+}
+
 class Game : public QObject
 {
     Q_OBJECT
@@ -18,20 +29,35 @@ public:
     QtEntity::EntityManager& entityManager() { return _entityManager; }
 
     void keyPressEvent ( QKeyEvent * event );
+    void keyReleaseEvent ( QKeyEvent * event );
 
 public slots:
 
     void run();
     void end();
+    void step(int frameNumber, int totalTime, int delta);
 
 private:
 
-    void step(int frameNumber, int totalTime, int delta);
-    void keyLeft();
-    void keyRight();
+    void createEnemy();
+    void createPlayer();
+
+    bool _leftpressed;
+    bool _rightpressed;
+    bool _spacepressed;
+
+
+    Renderer* _renderer;
     QtEntity::EntityManager _entityManager;
     bool _isRunning;
-    Renderer* _renderer;
+
+    BulletSystem* _bulletsys;
+    DamageSystem* _damagesys;
+    QtEntity::MetaDataSystem* _metasys;
+    EnemySystem* _enemysys;
+    ShapeSystem* _shapesys;
+
+    QtEntity::EntityId _playerid;
 
 };
 

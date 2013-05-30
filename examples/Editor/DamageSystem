@@ -1,0 +1,34 @@
+#pragma once
+
+#include <QtEntity/EntitySystem>
+#include <QRect>
+
+class Damage : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(int energy READ energy WRITE setEnergy USER true)
+
+public:
+
+    Q_INVOKABLE Damage() : _energy(0) { }
+
+    void setEnergy(int v) { _energy = v; }
+    int energy() const { return _energy; }
+
+private:
+
+    int _energy;
+
+};
+
+
+class DamageSystem : public QtEntity::EntitySystem
+{
+    Q_OBJECT
+
+public:
+    DamageSystem();
+
+    void step(int frameNumber, int totalTime, int delta);
+};

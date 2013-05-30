@@ -38,7 +38,7 @@ class DataHolder : public QObject
     Q_PROPERTY(QVector3D myvec3 READ myVec3 WRITE setMyVec3 USER true)
     Q_PROPERTY(QVector4D myvec4 READ myVec4 WRITE setMyVec4 USER true)
     Q_PROPERTY(QColor mycolor READ myColor WRITE setMyColor USER true)
-    Q_PROPERTY(PropertyObjects myobjects READ myObjects WRITE setMyObjects USER true)
+    Q_PROPERTY(QtEntity::PropertyObjects myobjects READ myObjects WRITE setMyObjects USER true)
 
 public:
     Q_INVOKABLE DataHolder() {}
@@ -74,6 +74,13 @@ private:
 class ReaderWriterJSONTest: public QObject
 {
     Q_OBJECT
+
+public:
+
+    ReaderWriterJSONTest()
+    {
+        QtEntity::registerMetaTypes();
+    }
 
 private slots:
 

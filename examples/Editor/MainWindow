@@ -15,8 +15,10 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 public:
 
     MainWindow();
+    ~MainWindow();
 
     void keyPressEvent ( QKeyEvent * event );
+    void keyReleaseEvent ( QKeyEvent * event );
 
 protected slots:
 
@@ -24,9 +26,11 @@ protected slots:
     void entityChanged(QtEntity::EntityId id, QString name, QString additionalInfo);
     void entityRemoved(QtEntity::EntityId id);
 
+    void stepGame();
 private:
 
-    //QThread _gameThread;
+    QThread _gameThread;
+    QTimer* _timer;
     Game* _game;
     Renderer* _renderer;
 };

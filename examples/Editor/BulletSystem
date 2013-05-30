@@ -1,0 +1,34 @@
+#pragma once
+
+#include <QtEntity/EntitySystem>
+#include <QRect>
+
+class Bullet : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(QPoint movement READ movement WRITE setMovement USER true)
+
+public:
+
+    Q_INVOKABLE Bullet() { }
+
+    void setMovement(const QPoint& m) { _movement = m; }
+    QPoint movement() const { return _movement; }
+
+private:
+
+    QPoint _movement;
+
+};
+
+
+class BulletSystem : public QtEntity::EntitySystem
+{
+    Q_OBJECT
+
+public:
+    BulletSystem();
+
+    void step(int frameNumber, int totalTime, int delta);
+};

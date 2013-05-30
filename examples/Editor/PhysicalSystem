@@ -3,42 +3,32 @@
 #include <QtEntity/EntitySystem>
 #include <QRect>
 
-class Physical : public QObject
+class Enemy : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QPoint position READ position WRITE setPosition USER true)
-    Q_PROPERTY(QPoint size READ size WRITE setSize USER true)
-    Q_PROPERTY(QPoint velocity READ velocity WRITE setVelocity USER true)
+    Q_PROPERTY(int lifetime READ lifetime WRITE setLifetime USER true)
 
 public:
 
-    Q_INVOKABLE Physical() {}
+    Q_INVOKABLE Enemy() : _lifetime(0) { }
 
-    void setPosition(const QPoint& p) { _position = p; }
-    QPoint position() const { return _position; }
-
-    void setSize(const QPoint& s) { _size = s; }
-    QPoint size() const { return _size; }
-
-    void setVelocity(const QPoint& v) { _velocity = v; }
-    QPoint velocity() const { return _velocity; }
+    void setLifetime(int v) { _lifetime = v; }
+    int lifetime() const { return _lifetime; }
 
 private:
 
-    QPoint _position;
-    QPoint _size;
-    QPoint _velocity;
+    int _lifetime;
+
 };
 
 
-class PhysicalSystem : public QtEntity::EntitySystem
+class EnemySystem : public QtEntity::EntitySystem
 {
     Q_OBJECT
 
 public:
-    PhysicalSystem();
+    EnemySystem();
 
-    void step(int delta);
-
+    void step(int frameNumber, int totalTime, int delta);
 };

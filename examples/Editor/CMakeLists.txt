@@ -10,24 +10,33 @@ set(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(LIB_PUBLIC_HEADERS
+  ${HEADER_PATH}/BulletSystem
+  ${HEADER_PATH}/DamageSystem
   ${HEADER_PATH}/Game
   ${HEADER_PATH}/MainWindow
   ${HEADER_PATH}/PhysicalSystem
   ${HEADER_PATH}/Renderer
+  ${HEADER_PATH}/ShapeSystem
 )
 
 set(LIB_SOURCES
+  ${SOURCE_PATH}/BulletSystem.cpp
+  ${SOURCE_PATH}/DamageSystem.cpp
   ${SOURCE_PATH}/Game.cpp
   ${SOURCE_PATH}/MainWindow.cpp
   ${SOURCE_PATH}/main.cpp
   ${SOURCE_PATH}/PhysicalSystem.cpp
   ${SOURCE_PATH}/Renderer.cpp
+  ${SOURCE_PATH}/ShapeSystem.cpp
 )
 
 set(MOC_INPUT
+   ${HEADER_PATH}/BulletSystem
+   ${HEADER_PATH}/DamageSystem
    ${HEADER_PATH}/Game
    ${HEADER_PATH}/MainWindow
    ${HEADER_PATH}/PhysicalSystem
+   ${HEADER_PATH}/ShapeSystem
 )
 
 QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})

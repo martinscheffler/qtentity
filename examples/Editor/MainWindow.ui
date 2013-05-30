@@ -29,6 +29,14 @@
         <height>16777215</height>
        </size>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>7</pointsize>
+       </font>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
+      </property>
       <column>
        <property name="text">
         <string>ID</string>
@@ -49,6 +57,9 @@
     <item>
      <widget class="QWidget" name="_rendererPos" native="true"/>
     </item>
+    <item>
+     <widget class="QTableView" name="_properties"/>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -57,7 +68,7 @@
      <x>0</x>
      <y>0</y>
      <width>992</width>
-     <height>19</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

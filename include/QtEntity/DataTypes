@@ -27,6 +27,15 @@ namespace QtEntity
      */
     typedef QVector<PropertyObjectPointer> PropertyObjects;
 
+
+}
+
+Q_DECLARE_METATYPE(QtEntity::EntityId)
+Q_DECLARE_METATYPE(QtEntity::PropertyObjects)
+
+
+namespace QtEntity
+{
     /**
      * @brief This has to be called once in an application to make data types
      * available for signal/slot connections
@@ -34,8 +43,6 @@ namespace QtEntity
     inline void registerMetaTypes()
     {
         qRegisterMetaType<QtEntity::EntityId>("QtEntity::EntityId");
+        qRegisterMetaType<QtEntity::PropertyObjects>("QtEntity::PropertyObjects");
     }
 }
-
-Q_DECLARE_METATYPE(QtEntity::EntityId)
-Q_DECLARE_METATYPE(QtEntity::PropertyObjects)

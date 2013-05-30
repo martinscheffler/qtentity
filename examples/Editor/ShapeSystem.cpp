@@ -25,6 +25,20 @@ void Shape::buildShape()
 }
 
 
+void Shape::setPosition(const QPoint& p)
+{
+    _position = p;
+    _renderer->updateShape(_handle, _position, _zindex);
+}
+
+
+void Shape::setZIndex(int i)
+{
+    _zindex = i;
+    _renderer->updateShape(_handle, _position, _zindex);
+}
+
+
 ShapeSystem::ShapeSystem(Renderer* renderer)
     : EntitySystem(Shape::staticMetaObject)
     , _renderer(renderer)
