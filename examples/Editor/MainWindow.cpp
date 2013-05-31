@@ -4,7 +4,7 @@
 #include "Renderer"
 #include <QtEntity/DataTypes>
 #include "MetaDataSystem"
-
+#include <QtEntityUtils/EntityEditor>
 
 MainWindow::MainWindow()
     : _timer(nullptr)
@@ -16,6 +16,10 @@ MainWindow::MainWindow()
     _rendererPos->setLayout(new QHBoxLayout());
     _renderer = new Renderer(_rendererPos);
     _rendererPos->layout()->addWidget(_renderer);
+
+    QtEntityUtils::EntityEditor* editor = new QtEntityUtils::EntityEditor();
+
+    centralWidget()->layout()->addWidget(editor);
 
     _game = new Game(_renderer);
 

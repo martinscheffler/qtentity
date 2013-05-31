@@ -17,7 +17,7 @@ set(QTENTITY_TESTS_SRC
 QT5_WRAP_CPP(MOC_SOURCES ${QTENTITY_TESTS_HDR})
 
 add_executable(${LIB_NAME} ${QTENTITY_TESTS_HDR} ${QTENTITY_TESTS_SRC} ${MOC_SOURCES})
-target_link_libraries(${LIB_NAME} qtentity)
+target_link_libraries(${LIB_NAME} QtEntity)
 add_test(NAME ${LIB_NAME} COMMAND qtentity_tests )
 qt5_use_modules(${LIB_NAME} Test)
 
