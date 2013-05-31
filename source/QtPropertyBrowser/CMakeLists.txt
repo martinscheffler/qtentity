@@ -3,6 +3,7 @@ set(LIBRARY_NAME QtPropertyBrowser)
 include_directories(
   ${CMAKE_SOURCE_DIR}/include/
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/source/
 )
 
 set(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/QtPropertyBrowser)
@@ -107,6 +108,6 @@ qt5_use_modules(${LIBRARY_NAME} Core Widgets)
 # generate export macro file in build folder
 include (GenerateExportHeader)
 generate_export_header(${LIBRARY_NAME}
-  EXPORT_FILE_NAME QtPropertyBrowser/Export
+  EXPORT_FILE_NAME Export
 )
 

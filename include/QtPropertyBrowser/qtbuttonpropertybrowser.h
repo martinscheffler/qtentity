@@ -42,6 +42,7 @@
 #ifndef QTBUTTONPROPERTYBROWSER_H
 #define QTBUTTONPROPERTYBROWSER_H
 
+#include <QtPropertyBrowser/Export>
 #include <QtPropertyBrowser/qtpropertybrowser.h>
 #include <QLabel>
 #include <QToolButton>
@@ -53,7 +54,7 @@ QT_BEGIN_NAMESPACE
 
 class QtButtonPropertyBrowserPrivate;
 
-class QT_QTPROPERTYBROWSER_EXPORT QtButtonPropertyBrowser : public QtAbstractPropertyBrowser
+class QTPROPERTYBROWSER_EXPORT QtButtonPropertyBrowser : public QtAbstractPropertyBrowser
 {
     Q_OBJECT
 public:

@@ -35,6 +35,6 @@ qt5_use_modules(${LIBRARY_NAME} Core Widgets)
 # generate export macro file in build folder
 include (GenerateExportHeader)
 generate_export_header(${LIBRARY_NAME}
-  EXPORT_FILE_NAME QtEntity/Export
+  EXPORT_FILE_NAME Export
 )
 

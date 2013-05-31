@@ -1,7 +1,7 @@
 set(LIB_NAME qtentity_tests)
 include_directories(
   ${CMAKE_SOURCE_DIR}/include/
-  ${CMAKE_BINARY_DIR}/source/QtEntity
+  ${CMAKE_BINARY_DIR}/source
 )
 
 set(QTENTITY_TESTS_HDR

@@ -42,6 +42,7 @@
 #ifndef QTGROUPBOXPROPERTYBROWSER_H
 #define QTGROUPBOXPROPERTYBROWSER_H
 
+#include <QtPropertyBrowser/Export>
 #include <QtPropertyBrowser/qtpropertybrowser.h>
 #include <QLabel>
 #include <QGroupBox>
@@ -53,7 +54,7 @@ QT_BEGIN_NAMESPACE
 
 class QtGroupBoxPropertyBrowserPrivate;
 
-class QT_QTPROPERTYBROWSER_EXPORT QtGroupBoxPropertyBrowser : public QtAbstractPropertyBrowser
+class QTPROPERTYBROWSER_EXPORT QtGroupBoxPropertyBrowser : public QtAbstractPropertyBrowser
 {
     Q_OBJECT
 public:

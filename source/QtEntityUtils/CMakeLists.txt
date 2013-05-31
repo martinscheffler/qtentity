@@ -3,6 +3,7 @@ set(LIBRARY_NAME QtEntityUtils)
 include_directories(
   ${CMAKE_SOURCE_DIR}/include/
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/source
 )
 
 set(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/QtEntityUtils)
@@ -26,11 +27,13 @@ QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})
 
 add_library(${LIBRARY_NAME} SHARED ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} ${MOC_SOURCES})
 
+target_link_libraries(${LIBRARY_NAME} QtEntity QtPropertyBrowser)
+
 qt5_use_modules(${LIBRARY_NAME} Core Widgets)
 
 # generate export macro file in build folder
 include (GenerateExportHeader)
 generate_export_header(${LIBRARY_NAME}
-  EXPORT_FILE_NAME QtEntityUtils/Export
+  EXPORT_FILE_NAME Export
 )
 

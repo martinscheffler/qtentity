@@ -2,7 +2,7 @@ set(APP_NAME QtEntityEditor)
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/include/
-  ${CMAKE_BINARY_DIR}/source/QtEntity
+  ${CMAKE_BINARY_DIR}/source/
   ${CMAKE_CURRENT_BINARY_DIR} # for .ui files
 )
 
@@ -53,6 +53,6 @@ QT5_ADD_RESOURCES(RCC_SOURCES
 
 add_executable(${APP_NAME} ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} ${MOC_SOURCES} ${RCC_SOURCES})
 
-target_link_libraries(${APP_NAME} QtEntity QtEntityUtils QtPropertyBrowser)
+target_link_libraries(${APP_NAME} QtEntity QtEntityUtils)
 qt5_use_modules(${APP_NAME} Widgets)
 

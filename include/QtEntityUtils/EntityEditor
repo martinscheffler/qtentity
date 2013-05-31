@@ -1,10 +1,11 @@
 #pragma once
 
+#include <QtEntityUtils\Export>
 #include <QWidget>
 
 namespace QtEntityUtils
 {
-    class EntityEditor : public QWidget
+    class QTENTITYUTILS_EXPORT EntityEditor : public QWidget
     {
     Q_OBJECT
     public:
