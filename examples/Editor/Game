@@ -29,6 +29,7 @@ public:
 
 public slots:
 
+    void init();
     void run();
     void end();
     void step(int frameNumber, int totalTime, int delta);
@@ -56,4 +57,6 @@ private:
     QtEntity::EntityId _playerid;
 
 };
+
+
 

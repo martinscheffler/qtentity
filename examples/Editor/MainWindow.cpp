@@ -33,6 +33,7 @@ MainWindow::MainWindow()
 
     connect(_entities, &QTableWidget::itemSelectionChanged, this, &MainWindow::entitySelectionChanged);
 
+    _game->init();
     // setup game tick
 #ifdef RUN_GAME_IN_THREAD
     _game->moveToThread(&_gameThread);

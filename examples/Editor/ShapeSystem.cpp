@@ -3,11 +3,11 @@
 
 Shape::Shape(Renderer* renderer, const QPoint& pos, const QString& path, int zIndex, const QRect& subtex)
     : _renderer(renderer)
-    , _position(pos)
     , _path(path)
-    , _zindex(zIndex)
-    , _handle(0)
+    , _position(pos)
     , _subtex(subtex)
+    , _zindex(zIndex)
+    , _handle(0)    
 {
     buildShape();
 }

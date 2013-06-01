@@ -23,6 +23,8 @@ namespace QtEntityUtils
         setLayout(new QHBoxLayout());
         layout()->addWidget(_editor);
 
+        connect(_propertyManager, &QtVariantPropertyManager::valueChanged, this, &EntityEditor::propertyValueChanged);
+
 /*
  * QtProperty *topItem = variantManager->addProperty(QtVariantPropertyManager::groupTypeId(),
                     QString::number(i++) + QLatin1String(" Group Property"));
@@ -159,11 +161,11 @@ namespace QtEntityUtils
         topItem->addSubProperty(item);
 */
 
-
     }
 
     void EntityEditor::displayEntity(QtEntity::EntityId id, const QVariant& data)
     {
+        _entityId = id;
         if(!data.canConvert<QVariantMap>()) return;
 
         clear();
@@ -181,7 +183,7 @@ namespace QtEntityUtils
             {
                 QString propname = j.key();
                 QVariant propval = j.value();
-                QtVariantProperty* propitem = _propertyManager->addProperty(QVariant::String, propname);
+                QtVariantProperty* propitem = _propertyManager->addProperty(propval.type(), propname);
                 propitem->setValue(propval.toString());
                 item->addSubProperty(propitem);
             }
@@ -223,7 +225,57 @@ namespace QtEntityUtils
 
     void EntityEditor::applyEntityData(QtEntity::EntityManager& em, QtEntity::EntityId eid, const QString& componenttype, const QString& propertyname, const QVariant& value)
     {
+        for(auto i = em.begin(); i != em.end(); ++i)
+        {
+            QtEntity::EntitySystem* es = *i;
+            if(es->name() == componenttype)
+            {
+                QObject* component = es->getComponent(eid);
+                if(component)
+                {
+                    const QMetaObject& meta = es->componentMetaObject();
 
+                    QVariantMap componentvals;
+                    for(int j = 0; j < meta.propertyCount(); ++j)
+                    {
+                        QMetaProperty prop = meta.property(j);
+                        if(prop.name() == propertyname)
+                        {
+                            prop.write(component, value);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    QString getComponentNameForProperty(QtAbstractPropertyManager* manager, QtProperty *property)
+    {
+        QSet<QtProperty*> comps = manager->properties();
+        for(auto i = comps.begin(); i != comps.end(); ++i)
+        {
+            QtProperty* comp = *i;
+            for(auto j = comp->subProperties().begin(); j != comp->subProperties().end(); ++j)
+            {
+                QtProperty* prop = *j;
+                if(prop == property)
+                {
+                    return comp->propertyName();
+                }
+            }
+        }
+        return "";
+    }
+
+    void EntityEditor::propertyValueChanged(QtProperty *property, const QVariant &val)
+    {
+        QString componentName = getComponentNameForProperty(_propertyManager, property);
+        if(!componentName.isEmpty())
+        {
+            emit entityDataChanged(_entityId, componentName, property->propertyName(), val);
+        }
     }
 
 }

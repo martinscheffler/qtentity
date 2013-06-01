@@ -11,16 +11,17 @@
 #include <QThread>
 
 Game::Game(Renderer* renderer)
-    : _isRunning(false)
+    : _leftpressed(false)
+    , _rightpressed(false)
+    , _spacepressed(false)
     , _renderer(renderer)
+    , _isRunning(false)
     , _bulletsys(new BulletSystem())
     , _damagesys(new DamageSystem())
     , _metasys(new MetaDataSystem())
     , _enemysys(new EnemySystem())
     , _shapesys(new ShapeSystem(renderer))
-    , _leftpressed(false)
-    , _rightpressed(false)
-    , _spacepressed(false)
+    , _playerid(0)
 {
     _entityManager.addEntitySystem(_bulletsys);
     _entityManager.addEntitySystem(_damagesys);
@@ -30,12 +31,18 @@ Game::Game(Renderer* renderer)
 
     _renderer->createShape(QPixmap(":/assets/space.jpg"), QPointF(0,0), -10);
 
+}
+
+
+void Game::init()
+{
     createPlayer();
 }
 
 
 void Game::run()
 {
+    init();
     _isRunning = true;
 
     int wantedTimeStep = 1000.0 / 60.0;
