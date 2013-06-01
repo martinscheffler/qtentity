@@ -139,6 +139,13 @@ namespace QtEntity
         QObject* createComponentByType(EntityId id, const QMetaObject& componentMetaObject,
                                        const QVariantMap& properties) const;
 
+        // iterators for entity systems
+        EntitySystemStore::iterator begin() { return _systemsBySystemType.begin(); }
+        EntitySystemStore::iterator end() { return _systemsBySystemType.end(); }
+
+        EntitySystemStore::const_iterator begin() const { return _systemsBySystemType.begin(); }
+        EntitySystemStore::const_iterator end() const { return _systemsBySystemType.end(); }
+
     private:
 
         EntitySystemStore _systemsByComponentType;

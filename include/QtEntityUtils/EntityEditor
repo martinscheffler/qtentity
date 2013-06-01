@@ -21,12 +21,13 @@ namespace QtEntityUtils
     public:
         EntityEditor();
 
-        static QVariant fetchEntityData(QtEntity::EntityId, const QtEntity::EntityManager& em);
+        static QVariant fetchEntityData(const QtEntity::EntityManager& em, QtEntity::EntityId);
         static void applyEntityData(QtEntity::EntityManager& em, QtEntity::EntityId eid, const QString& componenttype, const QString& propertyname, const QVariant& value);
 
     public slots:
 
         void displayEntity(QtEntity::EntityId id, const QVariant& data);
+        void clear();
 
     signals:
 

@@ -5,6 +5,7 @@
 #include <QDate>
 #include <QLocale>
 #include <QHBoxLayout>
+#include <QMetaProperty>
 
 namespace QtEntityUtils
 {
@@ -163,15 +164,60 @@ namespace QtEntityUtils
 
     void EntityEditor::displayEntity(QtEntity::EntityId id, const QVariant& data)
     {
-        QtProperty* topItem = _propertyManager->addProperty(QtVariantPropertyManager::groupTypeId(), " Group Property");
-        _editor->addProperty(topItem);
+        if(!data.canConvert<QVariantMap>()) return;
+
+        clear();
+
+        QVariantMap components = data.value<QVariantMap>();
+        for(auto i = components.begin(); i != components.end(); ++i)
+        {
+            QString componenttype = i.key();
+            QtProperty* item = _propertyManager->addProperty(QtVariantPropertyManager::groupTypeId(), componenttype);
+            _editor->addProperty(item);
+            QVariant variant = i.value();
+            if(!variant.canConvert<QVariantMap>()) continue;
+            QVariantMap props = variant.value<QVariantMap>();
+            for(auto j = props.begin(); j != props.end(); ++j)
+            {
+                QString propname = j.key();
+                QVariant propval = j.value();
+                QtVariantProperty* propitem = _propertyManager->addProperty(QVariant::String, propname);
+                propitem->setValue(propval.toString());
+                item->addSubProperty(propitem);
+            }
+        }
     }
 
 
-    QVariant EntityEditor::fetchEntityData(QtEntity::EntityId, const QtEntity::EntityManager& em)
+    void EntityEditor::clear()
     {
-        //em->
-        return 0;
+        _propertyManager->clear();
+        _editor->clear();
+    }
+
+
+    QVariant EntityEditor::fetchEntityData(const QtEntity::EntityManager& em, QtEntity::EntityId eid)
+    {
+        QVariantMap components;
+        for(auto i = em.begin(); i != em.end(); ++i)
+        {
+            QtEntity::EntitySystem* es = *i;
+            if(es->hasComponent(eid))
+            {
+                QObject* component = es->getComponent(eid);
+                const QMetaObject& meta = es->componentMetaObject();
+
+                QVariantMap componentvals;
+                for(int j = 0; j < meta.propertyCount(); ++j)
+                {
+                    QMetaProperty prop = meta.property(j);
+                    componentvals[prop.name()] = prop.read(component);
+
+                }
+                components[es->name()] = componentvals;
+            }
+        }
+        return components;
     }
 
 

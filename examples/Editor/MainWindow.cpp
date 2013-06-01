@@ -132,7 +132,7 @@ void MainWindow::entitySelectionChanged()
     else
     {
         QtEntity::EntityId selected = items.front()->data(Qt::UserRole).toUInt();
-        QVariant props = QtEntityUtils::EntityEditor::fetchEntityData(selected, _game->entityManager());
+        QVariant props = QtEntityUtils::EntityEditor::fetchEntityData(_game->entityManager(), selected);
         emit selectedEntityChanged(selected, props);
     }
 }
