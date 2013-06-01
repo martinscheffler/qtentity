@@ -25,8 +25,14 @@ protected slots:
     void entityAdded(QtEntity::EntityId id, QString name, QString additionalInfo);
     void entityChanged(QtEntity::EntityId id, QString name, QString additionalInfo);
     void entityRemoved(QtEntity::EntityId id);
-
+    void entitySelectionChanged();
+    void changeEntityData(QtEntity::EntityId id, const QString& componenttype, const QString& propertyname, const QVariant& value);
     void stepGame();
+
+signals:
+
+    void selectedEntityChanged(QtEntity::EntityId id, const QVariant& data);
+
 private:
 
     QThread _gameThread;

@@ -724,7 +724,7 @@ public:
 
 // QtCursorEditorFactory
 
-Q_GLOBAL_STATIC(QtCursorDatabase, cursorDatabase)
+
 
 class QtCursorEditorFactoryPrivate
 {

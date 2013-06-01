@@ -67,6 +67,8 @@
 QT_BEGIN_NAMESPACE
 #endif
 
+Q_GLOBAL_STATIC(QtCursorDatabase, cursorDatabase)
+
 // Set a hard coded left margin to account for the indentation
 // of the tree view icon when switching to an editor
 

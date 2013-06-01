@@ -88,6 +88,11 @@ namespace QtEntity
         const QMetaObject& componentMetaObject() const;
 
         /**
+         * @brief identifying name of component
+         */
+        const QString name() const { return _componentMetaObject->className(); }
+
+        /**
          * Return begin iterator of component container
          */
         virtual ComponentStore::iterator begin() { return _components.begin(); }

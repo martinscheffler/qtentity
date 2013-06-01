@@ -359,8 +359,7 @@ typedef QMap<QtAbstractPropertyBrowser *, QMap<QtAbstractPropertyManager *,
                             QtAbstractEditorFactoryBase *> > Map1;
 typedef QMap<QtAbstractPropertyManager *, QMap<QtAbstractEditorFactoryBase *,
                             QList<QtAbstractPropertyBrowser *> > > Map2;
-Q_GLOBAL_STATIC(Map1, m_viewToManagerToFactory)
-Q_GLOBAL_STATIC(Map2, m_managerToFactoryToViews)
+
 
 class QtAbstractPropertyBrowserPrivate
 {

@@ -67,6 +67,8 @@
 QT_BEGIN_NAMESPACE
 #endif
 
+Q_GLOBAL_STATIC(QFontDatabase, fontDatabase)
+
 template <class PrivateData, class Value>
 static void setSimpleMinimumData(PrivateData *data, const Value &minVal)
 {

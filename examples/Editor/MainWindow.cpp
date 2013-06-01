@@ -18,7 +18,8 @@ MainWindow::MainWindow()
     _rendererPos->layout()->addWidget(_renderer);
 
     QtEntityUtils::EntityEditor* editor = new QtEntityUtils::EntityEditor();
-
+    connect(this, &MainWindow::selectedEntityChanged, editor, &QtEntityUtils::EntityEditor::displayEntity);
+    connect(editor, &QtEntityUtils::EntityEditor::entityDataChanged, this, &MainWindow::changeEntityData);
     centralWidget()->layout()->addWidget(editor);
 
     _game = new Game(_renderer);
@@ -29,6 +30,8 @@ MainWindow::MainWindow()
     connect(ms, &MetaDataSystem::entityAdded,   this, &MainWindow::entityAdded);
     connect(ms, &MetaDataSystem::entityRemoved, this, &MainWindow::entityRemoved);
     connect(ms, &MetaDataSystem::entityChanged, this, &MainWindow::entityChanged);
+
+    connect(_entities, &QTableWidget::itemSelectionChanged, this, &MainWindow::entitySelectionChanged);
 
     // setup game tick
 #ifdef RUN_GAME_IN_THREAD
@@ -93,7 +96,9 @@ void MainWindow::entityAdded(QtEntity::EntityId id, QString name, QString additi
             QString colname = _entities->horizontalHeaderItem(i)->text();
             if(colname == pair.first())
             {
-                _entities->setItem(row, i, new QTableWidgetItem(pair.last()));
+                auto item = new QTableWidgetItem(pair.last());
+                item->setData(Qt::UserRole, id);
+                _entities->setItem(row, i, item);
             }
         }
     }
@@ -114,6 +119,28 @@ void MainWindow::entityRemoved(QtEntity::EntityId id)
         }
     }
     qCritical() << "could not remove entity from entity list, not found: " << id;
+}
+
+
+void MainWindow::entitySelectionChanged()
+{
+    auto items = _entities->selectedItems();
+    if(items.empty())
+    {
+        emit selectedEntityChanged(0, 0);
+    }
+    else
+    {
+        QtEntity::EntityId selected = items.front()->data(Qt::UserRole).toUInt();
+        QVariant props = QtEntityUtils::EntityEditor::fetchEntityData(selected, _game->entityManager());
+        emit selectedEntityChanged(selected, props);
+    }
+}
+
+
+void MainWindow::changeEntityData(QtEntity::EntityId id, const QString& componenttype, const QString& propertyname, const QVariant& value)
+{
+     QtEntityUtils::EntityEditor::applyEntityData(_game->entityManager(), id, componenttype, propertyname, value);
 }
 
 

@@ -1116,7 +1116,6 @@ public:
 // enumeration manager to re-set its strings and index values
 // for each property.
 
-Q_GLOBAL_STATIC(QFontDatabase, fontDatabase)
 
 class QtFontPropertyManagerPrivate
 {

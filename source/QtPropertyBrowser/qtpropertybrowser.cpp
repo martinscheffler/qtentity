@@ -53,6 +53,8 @@
 QT_BEGIN_NAMESPACE
 #endif
 
+Q_GLOBAL_STATIC(Map1, m_viewToManagerToFactory)
+Q_GLOBAL_STATIC(Map2, m_managerToFactoryToViews)
 /*!
     \class QtProperty
 

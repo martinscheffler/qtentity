@@ -1,6 +1,7 @@
 #include <QtEntityUtils/EntityEditor>
 #include <QtPropertyBrowser/QtVariantPropertyManager>
 #include <QtPropertyBrowser/QtTreePropertyBrowser>
+#include <QtEntity/EntityManager>
 #include <QDate>
 #include <QLocale>
 #include <QHBoxLayout>
@@ -8,13 +9,22 @@
 namespace QtEntityUtils
 {
     EntityEditor::EntityEditor()
+        : _entityId(0)
+        , _propertyManager(new QtVariantPropertyManager(this))
+        , _editor(new QtTreePropertyBrowser())
     {
-        QtVariantPropertyManager *variantManager = new QtVariantPropertyManager(this);
 
-        int i = 0;
-        QtProperty *topItem = variantManager->addProperty(QtVariantPropertyManager::groupTypeId(),
+        QtVariantEditorFactory* variantFactory = new QtVariantEditorFactory();
+
+        _editor->setFactoryForManager(_propertyManager, variantFactory);
+        _editor->setPropertiesWithoutValueMarked(true);
+        _editor->setRootIsDecorated(false);
+        setLayout(new QHBoxLayout());
+        layout()->addWidget(_editor);
+
+/*
+ * QtProperty *topItem = variantManager->addProperty(QtVariantPropertyManager::groupTypeId(),
                     QString::number(i++) + QLatin1String(" Group Property"));
-
         QtVariantProperty *item = variantManager->addProperty(QVariant::Bool, QString::number(i++) + QLatin1String(" Bool Property"));
         item->setValue(true);
         topItem->addSubProperty(item);
@@ -146,16 +156,28 @@ namespace QtEntityUtils
 
         item = variantManager->addProperty(QVariant::Color, QString::number(i++) + QLatin1String(" Color Property"));
         topItem->addSubProperty(item);
+*/
 
-        QtVariantEditorFactory *variantFactory = new QtVariantEditorFactory();
-
-        QtTreePropertyBrowser *variantEditor = new QtTreePropertyBrowser();
-        variantEditor->setFactoryForManager(variantManager, variantFactory);
-        variantEditor->addProperty(topItem);
-        variantEditor->setPropertiesWithoutValueMarked(true);
-        variantEditor->setRootIsDecorated(false);
-        setLayout(new QHBoxLayout());
-        layout()->addWidget(variantEditor);
 
     }
+
+    void EntityEditor::displayEntity(QtEntity::EntityId id, const QVariant& data)
+    {
+        QtProperty* topItem = _propertyManager->addProperty(QtVariantPropertyManager::groupTypeId(), " Group Property");
+        _editor->addProperty(topItem);
+    }
+
+
+    QVariant EntityEditor::fetchEntityData(QtEntity::EntityId, const QtEntity::EntityManager& em)
+    {
+        //em->
+        return 0;
+    }
+
+
+    void EntityEditor::applyEntityData(QtEntity::EntityManager& em, QtEntity::EntityId eid, const QString& componenttype, const QString& propertyname, const QVariant& value)
+    {
+
+    }
+
 }

@@ -1,7 +1,17 @@
 #pragma once
 
-#include <QtEntityUtils\Export>
+#include <QtEntityUtils/Export>
 #include <QWidget>
+#include <QtEntity/DataTypes>
+#include <QVariantMap>
+
+class QtVariantPropertyManager;
+class QtTreePropertyBrowser;
+
+namespace QtEntity
+{
+    class EntityManager;
+}
 
 namespace QtEntityUtils
 {
@@ -9,6 +19,24 @@ namespace QtEntityUtils
     {
     Q_OBJECT
     public:
-    EntityEditor();
+        EntityEditor();
+
+        static QVariant fetchEntityData(QtEntity::EntityId, const QtEntity::EntityManager& em);
+        static void applyEntityData(QtEntity::EntityManager& em, QtEntity::EntityId eid, const QString& componenttype, const QString& propertyname, const QVariant& value);
+
+    public slots:
+
+        void displayEntity(QtEntity::EntityId id, const QVariant& data);
+
+    signals:
+
+        void entityDataChanged(QtEntity::EntityId id, const QString& componenttype, const QString& propertyname, const QVariant& value);
+
+    private:
+
+        QtEntity::EntityId _entityId;
+        QtVariantPropertyManager* _propertyManager;
+        QtTreePropertyBrowser* _editor;
+
     };
 }

@@ -12,7 +12,7 @@ BulletSystem::BulletSystem()
 
 void BulletSystem::step(int frameNumber, int totalTime, int delta)
 {
-    float t = float(totalTime) / 1000.0f;
+   // float t = float(totalTime) / 1000.0f;
 
     for(auto i = begin(); i != end(); ++i)
     {
