@@ -1,4 +1,4 @@
-set(LIBRARY_NAME QtEntity)
+set(LIB_NAME QtEntity)
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/include/
@@ -27,14 +27,15 @@ set(MOC_INPUT
 
 QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})
 
-add_library(${LIBRARY_NAME} SHARED ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} ${MOC_SOURCES})
+add_library(${LIB_NAME} SHARED ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} ${MOC_SOURCES})
 
 #widgets is needed for QColor and other data types:
-qt5_use_modules(${LIBRARY_NAME} Core Widgets)
+qt5_use_modules(${LIB_NAME} Core Widgets)
 
 # generate export macro file in build folder
 include (GenerateExportHeader)
-generate_export_header(${LIBRARY_NAME}
+generate_export_header(${LIB_NAME}
   EXPORT_FILE_NAME Export
 )
 
+include(ModuleInstall)

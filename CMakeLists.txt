@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.10)
 
 project(QtEntity)
 
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules")
 
 IF (WIN32)
   SET(CMAKE_DEBUG_POSTFIX  "d")
