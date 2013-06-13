@@ -2,6 +2,7 @@
 
 #include <QtEntity/EntitySystem>
 #include <QRect>
+#include <QVariantMap>
 
 class Damage : public QObject
 {
@@ -31,4 +32,5 @@ public:
     DamageSystem();
 
     void step(int frameNumber, int totalTime, int delta);
+    virtual QVariantMap attributesForProperty(const QString& name) const;
 };

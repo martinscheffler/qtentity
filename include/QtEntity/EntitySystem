@@ -112,6 +112,17 @@ namespace QtEntity
          */
         virtual ComponentStore::const_iterator end() const { return _components.end(); }
 
+
+        /**
+         * @brief Returns all additional attributes for a property.
+         * This can be overwritten by entity system implementations to return
+         * a map of QVariants. This is especially used for specifying constraints
+         * for the QtPropertyBrowser, but can be used for other means.
+         * @param name Name of the property
+         * @return a map of QVariants
+         */
+        virtual QVariantMap attributesForProperty(const QString& name) const { return QVariantMap(); }
+
     signals:
 
         /**

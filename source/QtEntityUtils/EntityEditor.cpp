@@ -182,10 +182,29 @@ namespace QtEntityUtils
             for(auto j = props.begin(); j != props.end(); ++j)
             {
                 QString propname = j.key();
+
+                // skip property attributes
+                if(propname.left(2) == "#|") continue;
                 QVariant propval = j.value();
-                QtVariantProperty* propitem = _propertyManager->addProperty(propval.type(), propname);
-                propitem->setValue(propval.toString());
-                item->addSubProperty(propitem);
+
+                if(!propval.isNull())
+                {
+                    QtVariantProperty* propitem = _propertyManager->addProperty(propval.type(), propname);
+                    propitem->setValue(propval);
+
+                    // fetch property attributes
+                    auto i = props.find(QString("#|%1").arg(propname));
+                    if(i != props.end())
+                    {
+                        QVariantMap attrs = i.value().value<QVariantMap>();
+                        for(auto j = attrs.begin(); j != attrs.end(); ++j)
+                        {
+                            propitem->setAttribute(j.key(), j.value());
+                        }
+                    }
+
+                    item->addSubProperty(propitem);
+                }
             }
         }
     }
@@ -204,20 +223,30 @@ namespace QtEntityUtils
         for(auto i = em.begin(); i != em.end(); ++i)
         {
             QtEntity::EntitySystem* es = *i;
-            if(es->hasComponent(eid))
+            if(!es->hasComponent(eid)) continue;
+
+            QObject* component = es->getComponent(eid);
+            const QMetaObject& meta = es->componentMetaObject();
+
+            // store property name-value pairs
+            QVariantMap componentvals;
+            for(int j = 0; j < meta.propertyCount(); ++j)
             {
-                QObject* component = es->getComponent(eid);
-                const QMetaObject& meta = es->componentMetaObject();
+                QMetaProperty prop = meta.property(j);
+                if(strcmp(prop.name(), "objectName") == 0) continue;
 
-                QVariantMap componentvals;
-                for(int j = 0; j < meta.propertyCount(); ++j)
+                componentvals[prop.name()] = prop.read(component);
+
+                // store property constraints. Prepend a "#|" to identify
+                QVariantMap constraints = es->attributesForProperty(prop.name());
+                if(!constraints.empty())
                 {
-                    QMetaProperty prop = meta.property(j);
-                    componentvals[prop.name()] = prop.read(component);
-
+                    componentvals[QString("#|%1").arg(prop.name())] = constraints;
                 }
-                components[es->name()] = componentvals;
+
             }
+            components[es->name()] = componentvals;
+
         }
         return components;
     }
@@ -228,23 +257,19 @@ namespace QtEntityUtils
         for(auto i = em.begin(); i != em.end(); ++i)
         {
             QtEntity::EntitySystem* es = *i;
-            if(es->name() == componenttype)
-            {
-                QObject* component = es->getComponent(eid);
-                if(component)
-                {
-                    const QMetaObject& meta = es->componentMetaObject();
+            if(es->name() != componenttype) continue;
 
-                    QVariantMap componentvals;
-                    for(int j = 0; j < meta.propertyCount(); ++j)
-                    {
-                        QMetaProperty prop = meta.property(j);
-                        if(prop.name() == propertyname)
-                        {
-                            prop.write(component, value);
-                            return;
-                        }
-                    }
+            QObject* component = es->getComponent(eid);
+            if(!component) continue;
+
+            const QMetaObject& meta = es->componentMetaObject();
+            for(int j = 0; j < meta.propertyCount(); ++j)
+            {
+                QMetaProperty prop = meta.property(j);
+                if(prop.name() == propertyname)
+                {
+                    prop.write(component, value);
+                    return;
                 }
             }
         }
@@ -269,6 +294,7 @@ namespace QtEntityUtils
         return "";
     }
 
+
     void EntityEditor::propertyValueChanged(QtProperty *property, const QVariant &val)
     {
         QString componentName = getComponentNameForProperty(_propertyManager, property);
@@ -277,5 +303,4 @@ namespace QtEntityUtils
             emit entityDataChanged(_entityId, componentName, property->propertyName(), val);
         }
     }
-
 }

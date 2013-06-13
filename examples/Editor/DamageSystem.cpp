@@ -18,3 +18,15 @@ void DamageSystem::step(int frameNumber, int totalTime, int delta)
         _entityManager->getComponent(i.key(), shape);
     }
 }
+
+
+QVariantMap DamageSystem::attributesForProperty(const QString& name) const
+{
+    QVariantMap r;
+    if(name == "energy")
+    {
+        r["minimum"] = 0;
+        r["maximum"] = 1000;
+    }
+    return r;
+}

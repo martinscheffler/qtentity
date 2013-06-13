@@ -25,7 +25,7 @@ namespace QtEntity
 		~EntityManager();            
 
         /**
-         * @brief createEntity is a thread-safe method returning
+         * @brief createEntityId is a thread-safe method returning
          *        integers, starting with 1 and counting up from there.
          * @return a new entity id
          */
