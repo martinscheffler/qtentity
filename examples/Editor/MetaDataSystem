@@ -60,7 +60,7 @@ public:
     virtual QObject* createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;
 
     // override to emit signal for removing entity list entry
-    virtual bool destructComponent(QtEntity::EntityId id) override;
+    virtual bool destroyComponent(QtEntity::EntityId id) override;
 
 protected:
     // override to call ListEntry constructor passing it pointer to this

@@ -56,6 +56,16 @@ namespace QtEntity
         bool getComponent(EntityId id, T*& component) const;
 
         /**
+         * Templated method to get an existing component.
+         * Usage:
+         * MyComponent* comp = em.getComponent<ComponentType>(id);
+         * @param id Entity id of component to fetch
+         * @return pointer to component or nullptr if component could not be fetched
+         */
+        template <typename T>
+        T* getComponent(EntityId id) const;
+
+        /**
          * Templated method to create a new component.
          * If component already exists or can not be created then component is set to nullptr
          * and method returns false.
@@ -73,6 +83,20 @@ namespace QtEntity
         bool createComponent(EntityId id, T*& component, const QVariantMap& properties = QVariantMap()) const;
 
         /**
+         * Templated method to create a new component.
+         * If component already exists or can not be created then it returns a nullptr.
+         *
+         * Usage:
+         * MyComponent* comp = em.createComponent<MyComponent>(entityId)) {...}
+         * @param id Entity id of component to create
+         * @param properties A map of property values to apply to component before adding it to system
+         *                   Format is: { name of QMetaProperty => value to set }
+         * @return pointer to created component or nullptr if failed
+         */
+        template <typename T>
+        T* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) const;
+
+        /**
          * Templated method to fetch existing component or create a new one if it is not found.
          * If component can not be created then component is set to nullptr
          * and method returns false.
@@ -88,6 +112,16 @@ namespace QtEntity
          */
         template <typename T>
         bool getOrCreateComponent(EntityId id, T*& component, const QVariantMap& properties = QVariantMap()) const;
+
+        /**
+         * Templated method to destroy existing component.
+         * Returns true if component was found and could be destroyed, else false
+         * Usage: bool success = em.destroyComponent<MyComponentType>(eid);
+         * @param id Entity id of entity that component is assigned to
+         * @return true if component could be destroyed, else false
+         */
+        template <typename T>
+        bool destroyComponent(EntityId id) const;
 
         /**
          * @brief Add an entity system to the entity manager.
@@ -179,11 +213,32 @@ namespace QtEntity
 
 
     template <typename T>
+    T* EntityManager::getComponent(EntityId id) const
+    {
+        EntitySystem* s = this->getSystemByComponentType(T::staticMetaObject);
+        QObject* c;
+        if(s == nullptr || nullptr == (c = s->getComponent(id)))
+        {
+            return nullptr;
+        }
+        return qobject_cast<T*>(c);
+    }
+
+
+    template <typename T>
     bool EntityManager::createComponent(EntityId id, T*& component, const QVariantMap& properties) const
     {
         QObject* obj = this->createComponentByType(id, T::staticMetaObject, properties);
         component = qobject_cast<T*>(obj);
         return component != nullptr;
+    }
+
+
+    template <typename T>
+    T* EntityManager::createComponent(EntityId id, const QVariantMap& properties) const
+    {
+        QObject* obj = this->createComponentByType(id, T::staticMetaObject, properties);
+        return qobject_cast<T*>(obj);
     }
 
 
@@ -199,5 +254,14 @@ namespace QtEntity
 
         component = qobject_cast<T*>(s->createComponent(id, properties));
         return (component != nullptr);
+    }
+
+
+    template <typename T>
+    bool EntityManager::destroyComponent(EntityId id) const
+    {
+        EntitySystem* s = this->getSystemByComponentType(T::staticMetaObject);
+        if(s == nullptr) return false;
+        return s->destroyComponent(id);
     }
 }

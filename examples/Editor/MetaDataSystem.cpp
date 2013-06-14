@@ -59,7 +59,7 @@ QObject* MetaDataSystem::createObjectInstance(QtEntity::EntityId id, const QVari
 }
 
 
-bool MetaDataSystem::destructComponent(QtEntity::EntityId id)
+bool MetaDataSystem::destroyComponent(QtEntity::EntityId id)
 {
     MetaData* entry;
     if(this->getComponent(id, entry))
@@ -67,6 +67,6 @@ bool MetaDataSystem::destructComponent(QtEntity::EntityId id)
         emit entityRemoved(id);
     }
 
-    return EntitySystem::destructComponent(id);
+    return EntitySystem::destroyComponent(id);
 }
 

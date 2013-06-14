@@ -73,14 +73,14 @@ namespace QtEntity
         virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap());
 
         /**
-         * @brief destructComponent remove component from system and destruct it
+         * @brief destroyComponent remove component from system and destruct it
          * If you override this method then please make sure that you emit componentAboutToDestruct() before
          * a component is destroyed
          *
          * @param id Entity id of component to destruc
          * @return true if component existed, else false
          */
-        virtual bool destructComponent(EntityId id);
+        virtual bool destroyComponent(EntityId id);
 
         /**
          * @return  meta object type of component class

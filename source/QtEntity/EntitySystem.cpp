@@ -64,7 +64,7 @@ namespace QtEntity
     }
 
 
-    bool EntitySystem::destructComponent(EntityId id)
+    bool EntitySystem::destroyComponent(EntityId id)
     {        
         auto i = _components.find(id);
         if(i == _components.end()) return false;

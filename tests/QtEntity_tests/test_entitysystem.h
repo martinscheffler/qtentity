@@ -64,7 +64,7 @@ private slots:
         QObject* c2 = ts.getComponent(1);
         QVERIFY(c == c2);
         QVERIFY(ts.hasComponent(1));
-        ts.destructComponent(1);
+        ts.destroyComponent(1);
         QVERIFY(!ts.hasComponent(1));
         QObject* c3 = ts.getComponent(1);
         QVERIFY(c3 == nullptr);

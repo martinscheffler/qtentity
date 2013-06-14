@@ -88,6 +88,47 @@ private slots:
         QVERIFY(comp == comp2);
     }
 
+    void getComponent2()
+    {
+        EntityManager em;
+        auto es = new MocEntitySystem();
+        em.addEntitySystem(es);
+        MocComponent *comp, *comp2;
+        em.createComponent(1, comp);
+
+        comp2 = em.getComponent<MocComponent>(1);
+        QVERIFY(comp == comp2);
+    }
+
+    void createComponent2()
+    {
+        EntityManager em;
+        auto es = new MocEntitySystem();
+        em.addEntitySystem(es);
+        auto c1 = em.createComponent<MocComponent>(1);
+
+        MocComponent* c2;
+        bool success = em.getComponent(1, c2);
+        QVERIFY(success);
+        QVERIFY(c1 == c2);
+    }
+
+    void destroyComponent()
+    {
+        EntityManager em;
+        auto es = new MocEntitySystem();
+        em.addEntitySystem(es);
+        MocComponent *comp, *comp2;
+        em.createComponent(1, comp);
+        em.createComponent(2, comp2);
+        em.destroyComponent<MocComponent>(1);
+
+        bool success = em.getComponent(1, comp);
+        QVERIFY(!success);
+        success = em.getComponent(2, comp2);
+        QVERIFY(success);
+    }
+
     void getOrCreateComponent()
     {
         EntityManager em;
