@@ -42,6 +42,14 @@ namespace QtEntity
         }
 
         /**
+         * @brief fetch entityManager this system is associated with
+         */
+        EntityManager* entityManager() const
+        {
+            return _entityManager;
+        }
+
+        /**
          * @brief getComponent Return component associated with passed id
          * @param id EntityId of component to fetch
          * @return component or nullptr if it does not exist

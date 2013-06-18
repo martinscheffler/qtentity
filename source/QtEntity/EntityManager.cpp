@@ -66,6 +66,19 @@ namespace QtEntity
     }
 
 
+    EntitySystem* EntityManager::getSystemByComponentClassName(const QString& classname) const
+    {
+        for(auto i = _systemsByComponentType.begin(); i != _systemsByComponentType.end(); ++i)
+        {
+            if(i.key()->className() == classname)
+            {
+                return i.value();
+            }
+        }
+        return nullptr;
+    }
+
+
     EntitySystem* EntityManager::getSystemBySystemType(const QMetaObject& systemMetaObject) const
     {
         EntitySystemStore::const_iterator it = _systemsBySystemType.find(&systemMetaObject);

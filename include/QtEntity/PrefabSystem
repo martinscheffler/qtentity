@@ -1,0 +1,79 @@
+#pragma once
+
+#include <QtEntity/Export>
+#include <QtEntity/EntitySystem>
+#include <QVariantMap>
+#include <QStringList>
+
+namespace QtEntity
+{    
+
+    class Prefab
+    {
+
+    public:
+
+        Prefab(const QString& path, const QVariantMap& components, const QStringList& parameters);
+
+        const QString& path() const { return _path; }
+
+        void setComponents(const QVariantMap& v) { _components = v; }
+        const QVariantMap& components() const { return _components; }
+
+        void setParamaters(const QStringList& v) { _parameters = v; }
+        const QStringList& parameters() const { return _parameters; }
+
+    private:
+
+        QString _path;
+        QVariantMap _components;
+        QStringList _parameters;
+
+    };
+
+
+    class PrefabInstance : public QObject
+    {
+        Q_OBJECT
+
+    public:
+
+        PrefabInstance(QSharedPointer<Prefab> prefab) { }
+
+    private:
+
+        QSharedPointer<Prefab> _prefab;
+
+    };
+
+
+    class PrefabSystem : public EntitySystem
+    {
+        Q_OBJECT
+
+    public:
+        PrefabSystem();
+        ~PrefabSystem();
+
+        //bool buildFromPrefab(EntityId entity, const QString& path, const QVariantMap& properties) const;
+
+        //bool saveEntityAsPrefab(EntityId entity, const QString& path, const QVariantMap& properties) const;
+
+        void addPrefab(const QString& path, const QVariantMap& components, const QStringList& parameters = QStringList())
+        {
+            _prefabs[path] = QSharedPointer<Prefab>(new Prefab(path, components, parameters));
+        }
+
+    protected:
+
+        QObject* createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals);
+
+    private:
+
+        void createPrefabComponents(EntityId id, Prefab* prefab) const;
+
+        typedef QMap<QString, QSharedPointer<Prefab> > Prefabs;
+        Prefabs _prefabs;
+    };
+
+}
