@@ -48,7 +48,6 @@ private slots:
         props["path"] = "bla.prefab";
         em.createComponent(1, instance, props);
 
-
         auto test = em.getComponent<MyComponent>(1);
         QVERIFY(test != nullptr);
         QCOMPARE(12345, test->myInt());
@@ -56,5 +55,110 @@ private slots:
     }
 
 
+
+    void update()
+    {
+        EntityManager em;
+        PrefabSystem* ps = new PrefabSystem();
+        em.addEntitySystem(ps);
+
+        EntitySystem* es = new EntitySystem(MyComponent::staticMetaObject);
+        em.addEntitySystem(es);
+
+        QVariantMap mycomponent;
+        mycomponent["myint"] = 12345;
+
+        QVariantMap components;
+        QString cn = MyComponent::staticMetaObject.className();
+        components[cn] = mycomponent;
+        ps->addPrefab("bla.prefab", components);
+
+        PrefabInstance* instance;
+
+        QVariantMap props;
+        props["path"] = "bla.prefab";
+        em.createComponent(1, instance, props);
+
+        auto test = em.getComponent<MyComponent>(1);
+        QVERIFY(test != nullptr);
+        QCOMPARE(12345, test->myInt());
+
+        mycomponent["myint"] = 6789;
+        components[cn] = mycomponent;
+        ps->updatePrefab("bla.prefab", components, true);
+        QCOMPARE(6789, test->myInt());
+    }
+
+    void destroyComponent()
+    {
+        EntityManager em;
+        PrefabSystem* ps = new PrefabSystem();
+        em.addEntitySystem(ps);
+
+        EntitySystem* es = new EntitySystem(MyComponent::staticMetaObject);
+        em.addEntitySystem(es);
+
+        QVariantMap mycomponent;
+        mycomponent["myint"] = 12345;
+
+        QVariantMap components;
+        QString cn = MyComponent::staticMetaObject.className();
+        components[cn] = mycomponent;
+        ps->addPrefab("bla.prefab", components);
+
+        PrefabInstance* instance;
+
+        QVariantMap props;
+        props["path"] = "bla.prefab";
+        em.createComponent(1, instance, props);
+
+        auto test = em.getComponent<MyComponent>(1);
+        QVERIFY(test != nullptr);
+        QCOMPARE(12345, test->myInt());
+        auto x = em.getComponent<MyComponent>(1);
+        QVERIFY(x);
+        components.clear();
+        ps->updatePrefab("bla.prefab", components, true);
+
+        auto y = em.getComponent<MyComponent>(1);
+        QVERIFY(y == nullptr);
+    }
+
+
+    void add()
+    {
+        EntityManager em;
+        PrefabSystem* ps = new PrefabSystem();
+        em.addEntitySystem(ps);
+
+        EntitySystem* es = new EntitySystem(MyComponent::staticMetaObject);
+        em.addEntitySystem(es);
+
+        QVariantMap mycomponent;
+        mycomponent["myint"] = 12345;
+
+        QVariantMap components;
+        QString cn = MyComponent::staticMetaObject.className();
+
+        ps->addPrefab("bla.prefab", components);
+
+        PrefabInstance* instance;
+
+        QVariantMap props;
+        props["path"] = "bla.prefab";
+        em.createComponent(1, instance, props);
+
+        auto test = em.getComponent<MyComponent>(1);
+        QVERIFY(test == nullptr);
+
+
+        mycomponent["myint"] = 6789;
+        components[cn] = mycomponent;
+        components[cn] = mycomponent;
+        ps->updatePrefab("bla.prefab", components, true);
+        test = em.getComponent<MyComponent>(1);
+        QVERIFY(test != nullptr);
+        QCOMPARE(6789, test->myInt());
+    }
 
 };

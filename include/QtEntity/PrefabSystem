@@ -38,7 +38,9 @@ namespace QtEntity
 
     public:
 
-        PrefabInstance(QSharedPointer<Prefab> prefab) { }
+        PrefabInstance(QSharedPointer<Prefab> prefab);
+
+        const Prefab* prefab() const { return _prefab.data(); }
 
     private:
 
@@ -55,14 +57,25 @@ namespace QtEntity
         PrefabSystem();
         ~PrefabSystem();
 
-        //bool buildFromPrefab(EntityId entity, const QString& path, const QVariantMap& properties) const;
-
         //bool saveEntityAsPrefab(EntityId entity, const QString& path, const QVariantMap& properties) const;
 
-        void addPrefab(const QString& path, const QVariantMap& components, const QStringList& parameters = QStringList())
-        {
-            _prefabs[path] = QSharedPointer<Prefab>(new Prefab(path, components, parameters));
-        }
+        /**
+         * @brief adds a new prefab, identified by full system path
+         * @param path Identifies the prefab
+         * @param components A map from <component class name> => [<param name> => <param value>]
+         * @param parameters A list of parameter names to make editable.
+         *                   Parameter names have the form "<component class name>::<param name>"
+         */
+        void addPrefab(const QString& path, const QVariantMap& components, const QStringList& parameters = QStringList());
+
+        /**
+         * @brief update an existing prefab
+         *
+         * @param path identifies the prefab
+         * @param components The new component parameters
+         * @param updateInstances if true, iterate through all instances of prefab and update them
+         */
+        void updatePrefab(const QString& path, const QVariantMap& components, bool updateInstances);
 
     protected:
 
