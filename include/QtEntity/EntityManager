@@ -43,6 +43,15 @@ namespace QtEntity
         bool getEntitySystem(T*& out) const;
 
         /**
+         * Templated method to get an entity system.
+         * Usage:
+         * MyEntitySystem* sys = em.getEntitySystem<MyEntitySystem>();
+         * @return the entity system or nullptr if not found
+         */
+        template <typename T>
+        T* getEntitySystem() const;
+
+        /**
          * Templated method to get an existing component.
          * If component was not fonud then component is set to nullptr
          * Usage:
@@ -202,6 +211,13 @@ namespace QtEntity
         EntitySystem* es = this->getSystemBySystemType(T::staticMetaObject);
         out = qobject_cast<T*>(es);
         return (out != nullptr);
+    }
+
+
+    template <typename T>
+    T* EntityManager::getEntitySystem() const
+    {
+        return qobject_cast<T*>(this->getSystemBySystemType(T::staticMetaObject));
     }
 
 

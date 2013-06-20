@@ -42,3 +42,4 @@ generate_export_header(${LIB_NAME}
 )
 
 include(ModuleInstall)
+
