@@ -32,7 +32,7 @@ namespace QtEntity
     };
 
 
-    class PrefabInstance : public QObject
+    class QTENTITY_EXPORT PrefabInstance : public QObject
     {
         Q_OBJECT
 
@@ -49,7 +49,7 @@ namespace QtEntity
     };
 
 
-    class PrefabSystem : public EntitySystem
+    class QTENTITY_EXPORT PrefabSystem : public EntitySystem
     {
         Q_OBJECT
 
