@@ -46,6 +46,8 @@
 #include <QtPropertyBrowser/qtpropertybrowser.h>
 #include <QLineEdit>
 #include <QFontDatabase>
+#include <QVector3D>
+
 #if QT_VERSION >= 0x040400
 QT_BEGIN_NAMESPACE
 #endif
@@ -429,6 +431,41 @@ private:
     Q_PRIVATE_SLOT(d_func(), void slotDoubleChanged(QtProperty *, double))
     Q_PRIVATE_SLOT(d_func(), void slotPropertyDestroyed(QtProperty *))
 };
+
+
+
+class QtVector3DPropertyManagerPrivate;
+
+class QTPROPERTYBROWSER_EXPORT QtVector3DPropertyManager : public QtAbstractPropertyManager
+{
+    Q_OBJECT
+public:
+    QtVector3DPropertyManager(QObject *parent = 0);
+    ~QtVector3DPropertyManager();
+
+    QtDoublePropertyManager *subDoublePropertyManager() const;
+
+    QVector3D value(const QtProperty *property) const;
+    int decimals(const QtProperty *property) const;
+
+public slots:
+    void setValue(QtProperty *property, const QVector3D &val);
+    void setDecimals(QtProperty *property, int prec);
+signals:
+    void valueChanged(QtProperty *property, const QVector3D &val);
+    void decimalsChanged(QtProperty *property, int prec);
+protected:
+    QString valueText(const QtProperty *property) const;
+    virtual void initializeProperty(QtProperty *property);
+    virtual void uninitializeProperty(QtProperty *property);
+private:
+    QtVector3DPropertyManagerPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QtVector3DPropertyManager)
+    Q_DISABLE_COPY(QtVector3DPropertyManager)
+    Q_PRIVATE_SLOT(d_func(), void slotDoubleChanged(QtProperty *, double))
+    Q_PRIVATE_SLOT(d_func(), void slotPropertyDestroyed(QtProperty *))
+};
+
 
 
 template <class PrivateData, class Value>
@@ -871,6 +908,39 @@ public:
     QMap<const QtProperty *, QtProperty *> m_yToProperty;
 };
 
+
+
+// QtVector3DPropertyManager
+
+class QtVector3DPropertyManagerPrivate
+{
+    QtVector3DPropertyManager *q_ptr;
+    Q_DECLARE_PUBLIC(QtVector3DPropertyManager)
+public:
+
+    struct Data
+    {
+        Data() : decimals(2) {}
+        QVector3D val;
+        int decimals;
+    };
+
+    void slotDoubleChanged(QtProperty *property, double value);
+    void slotPropertyDestroyed(QtProperty *property);
+
+    typedef QMap<const QtProperty *, Data> PropertyValueMap;
+    PropertyValueMap m_values;
+
+    QtDoublePropertyManager *m_doublePropertyManager;
+
+    QMap<const QtProperty *, QtProperty *> m_propertyToX;
+    QMap<const QtProperty *, QtProperty *> m_propertyToY;
+	QMap<const QtProperty *, QtProperty *> m_propertyToZ;
+
+    QMap<const QtProperty *, QtProperty *> m_xToProperty;
+    QMap<const QtProperty *, QtProperty *> m_yToProperty;
+	QMap<const QtProperty *, QtProperty *> m_zToProperty;
+};
 
 // QtSizePropertyManager
 

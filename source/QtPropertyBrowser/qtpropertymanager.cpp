@@ -2874,6 +2874,9 @@ QtPointFPropertyManager::~QtPointFPropertyManager()
     delete d_ptr;
 }
 
+
+
+
 /*!
     Returns the manager that creates the nested \e x and \e y
     subproperties.
@@ -3030,6 +3033,302 @@ void QtPointFPropertyManager::uninitializeProperty(QtProperty *property)
 
     d_ptr->m_values.remove(property);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void QtVector3DPropertyManagerPrivate::slotDoubleChanged(QtProperty *property, double value)
+{
+    if (QtProperty *prop = m_xToProperty.value(property, 0)) {
+        QVector3D p = m_values[prop].val;
+        p.setX(value);
+        q_ptr->setValue(prop, p);
+    } else if (QtProperty *prop = m_yToProperty.value(property, 0)) {
+        QVector3D p = m_values[prop].val;
+        p.setY(value);
+        q_ptr->setValue(prop, p);
+    } else if (QtProperty *prop = m_zToProperty.value(property, 0)) {
+        QVector3D p = m_values[prop].val;
+        p.setZ(value);
+        q_ptr->setValue(prop, p);
+    }
+}
+
+void QtVector3DPropertyManagerPrivate::slotPropertyDestroyed(QtProperty *property)
+{
+    if (QtProperty *pointProp  = m_xToProperty.value(property, 0)) {
+        m_propertyToX[pointProp] = 0;
+        m_xToProperty.remove(property);
+    } else if (QtProperty *pointProp = m_yToProperty.value(property, 0)) {
+        m_propertyToY[pointProp] = 0;
+        m_yToProperty.remove(property);
+    } else if (QtProperty *pointProp = m_zToProperty.value(property, 0)) {
+        m_propertyToZ[pointProp] = 0;
+        m_zToProperty.remove(property);
+    }
+}
+
+/*! \class QtVector3DPropertyManager
+
+    \brief The QtVector3DPropertyManager provides and manages QVector3D properties.
+
+    A point property has nested \e x and \e y subproperties. The
+    top-level property's value can be retrieved using the value()
+    function, and set using the setValue() slot.
+
+    The subproperties are created by a QtDoublePropertyManager object. This
+    manager can be retrieved using the subDoublePropertyManager() function. In
+    order to provide editing widgets for the subproperties in a
+    property browser widget, this manager must be associated with an
+    editor factory.
+
+    In addition, QtVector3DPropertyManager provides the valueChanged() signal which
+    is emitted whenever a property created by this manager changes.
+
+    \sa QtAbstractPropertyManager, QtDoublePropertyManager, QtPointPropertyManager
+*/
+
+/*!
+    \fn void QtVector3DPropertyManager::valueChanged(QtProperty *property, const QVector3D &value)
+
+    This signal is emitted whenever a property created by this manager
+    changes its value, passing a pointer to the \a property and the
+    new \a value as parameters.
+
+    \sa setValue()
+*/
+
+/*!
+    \fn void QtVector3DPropertyManager::decimalsChanged(QtProperty *property, int prec)
+
+    This signal is emitted whenever a property created by this manager
+    changes its precision of value, passing a pointer to the
+    \a property and the new \a prec value
+
+    \sa setDecimals()
+*/
+
+/*!
+    Creates a manager with the given \a parent.
+*/
+QtVector3DPropertyManager::QtVector3DPropertyManager(QObject *parent)
+    : QtAbstractPropertyManager(parent)
+{
+    d_ptr = new QtVector3DPropertyManagerPrivate;
+    d_ptr->q_ptr = this;
+
+    d_ptr->m_doublePropertyManager = new QtDoublePropertyManager(this);
+    connect(d_ptr->m_doublePropertyManager, SIGNAL(valueChanged(QtProperty *, double)),
+                this, SLOT(slotDoubleChanged(QtProperty *, double)));
+    connect(d_ptr->m_doublePropertyManager, SIGNAL(propertyDestroyed(QtProperty *)),
+                this, SLOT(slotPropertyDestroyed(QtProperty *)));
+}
+
+/*!
+    Destroys this manager, and all the properties it has created.
+*/
+QtVector3DPropertyManager::~QtVector3DPropertyManager()
+{
+    clear();
+    delete d_ptr;
+}
+
+
+
+
+/*!
+    Returns the manager that creates the nested \e x and \e y
+    subproperties.
+
+    In order to provide editing widgets for the subproperties in a
+    property browser widget, this manager must be associated with an
+    editor factory.
+
+    \sa QtAbstractPropertyBrowser::setFactoryForManager()
+*/
+QtDoublePropertyManager *QtVector3DPropertyManager::subDoublePropertyManager() const
+{
+    return d_ptr->m_doublePropertyManager;
+}
+
+/*!
+    Returns the given \a property's value.
+
+    If the given \a property is not managed by this manager, this
+    function returns a point with coordinates (0, 0).
+
+    \sa setValue()
+*/
+QVector3D QtVector3DPropertyManager::value(const QtProperty *property) const
+{
+    return getValue<QVector3D>(d_ptr->m_values, property);
+}
+
+/*!
+    Returns the given \a property's precision, in decimals.
+
+    \sa setDecimals()
+*/
+int QtVector3DPropertyManager::decimals(const QtProperty *property) const
+{
+    return getData<int>(d_ptr->m_values, &QtVector3DPropertyManagerPrivate::Data::decimals, property, 0);
+}
+
+/*!
+    \reimp
+*/
+QString QtVector3DPropertyManager::valueText(const QtProperty *property) const
+{
+    const QtVector3DPropertyManagerPrivate::PropertyValueMap::const_iterator it = d_ptr->m_values.constFind(property);
+    if (it == d_ptr->m_values.constEnd())
+        return QString();
+    const QVector3D v = it.value().val;
+    const int dec =  it.value().decimals;
+    return QString(tr("(%1, %2, %3)").arg(QString::number(v.x(), 'f', dec))
+                                 .arg(QString::number(v.y(), 'f', dec))
+								 .arg(QString::number(v.z(), 'f', dec)));
+}
+
+/*!
+    \fn void QtVector3DPropertyManager::setValue(QtProperty *property, const QVector3D &value)
+
+    Sets the value of the given \a property to \a value. Nested
+    properties are updated automatically.
+
+    \sa value(), valueChanged()
+*/
+void QtVector3DPropertyManager::setValue(QtProperty *property, const QVector3D &val)
+{
+    const QtVector3DPropertyManagerPrivate::PropertyValueMap::iterator it = d_ptr->m_values.find(property);
+    if (it == d_ptr->m_values.end())
+        return;
+
+    if (it.value().val == val)
+        return;
+
+    it.value().val = val;
+    d_ptr->m_doublePropertyManager->setValue(d_ptr->m_propertyToX[property], val.x());
+    d_ptr->m_doublePropertyManager->setValue(d_ptr->m_propertyToY[property], val.y());
+	d_ptr->m_doublePropertyManager->setValue(d_ptr->m_propertyToZ[property], val.z());
+
+    emit propertyChanged(property);
+    emit valueChanged(property, val);
+}
+
+/*!
+    \fn void QtVector3DPropertyManager::setDecimals(QtProperty *property, int prec)
+
+    Sets the precision of the given \a property to \a prec.
+
+    The valid decimal range is 0-13. The default is 2.
+
+    \sa decimals()
+*/
+void QtVector3DPropertyManager::setDecimals(QtProperty *property, int prec)
+{
+    const QtVector3DPropertyManagerPrivate::PropertyValueMap::iterator it = d_ptr->m_values.find(property);
+    if (it == d_ptr->m_values.end())
+        return;
+
+    QtVector3DPropertyManagerPrivate::Data data = it.value();
+
+    if (prec > 13)
+        prec = 13;
+    else if (prec < 0)
+        prec = 0;
+
+    if (data.decimals == prec)
+        return;
+
+    data.decimals = prec;
+    d_ptr->m_doublePropertyManager->setDecimals(d_ptr->m_propertyToX[property], prec);
+    d_ptr->m_doublePropertyManager->setDecimals(d_ptr->m_propertyToY[property], prec);
+	d_ptr->m_doublePropertyManager->setDecimals(d_ptr->m_propertyToZ[property], prec);
+
+    it.value() = data;
+
+    emit decimalsChanged(property, data.decimals);
+}
+
+/*!
+    \reimp
+*/
+void QtVector3DPropertyManager::initializeProperty(QtProperty *property)
+{
+    d_ptr->m_values[property] = QtVector3DPropertyManagerPrivate::Data();
+
+    QtProperty *xProp = d_ptr->m_doublePropertyManager->addProperty();
+    xProp->setPropertyName(tr("X"));
+    d_ptr->m_doublePropertyManager->setDecimals(xProp, decimals(property));
+    d_ptr->m_doublePropertyManager->setValue(xProp, 0);
+    d_ptr->m_propertyToX[property] = xProp;
+    d_ptr->m_xToProperty[xProp] = property;
+    property->addSubProperty(xProp);
+
+    QtProperty *yProp = d_ptr->m_doublePropertyManager->addProperty();
+    yProp->setPropertyName(tr("Y"));
+    d_ptr->m_doublePropertyManager->setDecimals(yProp, decimals(property));
+    d_ptr->m_doublePropertyManager->setValue(yProp, 0);
+    d_ptr->m_propertyToY[property] = yProp;
+    d_ptr->m_yToProperty[yProp] = property;
+    property->addSubProperty(yProp);
+
+	QtProperty *zProp = d_ptr->m_doublePropertyManager->addProperty();
+    zProp->setPropertyName(tr("Z"));
+    d_ptr->m_doublePropertyManager->setDecimals(zProp, decimals(property));
+    d_ptr->m_doublePropertyManager->setValue(zProp, 0);
+    d_ptr->m_propertyToZ[property] = zProp;
+    d_ptr->m_zToProperty[zProp] = property;
+    property->addSubProperty(zProp);
+}
+
+/*!
+    \reimp
+*/
+void QtVector3DPropertyManager::uninitializeProperty(QtProperty *property)
+{
+    QtProperty *xProp = d_ptr->m_propertyToX[property];
+    if (xProp) {
+        d_ptr->m_xToProperty.remove(xProp);
+        delete xProp;
+    }
+    d_ptr->m_propertyToX.remove(property);
+
+    QtProperty *yProp = d_ptr->m_propertyToY[property];
+    if (yProp) {
+        d_ptr->m_yToProperty.remove(yProp);
+        delete yProp;
+    }
+    d_ptr->m_propertyToY.remove(property);
+
+	QtProperty *zProp = d_ptr->m_propertyToZ[property];
+    if (zProp) {
+        d_ptr->m_yToProperty.remove(zProp);
+        delete zProp;
+    }
+    d_ptr->m_propertyToZ.remove(property);
+
+    d_ptr->m_values.remove(property);
+}
+
+
+
+
+
 
 void QtSizePropertyManagerPrivate::slotIntChanged(QtProperty *property, int value)
 {

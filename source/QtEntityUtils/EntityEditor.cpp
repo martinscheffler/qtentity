@@ -190,20 +190,27 @@ namespace QtEntityUtils
                 if(!propval.isNull())
                 {
                     QtVariantProperty* propitem = _propertyManager->addProperty(propval.type(), propname);
-                    propitem->setValue(propval);
+					if(propitem)
+					{
+						propitem->setValue(propval);
 
-                    // fetch property attributes
-                    auto i = props.find(QString("#|%1").arg(propname));
-                    if(i != props.end())
-                    {
-                        QVariantMap attrs = i.value().value<QVariantMap>();
-                        for(auto j = attrs.begin(); j != attrs.end(); ++j)
-                        {
-                            propitem->setAttribute(j.key(), j.value());
-                        }
-                    }
+						// fetch property attributes
+						auto i = props.find(QString("#|%1").arg(propname));
+						if(i != props.end())
+						{
+							QVariantMap attrs = i.value().value<QVariantMap>();
+							for(auto j = attrs.begin(); j != attrs.end(); ++j)
+							{
+								propitem->setAttribute(j.key(), j.value());
+							}
+						}
 
-                    item->addSubProperty(propitem);
+						item->addSubProperty(propitem);
+					}
+					else
+					{
+						qDebug() << "Could not create property editor for property " << propname;
+					}
                 }
             }
         }

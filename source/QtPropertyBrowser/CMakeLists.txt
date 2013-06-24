@@ -67,6 +67,7 @@ set(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/QtVariantProperty
     ${HEADER_PATH}/qtvariantproperty.h
     ${HEADER_PATH}/QtVariantPropertyManager
+	${HEADER_PATH}/QtVector3DPropertyManager
 
 )
 

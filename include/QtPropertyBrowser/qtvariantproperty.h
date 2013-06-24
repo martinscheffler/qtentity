@@ -138,6 +138,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void slotValueChanged(QtProperty *, const QLocale &))
     Q_PRIVATE_SLOT(d_func(), void slotValueChanged(QtProperty *, const QPoint &))
     Q_PRIVATE_SLOT(d_func(), void slotValueChanged(QtProperty *, const QPointF &))
+	Q_PRIVATE_SLOT(d_func(), void slotValueChanged(QtProperty *, const QVector3D &))
     Q_PRIVATE_SLOT(d_func(), void slotValueChanged(QtProperty *, const QSize &))
     Q_PRIVATE_SLOT(d_func(), void slotRangeChanged(QtProperty *, const QSize &, const QSize &))
     Q_PRIVATE_SLOT(d_func(), void slotValueChanged(QtProperty *, const QSizeF &))
@@ -212,6 +213,7 @@ public:
     void slotValueChanged(QtProperty *property, const QLocale &val);
     void slotValueChanged(QtProperty *property, const QPoint &val);
     void slotValueChanged(QtProperty *property, const QPointF &val);
+	void slotValueChanged(QtProperty *property, const QVector3D &val);
     void slotValueChanged(QtProperty *property, const QSize &val);
     void slotRangeChanged(QtProperty *property, const QSize &min, const QSize &max);
     void slotValueChanged(QtProperty *property, const QSizeF &val);
