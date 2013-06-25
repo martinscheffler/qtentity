@@ -286,15 +286,17 @@ namespace QtEntityUtils
     QString getComponentNameForProperty(QtAbstractPropertyManager* manager, QtProperty *property)
     {
         QSet<QtProperty*> comps = manager->properties();
-        for(auto i = comps.begin(); i != comps.end(); ++i)
+        foreach(auto comp, comps)
         {
-            QtProperty* comp = *i;
-            for(auto j = comp->subProperties().begin(); j != comp->subProperties().end(); ++j)
+            
+			QString tmpname= comp->propertyName();
+            foreach(auto prop, comp->subProperties())
             {
-                QtProperty* prop = *j;
+				Q_ASSERT(prop != NULL);
+				QString tmpname2 = prop->propertyName();
                 if(prop == property)
                 {
-                    return comp->propertyName();
+                     return comp->propertyName();
                 }
             }
         }
