@@ -1,8 +1,6 @@
 #pragma once
 
 #include <QtEntity/EntitySystem>
-#include <QRect>
-#include <QVariantMap>
 
 class Damage : public QObject
 {
