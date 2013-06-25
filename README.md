@@ -12,7 +12,7 @@ Each entity system holds a list of components, indexed by entity id.
 Any class derived from QObject can be used for components. Qt's property system is used for in-game introspection and serialization.
 
 Example of an entity system holding components with a single int value:
-`
+
 	
 	#pragma once
 	#include <QtEntity/EntitySystem>
@@ -46,24 +46,22 @@ Example of an entity system holding components with a single int value:
 	};
 
 Now add this to an entity manager:
-`
+
 
 	QtEntity::EntityManager em;
 	em.addEntitySystem(new DamageSystem());
 
 Now create an entity and add a damage component to it:
 
-`
 
 	QtEntity::EntityId eid = em.createEntityId();
-
 	Damage* damage; em.createComponent(eid, damage);
 
 	// C++11 alternative:
 	auto damage = em.createComponent<Damage>(eid);
 
 You can retrieve components later by doing:
-`
+
 
 	Damage* damage; em.getComponent(eid, damage);
 
