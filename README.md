@@ -44,14 +44,12 @@ Example of an entity system holding components with a single int value:
 	public:
 		DamageSystem();
 	};
-`
 
 Now add this to an entity manager:
 `
 
 	QtEntity::EntityManager em;
 	em.addEntitySystem(new DamageSystem());
-`
 
 Now create an entity and add a damage component to it:
 
@@ -63,12 +61,10 @@ Now create an entity and add a damage component to it:
 
 	// C++11 alternative:
 	auto damage = em.createComponent<Damage>(eid);
-`
 
 You can retrieve components later by doing:
 `
 
 	Damage* damage; em.getComponent(eid, damage);
-`
 
 Included in the library are some examples and Qt widgets for managing and visualizing entities and their components.
