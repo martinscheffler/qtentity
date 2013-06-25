@@ -187,31 +187,30 @@ namespace QtEntityUtils
                 if(propname.left(2) == "#|") continue;
                 QVariant propval = j.value();
 
-                if(!propval.isNull())
-                {
-                    QtVariantProperty* propitem = _propertyManager->addProperty(propval.type(), propname);
-					if(propitem)
-					{
-						propitem->setValue(propval);
+                
+                QtVariantProperty* propitem = _propertyManager->addProperty(propval.type(), propname);
+				if(propitem)
+				{
+					propitem->setValue(propval);
 
-						// fetch property attributes
-						auto i = props.find(QString("#|%1").arg(propname));
-						if(i != props.end())
+					// fetch property attributes
+					auto i = props.find(QString("#|%1").arg(propname));
+					if(i != props.end())
+					{
+						QVariantMap attrs = i.value().value<QVariantMap>();
+						for(auto j = attrs.begin(); j != attrs.end(); ++j)
 						{
-							QVariantMap attrs = i.value().value<QVariantMap>();
-							for(auto j = attrs.begin(); j != attrs.end(); ++j)
-							{
-								propitem->setAttribute(j.key(), j.value());
-							}
+							propitem->setAttribute(j.key(), j.value());
 						}
+					}
 
-						item->addSubProperty(propitem);
-					}
-					else
-					{
-						qDebug() << "Could not create property editor for property " << propname;
-					}
-                }
+					item->addSubProperty(propitem);
+				}
+				else
+				{
+					qDebug() << "Could not create property editor for property " << propname;
+				}
+                
             }
         }
     }
@@ -240,15 +239,16 @@ namespace QtEntityUtils
             for(int j = 0; j < meta.propertyCount(); ++j)
             {
                 QMetaProperty prop = meta.property(j);
-                if(strcmp(prop.name(), "objectName") == 0) continue;
+				const char* name = prop.name();
+                if(strcmp(name, "objectName") == 0) continue;
 
-                componentvals[prop.name()] = prop.read(component);
+                componentvals[name] = prop.read(component);
 
                 // store property constraints. Prepend a "#|" to identify
-                QVariantMap constraints = es->attributesForProperty(prop.name());
+                QVariantMap constraints = es->attributesForProperty(name);
                 if(!constraints.empty())
                 {
-                    componentvals[QString("#|%1").arg(prop.name())] = constraints;
+                    componentvals[QString("#|%1").arg(name)] = constraints;
                 }
 
             }
