@@ -12,60 +12,60 @@ Each entity system holds a list of components, indexed by entity id.
 Any class derived from QObject can be used for components. Qt's property system is used for in-game introspection and serialization.
 
 Example of an entity system holding components with a single int value:
-<code>
-#pragma once
+`
+	#pragma once
 
-#include <QtEntity/EntitySystem>
+	#include <QtEntity/EntitySystem>
 
-class Damage : public QObject
-{
-    Q_OBJECT
+	class Damage : public QObject
+	{
+		Q_OBJECT
 
-	// make energy getter/setters visible to Qt meta type system
-    Q_PROPERTY(int energy READ energy WRITE setEnergy USER true)
+		// make energy getter/setters visible to Qt meta type system
+		Q_PROPERTY(int energy READ energy WRITE setEnergy USER true)
 
-public:
+	public:
 
-	// Have to declare constructor as invokable so Qt can construct this
-    Q_INVOKABLE Damage() : _energy(0) { }
+		// Have to declare constructor as invokable so Qt can construct this
+		Q_INVOKABLE Damage() : _energy(0) { }
 
-    void setEnergy(int v) { _energy = v; }
-    int energy() const { return _energy; }
+		void setEnergy(int v) { _energy = v; }
+		int energy() const { return _energy; }
 
-private:
-    int _energy;
-};
+	private:
+		int _energy;
+	};
 
 
-class DamageSystem : public QtEntity::EntitySystem
-{
-    Q_OBJECT
+	class DamageSystem : public QtEntity::EntitySystem
+	{
+		Q_OBJECT
 
-public:
-    DamageSystem();
-};
-</code>
+	public:
+		DamageSystem();
+	};
+`
 
 Now add this to an entity manager:
-<code>
-QtEntity::EntityManager em;
-em.addEntitySystem(new DamageSystem());
-</code>
+`
+	QtEntity::EntityManager em;
+	em.addEntitySystem(new DamageSystem());
+`
 
 Now create an entity and add a damage component to it:
 
-<code>
-QtEntity::EntityId eid = em.createEntityId();
+`
+	QtEntity::EntityId eid = em.createEntityId();
 
-Damage* damage; em.createComponent(eid, damage);
+	Damage* damage; em.createComponent(eid, damage);
 
-// C++11 alternative:
-auto damage = em.createComponent<Damage>(eid);
-</code>
+	// C++11 alternative:
+	auto damage = em.createComponent<Damage>(eid);
+`
 
 You can retrieve components later by doing:
-<code>
-Damage* damage; em.getComponent(eid, damage);
-</code>
+`
+	Damage* damage; em.getComponent(eid, damage);
+`
 
 Included in the library are some examples and Qt widgets for managing and visualizing entities and their components.
