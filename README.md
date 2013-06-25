@@ -13,8 +13,8 @@ Any class derived from QObject can be used for components. Qt's property system 
 
 Example of an entity system holding components with a single int value:
 `
+	
 	#pragma once
-
 	#include <QtEntity/EntitySystem>
 
 	class Damage : public QObject
@@ -48,6 +48,7 @@ Example of an entity system holding components with a single int value:
 
 Now add this to an entity manager:
 `
+
 	QtEntity::EntityManager em;
 	em.addEntitySystem(new DamageSystem());
 `
@@ -55,6 +56,7 @@ Now add this to an entity manager:
 Now create an entity and add a damage component to it:
 
 `
+
 	QtEntity::EntityId eid = em.createEntityId();
 
 	Damage* damage; em.createComponent(eid, damage);
@@ -65,6 +67,7 @@ Now create an entity and add a damage component to it:
 
 You can retrieve components later by doing:
 `
+
 	Damage* damage; em.getComponent(eid, damage);
 `
 
