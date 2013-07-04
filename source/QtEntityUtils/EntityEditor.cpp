@@ -166,10 +166,10 @@ namespace QtEntityUtils
     void EntityEditor::displayEntity(QtEntity::EntityId id, const QVariant& data)
     {
         _entityId = id;
-        if(!data.canConvert<QVariantMap>()) return;
-
         clear();
 
+        if(!data.canConvert<QVariantMap>()) return;
+        
         QVariantMap components = data.value<QVariantMap>();
         for(auto i = components.begin(); i != components.end(); ++i)
         {
@@ -187,8 +187,15 @@ namespace QtEntityUtils
                 if(propname.left(2) == "#|") continue;
                 QVariant propval = j.value();
 
+                QVariant::Type t = propval.type();
                 
-                QtVariantProperty* propitem = _propertyManager->addProperty(propval.type(), propname);
+                // qvariant has no float type :(
+                if(t == QMetaType::Float)
+                {
+                    t = QVariant::Double;
+                }
+
+                QtVariantProperty* propitem = _propertyManager->addProperty(t, propname);
 				if(propitem)
 				{
 					propitem->setValue(propval);
