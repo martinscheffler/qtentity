@@ -25,6 +25,15 @@ namespace QtEntity
         return eid;
     }
 
+    
+    void EntityManager::destroyEntity(EntityId id)
+    {
+        for(auto i = _systemsByComponentType.begin(); i != _systemsByComponentType.end(); ++i)
+        {
+            i.value()->destroyComponent(id);
+        }
+    }
+
 
     void EntityManager::addEntitySystem(EntitySystem* es)
     {
@@ -87,7 +96,7 @@ namespace QtEntity
 
 
     QObject* EntityManager::createComponentByType(EntityId id, const QMetaObject& componentMetaObject,
-                                                  const QVariantMap& props) const
+                                                  const QVariantMap& props)
     {
         EntitySystem* s = this->getSystemByComponentType(componentMetaObject);
 

@@ -30,6 +30,7 @@ namespace QtEntity
 
 }
 
+// have to do this in global namespace
 Q_DECLARE_METATYPE(QtEntity::EntityId)
 Q_DECLARE_METATYPE(QtEntity::PropertyObjects)
 

@@ -19,6 +19,8 @@ QT5_WRAP_CPP(MOC_SOURCES ${QTENTITY_TESTS_HDR})
 
 add_executable(${LIB_NAME} ${QTENTITY_TESTS_HDR} ${QTENTITY_TESTS_SRC} ${MOC_SOURCES})
 target_link_libraries(${LIB_NAME} QtEntity)
-add_test(NAME ${LIB_NAME} COMMAND qtentity_tests )
+add_test(NAME ${LIB_NAME} COMMAND ${LIB_NAME} )
 qt5_use_modules(${LIB_NAME} Test)
 
+#execute unit tests after each compile
+#add_custom_command(TARGET QtEntity POST_BUILD COMMAND ${LIB_NAME})

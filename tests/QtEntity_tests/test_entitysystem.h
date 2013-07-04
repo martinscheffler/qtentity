@@ -54,6 +54,7 @@ private slots:
         QCOMPARE(tr->myInt(), 666);
         QCOMPARE(tr->myVec2().x(), 77.0);
         QCOMPARE(tr->myVec2().y(), 88.0);
+     
 
     }
 

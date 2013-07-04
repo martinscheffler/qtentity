@@ -129,6 +129,20 @@ private slots:
         QVERIFY(success);
     }
 
+
+    void destroyEntity()
+    {
+        EntityManager em;
+        auto es = new MocEntitySystem();
+        em.addEntitySystem(es);
+        MocComponent *comp;
+        em.createComponent(1, comp);
+        em.destroyEntity(1);
+        bool success = em.getComponent(1, comp);
+        QVERIFY(!success);
+        
+    }
+
     void getOrCreateComponent()
     {
         EntityManager em;

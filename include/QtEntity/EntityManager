@@ -89,7 +89,7 @@ namespace QtEntity
          * @return true if component could be created, else false
          */
         template <typename T>
-        bool createComponent(EntityId id, T*& component, const QVariantMap& properties = QVariantMap()) const;
+        bool createComponent(EntityId id, T*& component, const QVariantMap& properties = QVariantMap());
 
         /**
          * Templated method to create a new component.
@@ -103,7 +103,7 @@ namespace QtEntity
          * @return pointer to created component or nullptr if failed
          */
         template <typename T>
-        T* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) const;
+        T* createComponent(EntityId id, const QVariantMap& properties = QVariantMap());
 
         /**
          * Templated method to fetch existing component or create a new one if it is not found.
@@ -120,7 +120,7 @@ namespace QtEntity
          * @return true if component could be found or created, else false
          */
         template <typename T>
-        bool getOrCreateComponent(EntityId id, T*& component, const QVariantMap& properties = QVariantMap()) const;
+        bool getOrCreateComponent(EntityId id, T*& component, const QVariantMap& properties = QVariantMap());
 
         /**
          * Templated method to destroy existing component.
@@ -130,7 +130,13 @@ namespace QtEntity
          * @return true if component could be destroyed, else false
          */
         template <typename T>
-        bool destroyComponent(EntityId id) const;
+        bool destroyComponent(EntityId id);
+
+        /**
+         * Destroy all components registered with this entity id.
+         * @param id Entity id of entity that component is assigned to
+         */
+        void destroyEntity(EntityId id);
 
         /**
          * @brief Add an entity system to the entity manager.
@@ -188,7 +194,7 @@ namespace QtEntity
          * @return component that was created.
          */
         QObject* createComponentByType(EntityId id, const QMetaObject& componentMetaObject,
-                                       const QVariantMap& properties) const;
+                                       const QVariantMap& properties);
 
         // iterators for entity systems
         EntitySystemStore::iterator begin() { return _systemsBySystemType.begin(); }
@@ -250,7 +256,7 @@ namespace QtEntity
 
 
     template <typename T>
-    bool EntityManager::createComponent(EntityId id, T*& component, const QVariantMap& properties) const
+    bool EntityManager::createComponent(EntityId id, T*& component, const QVariantMap& properties)
     {
         QObject* obj = this->createComponentByType(id, T::staticMetaObject, properties);
         component = qobject_cast<T*>(obj);
@@ -259,7 +265,7 @@ namespace QtEntity
 
 
     template <typename T>
-    T* EntityManager::createComponent(EntityId id, const QVariantMap& properties) const
+    T* EntityManager::createComponent(EntityId id, const QVariantMap& properties)
     {
         QObject* obj = this->createComponentByType(id, T::staticMetaObject, properties);
         return qobject_cast<T*>(obj);
@@ -267,7 +273,7 @@ namespace QtEntity
 
 
     template <typename T>
-    bool EntityManager::getOrCreateComponent(EntityId id, T*& component, const QVariantMap& properties) const
+    bool EntityManager::getOrCreateComponent(EntityId id, T*& component, const QVariantMap& properties)
     {
         EntitySystem* s = this->getSystemByComponentType(T::staticMetaObject);
 
@@ -282,7 +288,7 @@ namespace QtEntity
 
 
     template <typename T>
-    bool EntityManager::destroyComponent(EntityId id) const
+    bool EntityManager::destroyComponent(EntityId id)
     {
         EntitySystem* s = this->getSystemByComponentType(T::staticMetaObject);
         if(s == nullptr) return false;

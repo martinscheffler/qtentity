@@ -6,6 +6,7 @@
 #include <QtGui/QColor>
 #include <QtEntity/EntityManager>
 #include <QtEntity/ReaderWriterJSON>
+#include <QtEntity/MetaObjectRegistry>
 
 using namespace QtEntity;
 
@@ -15,19 +16,24 @@ class TestObj1 : public QObject
     Q_OBJECT
 
     Q_PROPERTY(int propint READ propInt WRITE setPropInt USER true)
+    qint32 _propint;
+public:
+
+     Q_INVOKABLE TestObj1() {}
+
     void setPropInt(qint32 v) { _propint = v; }
     qint32 propInt() const  { return _propint; }
-    qint32 _propint;
+    
 };
 
-Q_DECLARE_METATYPE(TestObj1*)
 
 class TestObj2 : public QObject
 {
     Q_OBJECT
+public:
+    Q_INVOKABLE TestObj2() {}
 };
 
-Q_DECLARE_METATYPE(TestObj2*)
 
 class DataHolder : public QObject
 {
@@ -70,6 +76,12 @@ private:
     PropertyObjects _myobjects;
 };
 
+class DataHolderSystem : public EntitySystem
+{
+    Q_OBJECT
+public:
+    DataHolderSystem() : EntitySystem(DataHolder::staticMetaObject) {}
+};
 
 class ReaderWriterJSONTest: public QObject
 {
@@ -80,6 +92,8 @@ public:
     ReaderWriterJSONTest()
     {
         QtEntity::registerMetaTypes();
+        registerMetaObject(TestObj1::staticMetaObject);
+        registerMetaObject(TestObj2::staticMetaObject);
     }
 
 private slots:
@@ -118,10 +132,25 @@ private slots:
 
     void decode()
     {
-        int tid = qMetaTypeId<TestObj1*>();
-        int id = QMetaType::type("TestObj1*");
-        QVERIFY (id != QMetaType::UnknownType);
-        QCOMPARE(id, tid);
+        QString jsonstr = "{\"classname\": \"DataHolder\", \"mycolor\": \"0,0,0,255\",\"myint\": 666,\"myobjects\": [{\"classname\": \"TestObj1\",\"propint\": 12345},{\"classname\": \"TestObj2\"}],\"myvec2\": \"0,0\",\"myvec3\": \"-1,0,354\",\"myvec4\": \"0,0,0,0\"}";
+        QJsonDocument doc = QJsonDocument::fromJson(jsonstr.toUtf8());
+        QVERIFY(doc.isObject());
+        EntityManager em;
+        em.addEntitySystem(new DataHolderSystem());
+
+        bool success = ReaderWriterJSON::jsonToComponent(em, 1, doc.object());
+        QVERIFY(success);
+        DataHolder* dh = em.getComponent<DataHolder>(1);
+        QVERIFY(dh);
+        QCOMPARE(dh->myInt(), 666);
+        PropertyObjects objs = dh->myObjects();
+        QCOMPARE(objs.count(), 2);
+        
+        TestObj1* to1 = qobject_cast<TestObj1*>(objs.front().value);
+        QVERIFY(to1);
+
+        QCOMPARE(to1->propInt(), 12345);
+        
     }
 
 };

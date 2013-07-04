@@ -1,13 +1,15 @@
 #include <QtEntity/ReaderWriterJSON>
 
-#include <QJsonArray>
 #include <QtEntity/EntityManager>
-#include <QMetaProperty>
+#include <QtEntity/MetaObjectRegistry>
 #include <QColor>
+#include <QDebug>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QMetaProperty>
 #include <QVector2D>
 #include <QVector3D>
 #include <QVector4D>
-#include <QDebug>
 
 namespace QtEntity
 {
@@ -48,9 +50,16 @@ namespace QtEntity
             {
                 const QMetaObject* meta = obj->metaObject();
 
+                if(metaObjectByClassName(meta->className()) == nullptr)
+                {
+                    qDebug() << "Cannot convert object to json, use QtEntity::registerMetaObject to register its type!";
+                    qDebug() << "Classname is: " << meta->className();
+                    continue;
+                }
+
                 QJsonObject qobj;
 
-                // write class name of QObject to JSON param
+                // write type name of QObject to JSON param
                 qobj.insert("classname", QString(meta->className()));
 
                 // convert the properties of the QObject
@@ -98,15 +107,120 @@ namespace QtEntity
 
     bool ReaderWriterJSON::jsonToComponent(EntityManager& em, EntityId id, const QJsonObject& json)
     {
-        qCritical() << "Not implemented!";
-		return false;
-        /*QJsonObject::const_iterator n = json.find("classname");
+        QJsonObject::const_iterator n = json.find("classname");
         if(n == json.end()) return false;
-        QString classname = *n;
-        QMetaType::Type id = QMetaType::type(classname);
-        if(id == 0)
+        QString classname = n.value().toString();
+        EntitySystem* es = em.getSystemByComponentClassName(classname);
+        if(es == 0)
         {
             return false;
-        }*/
+        }
+
+        QVariantMap params;
+        QMetaObject mo = es->componentMetaObject();
+        for(int i = 0; i < mo.propertyCount(); ++i)
+        {
+            QMetaProperty prop = mo.property(i);
+            const char* propname = prop.name();
+            auto j = json.find(propname);
+            if(j != json.end())
+            {
+                params[propname] = jsonToVariant(prop.userType(), j.value());
+            }
+        }
+
+        QObject* o = es->createComponent(id, params);
+        return (o != nullptr);
+    }
+
+    
+    QVariant ReaderWriterJSON::jsonToVariant(int t, const QJsonValue& val)
+    {
+        // check if a vector of QObjects is stored in the variant
+        if(t == qMetaTypeId<QtEntity::PropertyObjects>() && val.isArray())
+        {
+            PropertyObjects ret;
+            QJsonArray arr = val.toArray();
+            for(auto i = arr.begin(); i != arr.end(); ++i)
+            {
+                QJsonValue val = *i;
+                if(!val.isObject()) continue;
+                QJsonObject obj = val.toObject();
+                if(!obj.contains("classname")) continue;
+                QString classname = obj.value("classname").toString();
+                
+                const QMetaObject* mo = metaObjectByClassName(classname);
+                if(mo == nullptr)
+                {
+                    qDebug() << "Could not restore object from JSon,  use QtEntity::registerMetaObject to register its type!";
+                    qDebug() << "Classname is: " << classname;
+                    continue;
+                }
+                QObject* retobj = mo->newInstance();
+                ret.push_back(QSharedPointer<QObject>(retobj));
+
+                for(int j = 0; j < mo->propertyCount(); ++j)
+                {
+
+                    QMetaProperty prop = mo->property(j);
+                    const char* propname = prop.name();
+                    auto k = obj.find(propname);
+                    if(k != obj.end())
+                    {
+                        prop.write(retobj, jsonToVariant(prop.type(), k.value()));
+                    }
+                }   
+            }
+            return QVariant::fromValue(ret);
+            
+        }
+        else if(t == qMetaTypeId<QColor>() && val.isString())
+		{            
+            QString in = val.toString();
+            QTextStream str(&in);
+            QChar delim;
+            qreal r,g,b,a;
+            str >> r; str >> delim;
+            str >> g; str >> delim;
+            str >> b; str >> delim;
+            str >> a;
+            return QColor(r,g,b,a);
+        }
+		else if(t == qMetaTypeId<QVector2D>())
+		{
+            QString in = val.toString();
+            QTextStream str(&in);
+            QChar delim;
+            float x,y;
+            str >> x; str >> delim;
+            str >> y;            
+            return QVector2D(x,y);
+        }
+        else if(t == qMetaTypeId<QVector3D>())
+		{
+            QString in = val.toString();
+            QTextStream str(&in);
+            QChar delim;
+            float x,y,z;
+            str >> x; str >> delim;
+            str >> y; str >> delim;
+            str >> z;            
+            return QVector3D(x,y,z);
+        }
+        else if(t == qMetaTypeId<QVector4D>())
+		{
+            QString in = val.toString();
+            QTextStream str(&in);
+            QChar delim;
+            float x,y,z,w;
+            str >> x; str >> delim;
+            str >> y; str >> delim;
+            str >> z; str >> delim;
+            str >> w;            
+            return QVector4D(x,y,z,w); 
+        }
+
+        // unhandled variant types go to Qt provided method
+        return val.toVariant();
     }
 }

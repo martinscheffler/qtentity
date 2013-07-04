@@ -4,6 +4,7 @@
 #include <QtEntity/Export>
 #include <QJsonObject>
 #include <QObject>
+#include <QVariant>
 
 namespace QtEntity
 {
@@ -38,6 +39,14 @@ namespace QtEntity
          * @return true if success
          */
         static bool jsonToComponent(EntityManager& em, EntityId id, const QJsonObject& json);
+
+        /**
+         * jsonToComponent tries to convert json value to a variant of given type.
+         * @param usertype Variant type to convert to
+         * @param val Convert this json value
+         * @return variant with type vtype
+         */
+        static QVariant jsonToVariant(int usertype, const QJsonValue& val);
     };
 
 }

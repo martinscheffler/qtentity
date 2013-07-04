@@ -1,8 +1,9 @@
-cmake_minimum_required(VERSION 2.8.10)
-
+cmake_minimum_required(VERSION 2.8.11)
+cmake_policy(VERSION 2.8.11)
 project(QtEntity)
 
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules")
+ENABLE_TESTING()
 
 IF (WIN32)
   SET(CMAKE_DEBUG_POSTFIX  "d")
@@ -17,7 +18,7 @@ if(UNIX AND NOT WIN32)
 endif(UNIX AND NOT WIN32)
 
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
-SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
+SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 find_package(Qt5Widgets REQUIRED)
 

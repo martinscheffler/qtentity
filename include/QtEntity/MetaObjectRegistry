@@ -1,0 +1,10 @@
+#pragma once
+
+#include <QtEntity/Export>
+#include <QMetaObject>
+
+namespace QtEntity
+{    
+    QTENTITY_EXPORT void registerMetaObject(const QMetaObject& mo);
+    QTENTITY_EXPORT const QMetaObject* metaObjectByClassName(const QString& classname);    
+}
