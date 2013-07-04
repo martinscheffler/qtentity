@@ -146,7 +146,7 @@ private slots:
         PropertyObjects objs = dh->myObjects();
         QCOMPARE(objs.count(), 2);
         
-        TestObj1* to1 = qobject_cast<TestObj1*>(objs.front().value);
+        TestObj1* to1 = qobject_cast<TestObj1*>(objs.front().data());
         QVERIFY(to1);
 
         QCOMPARE(to1->propInt(), 12345);
