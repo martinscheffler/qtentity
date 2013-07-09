@@ -116,7 +116,7 @@ void Game::createEnemy()
     {
         MetaData* metadata;
         QVariantMap m;
-        m["name"] = QString("Enemy").arg(id);
+        m["name"] = QString("Enemy_%1").arg(id);
         m["additionalInfo"] = "prefab=enemy";
         _entityManager.createComponent(id, metadata, m);
     }
