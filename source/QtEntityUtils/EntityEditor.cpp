@@ -1,5 +1,6 @@
 #include <QtEntityUtils/EntityEditor>
-#include <QtPropertyBrowser/QtVariantPropertyManager>
+#include <QtEntityUtils/VariantFactory>
+#include <QtEntityUtils/VariantManager>
 #include <QtPropertyBrowser/QtTreePropertyBrowser>
 #include <QtEntity/EntityManager>
 #include <QDate>
@@ -11,11 +12,11 @@ namespace QtEntityUtils
 {
     EntityEditor::EntityEditor()
         : _entityId(0)
-        , _propertyManager(new QtVariantPropertyManager(this))
+        , _propertyManager(new VariantManager(this))
         , _editor(new QtTreePropertyBrowser())
     {
 
-        QtVariantEditorFactory* variantFactory = new QtVariantEditorFactory();
+        QtVariantEditorFactory* variantFactory = new VariantFactory();
 
         _editor->setFactoryForManager(_propertyManager, variantFactory);
         _editor->setPropertiesWithoutValueMarked(true);
@@ -23,7 +24,7 @@ namespace QtEntityUtils
         setLayout(new QHBoxLayout());
         layout()->addWidget(_editor);
 
-        connect(_propertyManager, &QtVariantPropertyManager::valueChanged, this, &EntityEditor::propertyValueChanged);
+        connect(_propertyManager, &VariantManager::valueChanged, this, &EntityEditor::propertyValueChanged);
 
 /*
  * QtProperty *topItem = variantManager->addProperty(QtVariantPropertyManager::groupTypeId(),
@@ -187,10 +188,10 @@ namespace QtEntityUtils
                 if(propname.left(2) == "#|") continue;
                 QVariant propval = j.value();
 
-                QVariant::Type t = propval.type();
+                int t = propval.userType();
                 
                 // qvariant has no float type :(
-                if(t == QMetaType::Float)
+                if(t == (int)QMetaType::Float)
                 {
                     t = QVariant::Double;
                 }
@@ -216,8 +217,7 @@ namespace QtEntityUtils
 				else
 				{
 					qDebug() << "Could not create property editor for property " << propname;
-				}
-                
+				}                
             }
         }
     }

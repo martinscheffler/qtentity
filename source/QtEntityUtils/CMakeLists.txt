@@ -11,15 +11,23 @@ set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/EntityEditor
+	${HEADER_PATH}/FileEdit
+	${HEADER_PATH}/VariantFactory
+	${HEADER_PATH}/VariantManager
 )
 
 set(LIB_SOURCES
   ${SOURCE_PATH}/EntityEditor.cpp
+  ${SOURCE_PATH}/FileEdit.cpp
+  ${SOURCE_PATH}/VariantFactory.cpp
+  ${SOURCE_PATH}/VariantManager.cpp
 )
 
 set(MOC_INPUT
   ${HEADER_PATH}/EntityEditor
-
+  ${HEADER_PATH}/FileEdit
+  ${HEADER_PATH}/VariantFactory
+  ${HEADER_PATH}/VariantManager
 )
 
 QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})

@@ -1,0 +1,57 @@
+#pragma once
+
+#include <QtEntityUtils/Export>
+#include <QtPropertyBrowser/QtVariantProperty>
+
+namespace QtEntityUtils
+{
+    class FilePath : public QString
+    {
+    };
+}
+
+Q_DECLARE_METATYPE(QtEntityUtils::FilePath)
+
+namespace QtEntityUtils
+{
+    class VariantManager : public QtVariantPropertyManager
+    {
+        Q_OBJECT
+    public:
+        VariantManager(QObject *parent = 0)
+            : QtVariantPropertyManager(parent)                
+        {
+        }
+
+        virtual QVariant value(const QtProperty *property) const override;
+        virtual int valueType(int propertyType) const override;
+        virtual bool isPropertyTypeSupported(int propertyType) const override;
+
+        virtual QStringList attributes(int propertyType) const override;
+        virtual int attributeType(int propertyType, const QString &attribute) const override;
+        virtual QVariant attributeValue(const QtProperty *property, const QString &attribute) const override;
+        
+        static int filePathTypeId();
+
+    public slots:
+
+        virtual void setValue(QtProperty *property, const QVariant &val);
+        virtual void setAttribute(QtProperty *property,
+                    const QString &attribute, const QVariant &value);
+
+    protected:
+
+        virtual QString valueText(const QtProperty *property) const;
+        virtual void initializeProperty(QtProperty *property);
+        virtual void uninitializeProperty(QtProperty *property);
+
+    private:
+
+        struct Data {
+            QString value;
+            QString filter;
+        };
+
+        QMap<const QtProperty *, Data> theValues;
+    }; 
+}

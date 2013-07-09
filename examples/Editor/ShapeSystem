@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QtEntity/EntitySystem>
+#include <QtEntityUtils/VariantManager>
+
 #include <QRect>
 #include "Renderer"
 
@@ -9,19 +11,19 @@ class Shape : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QPoint position READ position WRITE setPosition USER true)
-    Q_PROPERTY(QString path READ path WRITE setPath USER true)
+    Q_PROPERTY(QtEntityUtils::FilePath path READ path WRITE setPath USER true)
     Q_PROPERTY(int zIndex READ zIndex WRITE setZIndex USER true)
     Q_PROPERTY(QRect subTex READ subTex WRITE setSubtex USER true)
 
 public:
 
-    Shape(Renderer* renderer, const QPoint& pos, const QString& path, int zIndex, const QRect& subtex);
+    Shape(Renderer* renderer, const QPoint& pos, const QtEntityUtils::FilePath& path, int zIndex, const QRect& subtex);
 
     void setPosition(const QPoint& p);
     QPoint position() const { return _position; }
 
-    void setPath(const QString& path) { _path = path; buildShape();}
-    QString path() const { return _path; }
+    void setPath(const QtEntityUtils::FilePath& path) { _path = path; buildShape();}
+    QtEntityUtils::FilePath path() const { return _path; }
 
     void setZIndex(int i);
     int zIndex() const { return _zindex; }
@@ -33,7 +35,7 @@ private:
 
     void buildShape();
     Renderer* _renderer;
-    QString _path;
+    QtEntityUtils::FilePath _path;
     QPoint _position;
     QRect _subtex;
     int _zindex;
@@ -48,10 +50,10 @@ class ShapeSystem : public QtEntity::EntitySystem
 public:
     ShapeSystem(Renderer* renderer);
 
+    virtual QVariantMap attributesForProperty(const QString& name) const;
 protected:
     // override to call ListEntry constructor passing it pointer to this
     virtual QObject* createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals) override;
-
 private:
     Renderer* _renderer;
 };

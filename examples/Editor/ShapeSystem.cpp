@@ -1,7 +1,7 @@
 #include "ShapeSystem"
 
 
-Shape::Shape(Renderer* renderer, const QPoint& pos, const QString& path, int zIndex, const QRect& subtex)
+Shape::Shape(Renderer* renderer, const QPoint& pos, const QtEntityUtils::FilePath& path, int zIndex, const QRect& subtex)
     : _renderer(renderer)
     , _path(path)
     , _position(pos)
@@ -51,9 +51,19 @@ QObject* ShapeSystem::createObjectInstance(QtEntity::EntityId id, const QVariant
 {
 
     QPoint pos = propertyVals["position"].value<QPoint>();
-    QString path = propertyVals["path"].toString();
+    QtEntityUtils::FilePath path = propertyVals["path"].value<QtEntityUtils::FilePath>();
     int zindex = propertyVals["zIndex"].toInt();
     QRect rect = propertyVals["subtex"].value<QRect>();
     return new Shape(_renderer, pos, path, zindex, rect);
 
+}
+
+QVariantMap ShapeSystem::attributesForProperty(const QString& name) const
+{
+    QVariantMap r;
+    if(name == "path")
+    {
+        r["filter"] = "SVG files (*.svg)";
+    }
+    return r;
 }
