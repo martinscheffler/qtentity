@@ -2,11 +2,13 @@
 #include "ShapeSystem"
 
 #include <QtEntity/EntityManager>
+#include <QtEntity/MetaObjectRegistry>
 
 EnemySystem::EnemySystem()
     :QtEntity::EntitySystem(Enemy::staticMetaObject)
 {
-
+    QtEntity::registerMetaObject(TestObj1::staticMetaObject);
+    QtEntity::registerMetaObject(TestObj2::staticMetaObject);
 }
 
 
@@ -25,4 +27,19 @@ void EnemySystem::step(int frameNumber, int totalTime, int delta)
         int y = float(lifetime * 3.0f) + cos(t / 20.0f) * 10 - 50;
         shape->setPosition(QPoint(x, y));
     }
+}
+
+
+
+QVariantMap EnemySystem::attributesForProperty(const QString& name) const
+{
+    QVariantMap r;
+    if(name == "myobjects")
+    {
+        QStringList sl;
+        sl.push_back(TestObj1::staticMetaObject.className());
+        sl.push_back(TestObj2::staticMetaObject.className());
+        r["classnames"] = sl;
+    }
+    return r;
 }

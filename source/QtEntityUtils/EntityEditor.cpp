@@ -191,6 +191,7 @@ namespace QtEntityUtils
                 int t = propval.userType();
                 
                 // qvariant has no float type :(
+
                 if(t == (int)QMetaType::Float)
                 {
                     t = QVariant::Double;

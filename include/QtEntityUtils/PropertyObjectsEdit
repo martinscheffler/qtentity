@@ -1,0 +1,55 @@
+#pragma once
+
+#include <QPushButton>
+#include <QtEntity/DataTypes>
+#include <QDialog>
+
+class Ui_PropertyObjectsEdit;
+class QtTreePropertyBrowser;
+class QtVariantPropertyManager;
+class QtProperty;
+
+namespace QtEntityUtils
+{
+
+    class PropertyObjectEditor : public QDialog
+    {
+        Q_OBJECT
+    public:
+        PropertyObjectEditor(QtEntity::PropertyObjects& objects, const QStringList& classnames);
+
+        QtEntity::PropertyObjects propertyObjects() const;
+    protected slots:
+
+        void propertyValueChanged(QtProperty *property, const QVariant &val);
+
+    private:
+
+        QStringList _classNames;
+        Ui_PropertyObjectsEdit* _ui;
+        QtVariantPropertyManager* _propertyManager;
+        QtTreePropertyBrowser* _editor;
+
+    };
+
+
+    class PropertyObjectsEdit : public QWidget
+    {
+        Q_OBJECT
+    public:
+        PropertyObjectsEdit(QWidget *parent = 0);
+        void setValue(const QtEntity::PropertyObjects& o) { _value = o; }
+        void setClassNames(const QStringList& l) { _classnames = l; }
+    signals:
+        void objectsChanged(const QtEntity::PropertyObjects& objs);
+
+    private slots:
+        void openEditor();
+        void editorClosed(int result);
+    private:
+        PropertyObjectEditor* _editor;
+        QPushButton* _editButton;
+        QtEntity::PropertyObjects _value;
+        QStringList _classnames;
+    };
+}

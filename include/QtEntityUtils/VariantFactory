@@ -2,10 +2,12 @@
 
 #include <QtEntityUtils/Export>
 #include <QtPropertyBrowser/QtVariantProperty>
+#include <QtEntity/DataTypes>
 
 namespace QtEntityUtils
 {
     class FileEdit;
+    class PropertyObjectsEdit;
 
     class VariantFactory : public QtVariantEditorFactory
     {
@@ -26,9 +28,12 @@ namespace QtEntityUtils
         void slotPropertyChanged(QtProperty *property, const QVariant &value);
         void slotPropertyAttributeChanged(QtProperty *property, const QString &attribute, const QVariant &value);
         void slotSetValue(const QString &value);
+        void slotSetObjectsValue(const QtEntity::PropertyObjects &value);
         void slotEditorDestroyed(QObject *object);
     private:
-        QMap<QtProperty *, QList<FileEdit *> > theCreatedEditors;
-        QMap<FileEdit *, QtProperty *> theEditorToProperty;
+        QMap<QtProperty *, QList<FileEdit *> > _createdFileEditors;
+        QMap<FileEdit *, QtProperty *> _fileEditorToProperty;
+        QMap<QtProperty *, QList<PropertyObjectsEdit *> > _createdPropertyObjectsEditors;
+        QMap<PropertyObjectsEdit *, QtProperty *> _propertyObjectsEditorToProperty;
     };
 }

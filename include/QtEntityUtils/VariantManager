@@ -2,6 +2,7 @@
 
 #include <QtEntityUtils/Export>
 #include <QtPropertyBrowser/QtVariantProperty>
+#include <QtEntity/DataTypes>
 
 namespace QtEntityUtils
 {
@@ -32,6 +33,7 @@ namespace QtEntityUtils
         virtual QVariant attributeValue(const QtProperty *property, const QString &attribute) const override;
         
         static int filePathTypeId();
+        static int propertyObjectTypeId();
 
     public slots:
 
@@ -47,11 +49,17 @@ namespace QtEntityUtils
 
     private:
 
-        struct Data {
+        struct FilePathData {
             QString value;
             QString filter;
         };
 
-        QMap<const QtProperty *, Data> theValues;
+        QMap<const QtProperty *, FilePathData> _filePathValues;
+
+        struct PropertyObjectsData {
+            QtEntity::PropertyObjects value;
+            QStringList classnames;
+        };
+        QMap<const QtProperty *, PropertyObjectsData> _propertyObjectsValues;
     }; 
 }
