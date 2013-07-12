@@ -13,7 +13,9 @@ class TestObj1 : public QObject
     QString _name;
 public:
 
-     Q_INVOKABLE TestObj1() {}
+     Q_INVOKABLE TestObj1() 
+         : _propint(0)
+     {}
 
     void setPropInt(qint32 v) { _propint = v; }
     qint32 propInt() const  { return _propint; }
@@ -52,7 +54,11 @@ public:
     void setLifetime(int v) { _lifetime = v; }
     int lifetime() const { return _lifetime; }
 
-    void setMyObjects(const QtEntity::PropertyObjects& v) { _myobjects = v; }
+    void setMyObjects(const QtEntity::PropertyObjects& v) 
+    { 
+        _myobjects = v;            
+    }
+
     QtEntity::PropertyObjects myObjects() const  { return _myobjects; }
 
 private:

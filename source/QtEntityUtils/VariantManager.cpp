@@ -1,5 +1,6 @@
 #include <QtEntityUtils/VariantManager>
 #include <QtEntity/DataTypes>
+#include <QTextStream>
 
 namespace QtEntityUtils
 {
@@ -113,7 +114,21 @@ namespace QtEntityUtils
         if (_filePathValues.contains(property))
             return _filePathValues[property].value;
         if (_propertyObjectsValues.contains(property))
-            return QString("%1").arg(_propertyObjectsValues[property].value.count());
+        {
+            const QtEntity::PropertyObjects&  val = _propertyObjectsValues[property].value;
+            QString ret = "[";
+            bool first = true;
+            foreach(auto obj, val)
+            {
+                if(first)
+                    first = false;
+                else
+                    ret.append(";");
+                ret.append(obj->metaObject()->className());
+            }
+            ret.append("]");
+            return ret;
+        }
         return QtVariantPropertyManager::valueText(property);
     }
 

@@ -143,18 +143,6 @@ namespace QtEntityUtils
     void VariantFactory::slotSetObjectsValue(const QtEntity::PropertyObjects &value)
     {
         QObject *object = sender();
-        /*foreach(auto o, value)
-        {
-            QObject* obj = o.data();
-            QString classname = obj->metaObject()->className();
-            for(int i = 0; i < obj->metaObject()->propertyCount(); ++i)
-            {
-                QMetaProperty pr = obj->metaObject()->property(i);
-                QString propname = pr.name();
-                QString val = pr.read(obj).toString();
-                int x =0;
-            }
-        }*/
 
         QMap<PropertyObjectsEdit *, QtProperty *>::ConstIterator itEditor =
                     _propertyObjectsEditorToProperty.constBegin();

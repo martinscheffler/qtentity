@@ -8,6 +8,7 @@ class Ui_PropertyObjectsEdit;
 class QtTreePropertyBrowser;
 class QtVariantPropertyManager;
 class QtProperty;
+class QtBrowserItem;
 
 namespace QtEntityUtils
 {
@@ -21,7 +22,11 @@ namespace QtEntityUtils
         QtEntity::PropertyObjects propertyObjects() const;
     protected slots:
 
-        void propertyValueChanged(QtProperty *property, const QVariant &val);
+        void addObject();
+        void currentItemChanged(QtBrowserItem *);
+        void upPressed();
+        void downPressed();
+        void removePressed();
 
     private:
 
@@ -29,7 +34,7 @@ namespace QtEntityUtils
         Ui_PropertyObjectsEdit* _ui;
         QtVariantPropertyManager* _propertyManager;
         QtTreePropertyBrowser* _editor;
-
+        QtBrowserItem* _selectedItem;
     };
 
 
