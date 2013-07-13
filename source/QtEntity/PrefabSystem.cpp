@@ -150,10 +150,9 @@ namespace QtEntity
             EntitySystem* es = entityManager()->getSystemByComponentClassName(classname);
             if(es)
             {
-                QObject* component = es->createComponent(id, var.value<QVariantMap>());
+                es->createComponent(id, var.value<QVariantMap>());
             }
         }
-
     }
 
 

@@ -1,0 +1,48 @@
+#pragma once
+
+#include <QtEntity/EntityManager>
+#include <QObject>
+#include <QTimer>
+#include <QKeyEvent>
+#include <osgViewer/Viewer>
+
+class QGLWidget;
+
+class ActorSystem;
+
+class Game : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    Game();
+
+    QtEntity::EntityManager& entityManager() { return _entityManager; }
+
+    void keyPressEvent ( QKeyEvent * event );
+    void keyReleaseEvent ( QKeyEvent * event );
+
+    QGLWidget* glwidget();
+    osgViewer::Viewer* viewer() { return _viewer; }
+
+public slots:
+
+    void end();
+    void step(int frameNumber, int totalTime, int delta);
+
+private:
+
+    bool _leftpressed;
+    bool _rightpressed;
+    bool _spacepressed;
+
+    ActorSystem* _actorSystem;
+    osg::ref_ptr<osgViewer::Viewer> _viewer;
+    QtEntity::EntityManager _entityManager;
+    bool _isRunning;
+
+};
+
+
+

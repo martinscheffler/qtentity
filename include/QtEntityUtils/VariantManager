@@ -24,6 +24,7 @@ namespace QtEntityUtils
         {
         }
 
+        virtual QtVariantProperty *addProperty(int propertyType, const QString &name = QString());
         virtual QVariant value(const QtProperty *property) const override;
         virtual int valueType(int propertyType) const override;
         virtual bool isPropertyTypeSupported(int propertyType) const override;

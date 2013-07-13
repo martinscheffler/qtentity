@@ -70,13 +70,25 @@ namespace QtEntityUtils
         QtProperty* item = _propertyManager->addProperty(QtVariantPropertyManager::groupTypeId(), classname);
         _editor->addProperty(item);
         QObject* obj = mo->newInstance();
+        if(obj == nullptr)
+        {
+            qDebug() << "Could not create object of class " << classname;
+            return;
+        }
         for(int j = 0; j < mo->propertyCount(); ++j)
         {
             QMetaProperty prop = mo->property((j));
             if(strcmp(prop.name(), "objectName") == 0) continue;
             QtVariantProperty* propitem = _propertyManager->addProperty(prop.userType(), prop.name());
-            item->addSubProperty(propitem);
-            propitem->setValue(prop.read(obj));
+            if(propitem == nullptr)
+            {
+                qDebug() << "Could not create property editor for property named " << prop.name();
+            }
+            else
+            {
+                item->addSubProperty(propitem);
+                propitem->setValue(prop.read(obj));
+            }
         }
         delete obj;
     }

@@ -151,7 +151,6 @@ private slots:
         auto test = em.getComponent<MyComponent>(1);
         QVERIFY(test == nullptr);
 
-
         mycomponent["myint"] = 6789;
         components[cn] = mycomponent;
         components[cn] = mycomponent;

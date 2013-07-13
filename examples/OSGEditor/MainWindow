@@ -1,0 +1,42 @@
+#pragma once
+
+#include <QMainWindow>
+#include "ui_MainWindow.h"
+#include <QtEntity/DataTypes>
+#include <QThread>
+
+class Game;
+class Renderer;
+
+class MainWindow : public QMainWindow, public Ui_MainWindow
+{
+    Q_OBJECT
+
+public:
+
+    MainWindow();
+    ~MainWindow();
+
+    void keyPressEvent ( QKeyEvent * event );
+    void keyReleaseEvent ( QKeyEvent * event );
+
+protected slots:
+
+    void entityAdded(QtEntity::EntityId id, QString name);
+    void entityChanged(QtEntity::EntityId id, QString name);
+    void entityRemoved(QtEntity::EntityId id);
+    void entitySelectionChanged();
+    void changeEntityData(QtEntity::EntityId id, const QString& componenttype, const QString& propertyname, const QVariant& value);
+    void stepGame();
+    void addActor();
+signals:
+
+    void selectedEntityChanged(QtEntity::EntityId id, const QVariant& data);
+
+private:
+
+    QThread _gameThread;
+    QTimer* _timer;
+    Game* _game;    
+};
+

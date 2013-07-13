@@ -5,6 +5,16 @@
 namespace QtEntityUtils
 {
 
+    QtVariantProperty* VariantManager::addProperty(int propertyType, const QString &name)
+    {
+        if(propertyType == qMetaTypeId<float>())
+        {
+            propertyType = qMetaTypeId<double>();
+        }
+        return QtVariantPropertyManager::addProperty(propertyType, name);
+
+    }
+
     int VariantManager::filePathTypeId()
     {
         return qMetaTypeId<FilePath>();
@@ -112,8 +122,10 @@ namespace QtEntityUtils
     QString VariantManager::valueText(const QtProperty *property) const
     {
         if (_filePathValues.contains(property))
+        {
             return _filePathValues[property].value;
-        if (_propertyObjectsValues.contains(property))
+        }
+        else if (_propertyObjectsValues.contains(property))
         {
             const QtEntity::PropertyObjects&  val = _propertyObjectsValues[property].value;
             QString ret = "[";
@@ -129,7 +141,10 @@ namespace QtEntityUtils
             ret.append("]");
             return ret;
         }
-        return QtVariantPropertyManager::valueText(property);
+        else
+        {
+            return QtVariantPropertyManager::valueText(property);
+        }
     }
 
 

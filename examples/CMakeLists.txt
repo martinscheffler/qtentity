@@ -1,1 +1,5 @@
 add_subdirectory(Editor)
+option(BUILD_OSG_EXAMPLE off)
+if(BUILD_OSG_EXAMPLE)
+  add_subdirectory(OSGEditor)
+endif(BUILD_OSG_EXAMPLE)

@@ -20,7 +20,7 @@ namespace QtEntity
         void setComponents(const QVariantMap& v) { _components = v; }
         const QVariantMap& components() const { return _components; }
 
-        void setParamaters(const QStringList& v) { _parameters = v; }
+        void setParameters(const QStringList& v) { _parameters = v; }
         const QStringList& parameters() const { return _parameters; }
 
     private:

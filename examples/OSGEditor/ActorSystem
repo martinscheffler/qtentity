@@ -1,0 +1,188 @@
+#pragma once
+
+#include <QtEntity/EntitySystem>
+#include <QVector3D>
+#include <osg/Group>
+#include <osg/Shape>
+#include <osg/ShapeDrawable>
+#include <osg/Geode>
+#include <osg/PositionAttitudeTransform>
+#include <QColor>
+
+class ActorSystem;
+
+class ShapeDrawable : public QObject
+{
+    Q_OBJECT
+
+public:
+    osg::ref_ptr<osg::ShapeDrawable> _shapeDrawable;
+
+    Q_PROPERTY(QColor color READ color WRITE setColor USER true)
+
+    ShapeDrawable()
+        : _shapeDrawable(new osg::ShapeDrawable())
+    {
+
+    }
+
+    QColor color() const
+    {
+        const osg::Vec4& c = _shapeDrawable->getColor();
+        QColor ret;
+        ret.setRgbF(c[0], c[1], c[2]);
+        ret.setAlphaF(c[3]);
+        return ret;
+    }
+
+    void setColor(const QColor& v)
+    {
+        _shapeDrawable->setColor(osg::Vec4(v.redF(), v.greenF(), v.blueF(), v.alphaF()));
+    }
+};
+
+class Sphere : public ShapeDrawable
+{
+    Q_OBJECT
+public:
+
+    Q_PROPERTY(float radius READ radius WRITE setRadius USER true)
+    Q_PROPERTY(QVector3D center READ center WRITE setCenter USER true)
+
+    osg::ref_ptr<osg::Sphere> _sphere;
+
+     Q_INVOKABLE Sphere()
+        : _sphere(new osg::Sphere(osg::Vec3(), 1))
+    {
+        _shapeDrawable->setShape(_sphere);
+    }
+
+    void setRadius(float v) { _sphere->setRadius(v); }
+    float radius() const { return _sphere->getRadius(); }
+
+    QVector3D center() const
+    { const osg::Vec3d& c = _sphere->getCenter();
+        return QVector3D(c[0], c[1], c[2]);
+    }
+
+    void setCenter(const QVector3D& v)
+    {
+        _sphere->setCenter(osg::Vec3d(v.x(), v.y(), v.z()));
+    }
+
+};
+
+
+
+class Box : public ShapeDrawable
+{
+    Q_OBJECT
+public:
+
+    Q_PROPERTY(QVector3D halfLengths READ halfLengths WRITE setHalfLengths USER true)
+    Q_PROPERTY(QVector3D center READ center WRITE setCenter USER true)
+
+    osg::ref_ptr<osg::Box> _box;
+
+     Q_INVOKABLE Box()
+        : _box(new osg::Box(osg::Vec3(), 1))
+    {
+        _shapeDrawable->setShape(_box);
+    }
+
+    QVector3D halfLengths() const
+    { const osg::Vec3d& c = _box->getHalfLengths();
+        return QVector3D(c[0], c[1], c[2]);
+    }
+
+    void setHalfLengths(const QVector3D& v)
+    {
+        _box->setHalfLengths(osg::Vec3d(v.x(), v.y(), v.z()));
+    }
+
+    QVector3D center() const
+    {
+        const osg::Vec3d& c = _box->getCenter();
+        return QVector3D(c[0], c[1], c[2]);
+    }
+
+    void setCenter(const QVector3D& v)
+    {
+        _box->setCenter(osg::Vec3d(v.x(), v.y(), v.z()));
+    }
+
+};
+
+class Actor : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(QString name READ name WRITE setName USER true)
+    Q_PROPERTY(QVector3D position READ position WRITE setPosition USER true)
+    Q_PROPERTY(QtEntity::PropertyObjects shapes READ shapes WRITE setShapes USER true)
+
+public:
+
+    Actor(QtEntity::EntityId id, osg::Group* parent, const QString& name, const QVector3D& pos, ActorSystem* as);
+
+
+    /**
+     * Set entity name (human readable identifier)
+     * Causes MetaDataSystem to emit entityChanged signal
+     **/
+    void setName(const QString& name);
+
+    /**
+     * Get entity name (human readable identifier)
+     **/
+    QString name() const  { return _name; }
+
+    void setPosition(const QVector3D& p);
+    QVector3D position() const;
+
+    void setShapes(const QtEntity::PropertyObjects& v);
+    QtEntity::PropertyObjects shapes() const  { return _shapes; }
+
+private:
+
+    QtEntity::EntityId _id;
+    QString _name;
+    osg::ref_ptr<osg::Geode> _geode;
+    osg::ref_ptr<osg::PositionAttitudeTransform> _transform;
+    ActorSystem* _system;
+    QtEntity::PropertyObjects _shapes;
+};
+
+
+class ActorSystem : public QtEntity::EntitySystem
+{
+    Q_OBJECT
+
+public:
+
+    ActorSystem(osg::Group* rootnode);
+
+    // override to emit signal for creating entity list entry
+    virtual QObject* createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;
+
+    // override to emit signal for removing entity list entry
+    virtual bool destroyComponent(QtEntity::EntityId id) override;
+
+    virtual QVariantMap attributesForProperty(const QString& name) const;
+
+    void writeNodes();
+
+signals:
+
+    void entityAdded(QtEntity::EntityId id, QString name);
+    void entityRemoved(QtEntity::EntityId id);
+    void entityChanged(QtEntity::EntityId id, QString name);
+
+protected:
+
+    // override to call ListEntry constructor passing it pointer to this
+    virtual QObject* createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals) override;
+
+private:
+    osg::ref_ptr<osg::Group> _rootNode;
+};
