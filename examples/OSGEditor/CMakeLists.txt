@@ -7,7 +7,7 @@ include_directories(
   ${OSG_INCLUDE_DIR}
 )
 
-FIND_PACKAGE(OpenSceneGraph REQUIRED osgDB osgGA osgUtil osgViewer osgQt osgText osgWidget)
+FIND_PACKAGE(OpenSceneGraph REQUIRED osgDB osgGA osgUtil osgViewer osgText osgWidget)
 
 set(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})

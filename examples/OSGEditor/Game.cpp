@@ -3,7 +3,6 @@
 #include <QCoreApplication>
 #include <QTime>
 #include <QThread>
-#include <osgQt/GraphicsWindowQt>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgGA/TrackballManipulator>
 #include "ActorSystem"
@@ -42,12 +41,6 @@ Game::Game()
     _viewer->setUpViewInWindow(100,100,800,600);
     _viewer->realize();
 
-}
-
-
-QGLWidget* Game::glwidget()
-{
-    return static_cast<osgQt::GraphicsWindowQt*>(_viewer->getCamera()->getGraphicsContext())->getGLWidget();
 }
 
 
