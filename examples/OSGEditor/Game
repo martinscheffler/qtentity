@@ -16,7 +16,7 @@ class Game : public QObject
 
 public:
 
-    Game();
+    Game(QObject* parent = nullptr);
 
     QtEntity::EntityManager& entityManager() { return _entityManager; }
 
@@ -27,8 +27,9 @@ public:
 
 public slots:
 
-    void end();
+    void end();    
     void step(int frameNumber, int totalTime, int delta);
+    void run();
 
 private:
 

@@ -3,10 +3,12 @@
 #include <QtEntityUtils/VariantManager>
 #include <QtPropertyBrowser/QtTreePropertyBrowser>
 #include <QtEntity/EntityManager>
+#include <QtEntity/MetaObjectRegistry>
 #include <QDate>
 #include <QLocale>
 #include <QHBoxLayout>
 #include <QMetaProperty>
+#include <QUuid>
 
 namespace QtEntityUtils
 {
@@ -25,142 +27,6 @@ namespace QtEntityUtils
         layout()->addWidget(_editor);
 
         connect(_propertyManager, &VariantManager::valueChanged, this, &EntityEditor::propertyValueChanged);
-
-/*
- * QtProperty *topItem = variantManager->addProperty(QtVariantPropertyManager::groupTypeId(),
-                    QString::number(i++) + QLatin1String(" Group Property"));
-        QtVariantProperty *item = variantManager->addProperty(QVariant::Bool, QString::number(i++) + QLatin1String(" Bool Property"));
-        item->setValue(true);
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::Int, QString::number(i++) + QLatin1String(" Int Property"));
-        item->setValue(20);
-        item->setAttribute(QLatin1String("minimum"), 0);
-        item->setAttribute(QLatin1String("maximum"), 100);
-        item->setAttribute(QLatin1String("singleStep"), 10);
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::Int, QString::number(i++) + QLatin1String(" Int Property (ReadOnly)"));
-        item->setValue(20);
-        item->setAttribute(QLatin1String("minimum"), 0);
-        item->setAttribute(QLatin1String("maximum"), 100);
-        item->setAttribute(QLatin1String("singleStep"), 10);
-        item->setAttribute(QLatin1String("readOnly"), true);
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::Double, QString::number(i++) + QLatin1String(" Double Property"));
-        item->setValue(1.2345);
-        item->setAttribute(QLatin1String("singleStep"), 0.1);
-        item->setAttribute(QLatin1String("decimals"), 3);
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::Double, QString::number(i++) + QLatin1String(" Double Property (ReadOnly)"));
-        item->setValue(1.23456);
-        item->setAttribute(QLatin1String("singleStep"), 0.1);
-        item->setAttribute(QLatin1String("decimals"), 5);
-        item->setAttribute(QLatin1String("readOnly"), true);
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::String, QString::number(i++) + QLatin1String(" String Property"));
-        item->setValue("Value");
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::String, QString::number(i++) + QLatin1String(" String Property (Password)"));
-        item->setAttribute(QLatin1String("echoMode"), QLineEdit::Password);
-        item->setValue("Password");
-        topItem->addSubProperty(item);
-
-        // Readonly String Property
-        item = variantManager->addProperty(QVariant::String, QString::number(i++) + QLatin1String(" String Property (ReadOnly)"));
-        item->setAttribute(QLatin1String("readOnly"), true);
-        item->setValue("readonly text");
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::Date, QString::number(i++) + QLatin1String(" Date Property"));
-        item->setValue(QDate::currentDate().addDays(2));
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::Time, QString::number(i++) + QLatin1String(" Time Property"));
-        item->setValue(QTime::currentTime());
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::DateTime, QString::number(i++) + QLatin1String(" DateTime Property"));
-        item->setValue(QDateTime::currentDateTime());
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::KeySequence, QString::number(i++) + QLatin1String(" KeySequence Property"));
-        item->setValue(QKeySequence(Qt::ControlModifier | Qt::Key_Q));
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::Char, QString::number(i++) + QLatin1String(" Char Property"));
-        item->setValue(QChar(386));
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::Locale, QString::number(i++) + QLatin1String(" Locale Property"));
-        item->setValue(QLocale(QLocale::Polish, QLocale::Poland));
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::Point, QString::number(i++) + QLatin1String(" Point Property"));
-        item->setValue(QPoint(10, 10));
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::PointF, QString::number(i++) + QLatin1String(" PointF Property"));
-        item->setValue(QPointF(1.2345, -1.23451));
-        item->setAttribute(QLatin1String("decimals"), 3);
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::Size, QString::number(i++) + QLatin1String(" Size Property"));
-        item->setValue(QSize(20, 20));
-        item->setAttribute(QLatin1String("minimum"), QSize(10, 10));
-        item->setAttribute(QLatin1String("maximum"), QSize(30, 30));
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::SizeF, QString::number(i++) + QLatin1String(" SizeF Property"));
-        item->setValue(QSizeF(1.2345, 1.2345));
-        item->setAttribute(QLatin1String("decimals"), 3);
-        item->setAttribute(QLatin1String("minimum"), QSizeF(0.12, 0.34));
-        item->setAttribute(QLatin1String("maximum"), QSizeF(20.56, 20.78));
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::Rect, QString::number(i++) + QLatin1String(" Rect Property"));
-        item->setValue(QRect(10, 10, 20, 20));
-        topItem->addSubProperty(item);
-        item->setAttribute(QLatin1String("constraint"), QRect(0, 0, 50, 50));
-
-        item = variantManager->addProperty(QVariant::RectF, QString::number(i++) + QLatin1String(" RectF Property"));
-        item->setValue(QRectF(1.2345, 1.2345, 1.2345, 1.2345));
-        topItem->addSubProperty(item);
-        item->setAttribute(QLatin1String("constraint"), QRectF(0, 0, 50, 50));
-        item->setAttribute(QLatin1String("decimals"), 3);
-
-        item = variantManager->addProperty(QtVariantPropertyManager::enumTypeId(),
-                        QString::number(i++) + QLatin1String(" Enum Property"));
-        QStringList enumNames;
-        enumNames << "Enum0" << "Enum1" << "Enum2";
-        item->setAttribute(QLatin1String("enumNames"), enumNames);
-        item->setValue(1);
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QtVariantPropertyManager::flagTypeId(),
-                        QString::number(i++) + QLatin1String(" Flag Property"));
-        QStringList flagNames;
-        flagNames << "Flag0" << "Flag1" << "Flag2";
-        item->setAttribute(QLatin1String("flagNames"), flagNames);
-        item->setValue(5);
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::SizePolicy, QString::number(i++) + QLatin1String(" SizePolicy Property"));
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::Font, QString::number(i++) + QLatin1String(" Font Property"));
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::Cursor, QString::number(i++) + QLatin1String(" Cursor Property"));
-        topItem->addSubProperty(item);
-
-        item = variantManager->addProperty(QVariant::Color, QString::number(i++) + QLatin1String(" Color Property"));
-        topItem->addSubProperty(item);
-*/
 
     }
 
@@ -250,7 +116,29 @@ namespace QtEntityUtils
 				const char* name = prop.name();
                 if(strcmp(name, "objectName") == 0) continue;
 
-                componentvals[name] = prop.read(component);
+                if(prop.userType() == VariantManager::propertyObjectsId())
+                {
+                    QVariantList vl;
+
+                    QtEntity::PropertyObjects po = prop.read(component).value<QtEntity::PropertyObjects>();
+                    foreach(auto o, po)
+                    {
+                        QVariantMap m;
+                        const QMetaObject& meta = *o->metaObject();
+                        m["classname"] = meta.className();
+                        for(int j = 0; j < meta.propertyCount(); ++j)
+                        {
+                            QMetaProperty prop = meta.property(j);
+                            m[prop.name()] = prop.read(o.data());
+                        }
+                        vl.append(m);
+                    }
+                    componentvals[name] = vl;
+                }
+                else
+                {
+                    componentvals[name] = prop.read(component);
+                }
 
                 // store property constraints. Prepend a "#|" to identify
                 QVariantMap constraints = es->attributesForProperty(name);
@@ -281,12 +169,97 @@ namespace QtEntityUtils
             for(int j = 0; j < meta.propertyCount(); ++j)
             {
                 QMetaProperty prop = meta.property(j);
-                if(prop.name() == propertyname)
+                if(prop.name() != propertyname) continue;
+
+                if(prop.userType() == VariantManager::propertyObjectsId())
+                {
+                    QVariantList vars = value.value<QVariantList>();
+                    QtEntity::PropertyObjects objs = prop.read(component).value<QtEntity::PropertyObjects>();
+
+                    // delete objects not in vars list or update existing.
+                    for(auto i = objs.begin(); i != objs.end(); ++i)
+                    {
+                        QString objname = i->data()->objectName();
+                        bool found = false;
+                        foreach(auto j, vars)
+                        {
+                            QVariantMap map = j.value<QVariantMap>();
+                            if(map.contains("objectName") && map["objectName"].toString() == objname)
+                            {
+                                found = true;
+
+                                // object still exists. Update from vars
+                                const QMetaObject* mo = i->data()->metaObject();
+                                for(int k = 0; k < mo->propertyCount(); ++k)
+                                {
+                                    QMetaProperty prp = mo->property(k);
+                                    QString todo_remove =prp.name();
+                                    if(map.contains(prp.name()))
+                                    {
+                                        prp.write(i->data(), map[prp.name()]);
+                                    }
+                                }
+                            }
+                        }
+
+                        // delete object if not found in property list
+                        if(!found)
+                        {
+                            i = objs.erase(i);
+                        }
+                    }
+
+                    // Create new objects from vars
+                    foreach(auto i, vars)
+                    {
+                        QVariantMap map = i.value<QVariantMap>();
+
+                        if(!map.contains("objectName") || map["objectName"].toString() == "")
+                        {
+                            map["objectName"] = QUuid::createUuid().toString();
+
+                            Q_ASSERT(map.contains("classname"));
+                            QString classname = map["classname"].toString();
+
+                            const QMetaObject* mo = QtEntity::metaObjectByClassName(classname);
+                            if(!mo)
+                            {
+                                qDebug() << "Could not instantiate, classname not registered: " << classname;
+                                return;
+                            }
+
+                            QObject* obj = mo->newInstance();
+
+                            if(obj == nullptr)
+                            {
+                                qDebug() << "Could not create object of class " << classname;
+                                continue;
+                            }
+
+
+
+                            for(int j = 0; j < mo->propertyCount(); ++j)
+                            {
+                                QMetaProperty prp = mo->property((j));
+                                if(map.contains(prp.name()))
+                                {
+                                    prp.write(obj, map[prp.name()]);
+                                }
+                            }
+
+                            objs.push_back(QtEntity::PropertyObjectPointer(obj));
+                            prop.write(component, QVariant::fromValue(objs));
+
+                        }
+                    }
+                }
+                else
                 {
                     prop.write(component, value);
-                    return;
                 }
+                return;
             }
+
         }
     }
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QPushButton>
-#include <QtEntity/DataTypes>
+#include <QVariantList>
 #include <QDialog>
 
 class Ui_PropertyObjectsEdit;
@@ -17,9 +17,9 @@ namespace QtEntityUtils
     {
         Q_OBJECT
     public:
-        PropertyObjectEditor(QtEntity::PropertyObjects& objects, const QStringList& classnames);
+        PropertyObjectEditor(QVariantList& objects, const QStringList& classnames);
 
-        QtEntity::PropertyObjects propertyObjects() const;
+        QVariantList propertyObjects() const;
     protected slots:
 
         void addObject();
@@ -43,10 +43,10 @@ namespace QtEntityUtils
         Q_OBJECT
     public:
         PropertyObjectsEdit(QWidget *parent = 0);
-        void setValue(const QtEntity::PropertyObjects& o) { _value = o; }
+        void setValue(const QVariantList& o) { _value = o; }
         void setClassNames(const QStringList& l) { _classnames = l; }
     signals:
-        void objectsChanged(const QtEntity::PropertyObjects& objs);
+        void objectsChanged(const QVariantList& objs);
 
     private slots:
         void openEditor();
@@ -54,7 +54,7 @@ namespace QtEntityUtils
     private:
         PropertyObjectEditor* _editor;
         QPushButton* _editButton;
-        QtEntity::PropertyObjects _value;
+        QVariantList _value;
         QStringList _classnames;
     };
 }

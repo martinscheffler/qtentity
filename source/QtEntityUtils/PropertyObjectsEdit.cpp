@@ -14,7 +14,7 @@
 
 namespace QtEntityUtils
 {
-    PropertyObjectEditor::PropertyObjectEditor(QtEntity::PropertyObjects& objects, const QStringList& classnames)
+    PropertyObjectEditor::PropertyObjectEditor(QVariantList& objects, const QStringList& classnames)
         : _classNames(classnames)
         , _ui(new Ui_PropertyObjectsEdit())
         , _propertyManager(new VariantManager(this))
@@ -39,19 +39,22 @@ namespace QtEntityUtils
         connect(_ui->_removeButton, &QPushButton::clicked, this, &PropertyObjectEditor::removePressed);
         for(auto i = objects.begin(); i != objects.end(); ++i)
         {
-            QObject* obj = i->data();
-            const QMetaObject* meta = obj->metaObject();
+            QVariantMap obj = i->value<QVariantMap>();
+            QString classname = obj["classname"].toString();
+            const QMetaObject* meta = QtEntity::metaObjectByClassName(classname);
 
-            QString classname = meta->className();
             QtProperty* item = _propertyManager->addProperty(QtVariantPropertyManager::groupTypeId(), classname);
             _editor->addProperty(item);
             for(int j = 0; j < meta->propertyCount(); ++j)
             {
                 QMetaProperty prop = meta->property((j));
-                if(strcmp(prop.name(), "objectName") == 0) continue;
+                //if(strcmp(prop.name(), "objectName") == 0) continue;
                 QtVariantProperty* propitem = _propertyManager->addProperty(prop.userType(), prop.name());
                 item->addSubProperty(propitem);
-                propitem->setValue(prop.read(obj));
+                if(obj.find(prop.name()) != obj.end())
+                {
+                    propitem->setValue(obj[prop.name()]);
+                }
             }
         }
     }
@@ -69,6 +72,8 @@ namespace QtEntityUtils
 
         QtProperty* item = _propertyManager->addProperty(QtVariantPropertyManager::groupTypeId(), classname);
         _editor->addProperty(item);
+
+        // create instance to fill properties with default constructed values
         QObject* obj = mo->newInstance();
         if(obj == nullptr)
         {
@@ -78,7 +83,7 @@ namespace QtEntityUtils
         for(int j = 0; j < mo->propertyCount(); ++j)
         {
             QMetaProperty prop = mo->property((j));
-            if(strcmp(prop.name(), "objectName") == 0) continue;
+
             QtVariantProperty* propitem = _propertyManager->addProperty(prop.userType(), prop.name());
             if(propitem == nullptr)
             {
@@ -158,43 +163,22 @@ namespace QtEntityUtils
     }
 
 
-    QtEntity::PropertyObjects PropertyObjectEditor::propertyObjects() const
+    QVariantList PropertyObjectEditor::propertyObjects() const
     {
-        QtEntity::PropertyObjects ret;
+        QVariantList ret;
         auto objprops =_editor->properties();
         foreach(QtProperty* p, objprops)
         {
             QtVariantProperty* objprop = static_cast<QtVariantProperty*>(p);
             QString classname = objprop->propertyName();
-            const QMetaObject* mo = QtEntity::metaObjectByClassName(classname);
-            if(mo == nullptr)
-            {
-                qDebug() << "Could not create property object, not called registerMetaObject? Classname is " << classname;
-                continue;
-            }
-            QObject* o = mo->newInstance();
-            ret.push_back(QtEntity::PropertyObjectPointer(o));
-
+            QVariantMap retobj;
+            retobj["classname"] = classname;
             foreach(QtProperty* subprop, objprop->subProperties())
             {
-                bool found = false;
                 QString name = subprop->propertyName();
-                if(name == "objectName") continue;
-                for(int i = 0; i < mo->propertyCount(); ++i)
-                {
-                    QMetaProperty pr = mo->property(i);
-                    if(name == pr.name())
-                    {
-                        pr.write(o, static_cast<QtVariantProperty*>(subprop)->value());
-                        found = true;
-                        break;
-                    }
-                }
-                if(!found)
-                {
-                    qDebug() << "Cannot set Property object parameter " << name;
-                }
+                retobj[name] = static_cast<QtVariantProperty*>(subprop)->value();
             }
+            ret.push_back(retobj);
         }
         return ret;
     }

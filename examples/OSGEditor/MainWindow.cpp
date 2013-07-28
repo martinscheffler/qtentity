@@ -7,16 +7,16 @@
 #include <QDebug>
 #include <QGLWidget>
 
-MainWindow::MainWindow()
-    : _timer(nullptr)
+
+MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
+    : QMainWindow(parent, flags)
     , _game(new Game())
+    , _gameThread(new QThread(this))
 {
     setupUi(this);
-
     QtEntity::registerMetaTypes();
 
     _rendererPos->setLayout(new QHBoxLayout());
-
 
     // connect signals of meta data system to entity list
     ActorSystem* as;
@@ -28,15 +28,6 @@ MainWindow::MainWindow()
     connect(_entities, &QTableWidget::itemSelectionChanged, this, &MainWindow::entitySelectionChanged);
     connect(_addActorButton, &QPushButton::clicked, this, &MainWindow::addActor);
 
-    // setup game tick
-
-    _timer = new QTimer(this);
-    connect(_timer, &QTimer::timeout, this, &MainWindow::stepGame);
-    _timer->start((int)(1000.0 / 60.0));
-
-    //_game->glwidget()->setMinimumSize(640,480);
-    //centralWidget()->layout()->addWidget(_game->glwidget());
-
     QtEntityUtils::EntityEditor* editor = new QtEntityUtils::EntityEditor();
     connect(this, &MainWindow::selectedEntityChanged, editor, &QtEntityUtils::EntityEditor::displayEntity);
     connect(editor, &QtEntityUtils::EntityEditor::entityDataChanged, this, &MainWindow::changeEntityData);
@@ -46,22 +37,23 @@ MainWindow::MainWindow()
 
     setFocusPolicy(Qt::StrongFocus);
 
+    _game->moveToThread(_gameThread);
+    connect(_gameThread, &QThread::started, _game, &Game::run);
+    _gameThread->start();
+
 }
 
-
-void MainWindow::keyPressEvent ( QKeyEvent * event )
-{
-    //_game->keyPressEvent(event);
-}
-
-
-void MainWindow::keyReleaseEvent ( QKeyEvent * event )
-{
-   // _game->keyReleaseEvent(event);
-}
 
 MainWindow::~MainWindow()
 {
+    delete _game;
+}
+
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    QMetaObject::invokeMethod(_game, "end");
+    QApplication::quit();
 }
 
 
@@ -133,6 +125,9 @@ void MainWindow::entitySelectionChanged()
 void MainWindow::changeEntityData(QtEntity::EntityId id, const QString& componenttype, const QString& propertyname, const QVariant& value)
 {
     QtEntityUtils::EntityEditor::applyEntityData(_game->entityManager(), id, componenttype, propertyname, value);
+
+    //re-send changed component properties to editor
+    entitySelectionChanged();
 }
 
 

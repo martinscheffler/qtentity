@@ -48,10 +48,10 @@ namespace QtEntityUtils
             connect(editor, &PropertyObjectsEdit::destroyed, this, &VariantFactory::slotEditorDestroyed);
             return editor;
         }
-        if (manager->propertyType(property) == VariantManager::propertyObjectTypeId())
+        if (manager->propertyType(property) == VariantManager::variantListId())
         {
             PropertyObjectsEdit *editor = new PropertyObjectsEdit(parent);
-            editor->setValue(manager->value(property).value<QtEntity::PropertyObjects>());
+            editor->setValue(manager->value(property).value<QVariantList>());
             editor->setClassNames(manager->attributeValue(property, QLatin1String("classnames")).toStringList());
             _createdPropertyObjectsEditors[property].append(editor);
             _propertyObjectsEditorToProperty[editor] = property;
@@ -89,7 +89,7 @@ namespace QtEntityUtils
             QList<PropertyObjectsEdit *> editors = _createdPropertyObjectsEditors[property];
             QListIterator<PropertyObjectsEdit *> itEditor(editors);
             while (itEditor.hasNext())
-                itEditor.next()->setValue(value.value<QtEntity::PropertyObjects>());
+                itEditor.next()->setValue(value.value<QVariantList>());
         }
     }
 
@@ -140,7 +140,7 @@ namespace QtEntityUtils
     }
 
 
-    void VariantFactory::slotSetObjectsValue(const QtEntity::PropertyObjects &value)
+    void VariantFactory::slotSetObjectsValue(const QVariantList& value)
     {
         QObject *object = sender();
 

@@ -8,8 +8,9 @@
 #include "ActorSystem"
 #include <QVector3D>
 
-Game::Game()
-    : _leftpressed(false)
+Game::Game(QObject* parent)
+    : QObject(parent)
+    , _leftpressed(false)
     , _rightpressed(false)
     , _spacepressed(false)    
     , _viewer(new osgViewer::Viewer())
@@ -22,20 +23,9 @@ Game::Game()
     _entityManager.addEntitySystem(_actorSystem);
 
     osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
-    osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-    traits->windowDecoration = false;
-    traits->x = 100;
-    traits->y = 100;
-    traits->width = 800;
-    traits->height = 600;
-    traits->doubleBuffer = true;
-    traits->alpha = ds->getMinimumNumAlphaBits();
-    traits->stencil = ds->getMinimumNumStencilBits();
-    traits->sampleBuffers = ds->getMultiSamples();
-    traits->samples = 4;
+    ds->setNumMultiSamples(4);
 
-    _viewer->getCamera()->setClearColor( osg::Vec4(0.2, 0.2, 0.2, 1.0) );
-
+    _viewer->getCamera()->setClearColor(osg::Vec4(0.2, 0.2, 0.2, 1.0));
     _viewer->addEventHandler(new osgViewer::StatsHandler);
     _viewer->setCameraManipulator(new osgGA::TrackballManipulator);
     _viewer->setUpViewInWindow(100,100,800,600);
@@ -43,6 +33,23 @@ Game::Game()
 
 }
 
+
+
+void Game::run()
+{
+    _isRunning = true;
+    int timeStep = 10;
+    int frameNumber = 0;
+
+    QTime startTime;
+    while(_isRunning)
+    {
+        QTime frameTime;
+        step(frameNumber++, startTime.elapsed(), timeStep);
+        QCoreApplication::processEvents();
+        timeStep = frameTime.elapsed();
+    }
+}
 
 void Game::end()
 {
@@ -53,13 +60,6 @@ void Game::end()
 void Game::step(int frameNumber, int totalTime, int delta)
 {
     _viewer->frame();
-    /*if(frameNumber % 100 == 0)
-    {
-        QVariantMap m;
-        m["position"] = QVector3D(0, frameNumber / 50, 0);
-        m["name"] = QString("actor_%1").arg(frameNumber / 100);
-        _actorSystem->createComponent(frameNumber / 100 + 1, m);
-    }*/
 }
 
 
