@@ -55,7 +55,7 @@ void Actor::setShapes(const QtEntity::PropertyObjects& v)
 
 
 ActorSystem::ActorSystem(osg::Group* rootnode)
-    : EntitySystem(Actor::staticMetaObject)
+    : SimpleEntitySystem(Actor::staticMetaObject)
     , _rootNode(rootnode)
 {
     QtEntity::registerMetaObject(Box::staticMetaObject);
@@ -75,7 +75,7 @@ QObject* ActorSystem::createObjectInstance(QtEntity::EntityId id, const QVariant
 
 QObject* ActorSystem::createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals)
 {
-    QObject* obj = EntitySystem::createComponent(id, propertyVals);
+    QObject* obj = SimpleEntitySystem::createComponent(id, propertyVals);
     if(obj != NULL)
     {
         Actor* entry;
@@ -96,12 +96,12 @@ bool ActorSystem::destroyComponent(QtEntity::EntityId id)
         emit entityRemoved(id);
     }
 
-    return EntitySystem::destroyComponent(id);
+    return SimpleEntitySystem::destroyComponent(id);
 }
 
 
 
-QVariantMap ActorSystem::attributesForProperty(const QString& name) const
+const QVariantMap ActorSystem::attributesForProperty(const QString& name) const
 {
     QVariantMap r;
     if(name == "shapes")

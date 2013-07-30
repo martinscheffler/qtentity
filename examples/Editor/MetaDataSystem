@@ -49,7 +49,7 @@ private:
 };
 
 
-class MetaDataSystem : public QtEntity::EntitySystem
+class MetaDataSystem : public QtEntity::SimpleEntitySystem
 {
     Q_OBJECT
 

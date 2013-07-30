@@ -35,7 +35,7 @@ private slots:
 
     void createAndFetch()
     {
-        EntitySystem ts(Transform::staticMetaObject);
+        SimpleEntitySystem ts(Transform::staticMetaObject);
 
 		QVariantMap m;
 		m["myint"] = 666;
@@ -60,7 +60,7 @@ private slots:
 
     void destruct()
     {
-        EntitySystem ts(Transform::staticMetaObject);
+        SimpleEntitySystem ts(Transform::staticMetaObject);
         QObject* c = ts.createComponent(1);
         QObject* c2 = ts.getComponent(1);
         QVERIFY(c == c2);

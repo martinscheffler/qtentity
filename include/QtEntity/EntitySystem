@@ -11,12 +11,27 @@ namespace QtEntity
     // fwd declaration
     class EntityManager;
 
+    class EntitySystem : public QObject
+    {
+    public:
+
+        virtual ~EntitySystem() {}
+
+        virtual QObject* getComponent(EntityId id) const = 0;
+        virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) = 0;
+        virtual bool destroyComponent(EntityId id) = 0;
+        virtual const QMetaObject& componentMetaObject() const = 0;
+        virtual void setEntityManager(EntityManager* em) = 0;
+        virtual const QVariantMap attributesForProperty(const QString& name) const = 0;
+        virtual const QString name() const = 0;
+    };
+
     /**
      * @brief EntitySystem objects hold a number of components
      * which are basic QObject instances. Components are referenced
      * by an integer handle, the entity id.
      */
-    class QTENTITY_EXPORT EntitySystem : public QObject
+    class QTENTITY_EXPORT SimpleEntitySystem : public EntitySystem
     {
         Q_OBJECT
 
@@ -29,14 +44,14 @@ namespace QtEntity
          * @param componentMeta the QMetaObject of the QObject subclass that
          *                      this entity system uses as components
          */
-        EntitySystem(const QMetaObject& componentMeta);
+        SimpleEntitySystem(const QMetaObject& componentMeta);
 
-        virtual ~EntitySystem();
+        virtual ~SimpleEntitySystem();
 
         /**
          * This is called by entity manager when system is added to entity manager
          */
-        void setEntityManager(EntityManager* em)
+        virtual void setEntityManager(EntityManager* em)
         {
             _entityManager = em;
         }
@@ -93,12 +108,12 @@ namespace QtEntity
         /**
          * @return  meta object type of component class
          */
-        const QMetaObject& componentMetaObject() const;
+        virtual const QMetaObject& componentMetaObject() const;
 
         /**
          * @brief identifying name of component
          */
-        const QString name() const { return _componentMetaObject->className(); }
+        virtual const QString name() const { return _componentMetaObject->className(); }
 
         /**
          * Return begin iterator of component container
@@ -129,7 +144,7 @@ namespace QtEntity
          * @param name Name of the property
          * @return a map of QVariants
          */
-        virtual QVariantMap attributesForProperty(const QString& name) const { return QVariantMap(); }
+        virtual const QVariantMap attributesForProperty(const QString& name) const { return QVariantMap(); }
 
     signals:
 
@@ -171,7 +186,7 @@ namespace QtEntity
     };
 
     template <typename T>
-    bool EntitySystem::getComponent(EntityId id, T*& component) const
+    bool SimpleEntitySystem::getComponent(EntityId id, T*& component) const
     {
         QObject* obj = this->getComponent(id);
         component = qobject_cast<T*>(obj);

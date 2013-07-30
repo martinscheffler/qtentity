@@ -40,7 +40,7 @@ void Shape::setZIndex(int i)
 
 
 ShapeSystem::ShapeSystem(Renderer* renderer)
-    : EntitySystem(Shape::staticMetaObject)
+    : SimpleEntitySystem(Shape::staticMetaObject)
     , _renderer(renderer)
 {
 
@@ -58,7 +58,7 @@ QObject* ShapeSystem::createObjectInstance(QtEntity::EntityId id, const QVariant
 
 }
 
-QVariantMap ShapeSystem::attributesForProperty(const QString& name) const
+const QVariantMap ShapeSystem::attributesForProperty(const QString& name) const
 {
     QVariantMap r;
     if(name == "path")

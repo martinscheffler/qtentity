@@ -5,7 +5,7 @@
 #include <QtEntity/MetaObjectRegistry>
 
 EnemySystem::EnemySystem()
-    :QtEntity::EntitySystem(Enemy::staticMetaObject)
+    :QtEntity::SimpleEntitySystem(Enemy::staticMetaObject)
 {
     QtEntity::registerMetaObject(TestObj1::staticMetaObject);
     QtEntity::registerMetaObject(TestObj2::staticMetaObject);
@@ -31,7 +31,7 @@ void EnemySystem::step(int frameNumber, int totalTime, int delta)
 
 
 
-QVariantMap EnemySystem::attributesForProperty(const QString& name) const
+const QVariantMap EnemySystem::attributesForProperty(const QString& name) const
 {
     QVariantMap r;
     if(name == "myobjects")

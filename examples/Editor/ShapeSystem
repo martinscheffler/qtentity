@@ -43,14 +43,14 @@ private:
 };
 
 
-class ShapeSystem : public QtEntity::EntitySystem
+class ShapeSystem : public QtEntity::SimpleEntitySystem
 {
     Q_OBJECT
 
 public:
     ShapeSystem(Renderer* renderer);
 
-    virtual QVariantMap attributesForProperty(const QString& name) const;
+    virtual const QVariantMap attributesForProperty(const QString& name) const;
 protected:
     // override to call ListEntry constructor passing it pointer to this
     virtual QObject* createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals) override;

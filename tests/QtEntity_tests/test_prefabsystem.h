@@ -31,7 +31,7 @@ private slots:
         PrefabSystem* ps = new PrefabSystem();
         em.addEntitySystem(ps);
 
-        EntitySystem* es = new EntitySystem(MyComponent::staticMetaObject);
+        SimpleEntitySystem* es = new SimpleEntitySystem(MyComponent::staticMetaObject);
         em.addEntitySystem(es);
 
         QVariantMap mycomponent;
@@ -62,7 +62,7 @@ private slots:
         PrefabSystem* ps = new PrefabSystem();
         em.addEntitySystem(ps);
 
-        EntitySystem* es = new EntitySystem(MyComponent::staticMetaObject);
+        SimpleEntitySystem* es = new SimpleEntitySystem(MyComponent::staticMetaObject);
         em.addEntitySystem(es);
 
         QVariantMap mycomponent;
@@ -95,7 +95,7 @@ private slots:
         PrefabSystem* ps = new PrefabSystem();
         em.addEntitySystem(ps);
 
-        EntitySystem* es = new EntitySystem(MyComponent::staticMetaObject);
+        SimpleEntitySystem* es = new SimpleEntitySystem(MyComponent::staticMetaObject);
         em.addEntitySystem(es);
 
         QVariantMap mycomponent;
@@ -131,7 +131,7 @@ private slots:
         PrefabSystem* ps = new PrefabSystem();
         em.addEntitySystem(ps);
 
-        EntitySystem* es = new EntitySystem(MyComponent::staticMetaObject);
+        SimpleEntitySystem* es = new SimpleEntitySystem(MyComponent::staticMetaObject);
         em.addEntitySystem(es);
 
         QVariantMap mycomponent;

@@ -12,11 +12,11 @@ public:
     Q_INVOKABLE MocComponent() {}
 };
 
-class MocEntitySystem : public EntitySystem
+class MocEntitySystem : public SimpleEntitySystem
 {
     Q_OBJECT
 public:
-    MocEntitySystem() : EntitySystem(MocComponent::staticMetaObject) {}
+    MocEntitySystem() : SimpleEntitySystem(MocComponent::staticMetaObject) {}
 };
 
 

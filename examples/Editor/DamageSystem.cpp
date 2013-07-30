@@ -4,7 +4,7 @@
 #include <QtEntity/EntityManager>
 
 DamageSystem::DamageSystem()
-    :QtEntity::EntitySystem(Damage::staticMetaObject)
+    :QtEntity::SimpleEntitySystem(Damage::staticMetaObject)
 {
 
 }
@@ -20,7 +20,7 @@ void DamageSystem::step(int frameNumber, int totalTime, int delta)
 }
 
 
-QVariantMap DamageSystem::attributesForProperty(const QString& name) const
+const QVariantMap DamageSystem::attributesForProperty(const QString& name) const
 {
     QVariantMap r;
     if(name == "energy")

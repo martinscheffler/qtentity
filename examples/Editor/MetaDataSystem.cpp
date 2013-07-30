@@ -30,7 +30,7 @@ void MetaData::setAdditionalInfo(const QString& info)
 
 
 MetaDataSystem::MetaDataSystem()
-    : QtEntity::EntitySystem(MetaData::staticMetaObject)
+    : QtEntity::SimpleEntitySystem(MetaData::staticMetaObject)
 {
 
 }
@@ -38,7 +38,7 @@ MetaDataSystem::MetaDataSystem()
 
 QObject* MetaDataSystem::createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals)
 {
-    QObject* obj = EntitySystem::createComponent(id, propertyVals);
+    QObject* obj = SimpleEntitySystem::createComponent(id, propertyVals);
     if(obj != NULL)
     {
         MetaData* entry;
@@ -67,6 +67,6 @@ bool MetaDataSystem::destroyComponent(QtEntity::EntityId id)
         emit entityRemoved(id);
     }
 
-    return EntitySystem::destroyComponent(id);
+    return SimpleEntitySystem::destroyComponent(id);
 }
 

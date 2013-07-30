@@ -69,7 +69,7 @@ private:
 };
 
 
-class EnemySystem : public QtEntity::EntitySystem
+class EnemySystem : public QtEntity::SimpleEntitySystem
 {
     Q_OBJECT
 
@@ -78,5 +78,5 @@ public:
 
     void step(int frameNumber, int totalTime, int delta);
 
-    virtual QVariantMap attributesForProperty(const QString& name) const;
+    virtual const QVariantMap attributesForProperty(const QString& name) const;
 };

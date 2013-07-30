@@ -103,9 +103,9 @@ namespace QtEntityUtils
         for(auto i = em.begin(); i != em.end(); ++i)
         {
             QtEntity::EntitySystem* es = *i;
-            if(!es->hasComponent(eid)) continue;
-
             QObject* component = es->getComponent(eid);
+            if(component == nullptr) continue;
+
             const QMetaObject& meta = es->componentMetaObject();
 
             // store property name-value pairs

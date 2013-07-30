@@ -22,7 +22,7 @@ private:
 };
 
 
-class DamageSystem : public QtEntity::EntitySystem
+class DamageSystem : public QtEntity::SimpleEntitySystem
 {
     Q_OBJECT
 
@@ -30,5 +30,5 @@ public:
     DamageSystem();
 
     void step(int frameNumber, int totalTime, int delta);
-    virtual QVariantMap attributesForProperty(const QString& name) const;
+    virtual const QVariantMap attributesForProperty(const QString& name) const;
 };

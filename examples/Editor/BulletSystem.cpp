@@ -4,7 +4,7 @@
 #include <QtEntity/EntityManager>
 
 BulletSystem::BulletSystem()
-    :QtEntity::EntitySystem(Bullet::staticMetaObject)
+    : QtEntity::SimpleEntitySystem(Bullet::staticMetaObject)
 {
 
 }

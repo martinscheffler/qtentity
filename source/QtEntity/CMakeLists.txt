@@ -13,6 +13,7 @@ set(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/DataTypes
   ${HEADER_PATH}/EntityManager
   ${HEADER_PATH}/EntitySystem
+  ${HEADER_PATH}/MemoryPool
   ${HEADER_PATH}/MetaObjectRegistry
   ${HEADER_PATH}/PrefabSystem
   ${HEADER_PATH}/ReaderWriterJSON

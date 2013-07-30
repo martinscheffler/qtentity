@@ -22,7 +22,7 @@ namespace QtEntity
 
 
     PrefabSystem::PrefabSystem()
-        :QtEntity::EntitySystem(PrefabInstance::staticMetaObject)
+        :QtEntity::SimpleEntitySystem(PrefabInstance::staticMetaObject)
     {
 
     }

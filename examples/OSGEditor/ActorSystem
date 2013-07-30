@@ -154,7 +154,7 @@ private:
 };
 
 
-class ActorSystem : public QtEntity::EntitySystem
+class ActorSystem : public QtEntity::SimpleEntitySystem
 {
     Q_OBJECT
 
@@ -168,7 +168,7 @@ public:
     // override to emit signal for removing entity list entry
     virtual bool destroyComponent(QtEntity::EntityId id) override;
 
-    virtual QVariantMap attributesForProperty(const QString& name) const;
+    virtual const QVariantMap attributesForProperty(const QString& name) const;
 
     void writeNodes();
 

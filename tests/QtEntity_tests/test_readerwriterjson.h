@@ -76,11 +76,11 @@ private:
     PropertyObjects _myobjects;
 };
 
-class DataHolderSystem : public EntitySystem
+class DataHolderSystem : public SimpleEntitySystem
 {
     Q_OBJECT
 public:
-    DataHolderSystem() : EntitySystem(DataHolder::staticMetaObject) {}
+    DataHolderSystem() : SimpleEntitySystem(DataHolder::staticMetaObject) {}
 };
 
 class ReaderWriterJSONTest: public QObject
