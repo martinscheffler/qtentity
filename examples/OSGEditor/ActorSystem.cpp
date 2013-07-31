@@ -2,7 +2,6 @@
 #include <osg/Geode>
 #include <QStringList>
 #include <QtEntity/MetaObjectRegistry>
-#include <osgDB/WriteFile>
 
 Actor::Actor(QtEntity::EntityId id, osg::Group* parent, const QString& name, const QVector3D& pos, ActorSystem* as)
     : _id(id)
@@ -50,7 +49,6 @@ void Actor::setShapes(const QtEntity::PropertyObjects& v)
         ShapeDrawable* sd = static_cast<ShapeDrawable*>(o.data());
         _geode->addDrawable(sd->_shapeDrawable);
     }
-    _system->writeNodes();
 }
 
 
@@ -112,9 +110,4 @@ const QVariantMap ActorSystem::attributesForProperty(const QString& name) const
         r["classnames"] = sl;
     }
     return r;
-}
-
-void ActorSystem::writeNodes()
-{
-    osgDB::writeNodeFile(*_rootNode, "/tmp/nodes.osg");
 }

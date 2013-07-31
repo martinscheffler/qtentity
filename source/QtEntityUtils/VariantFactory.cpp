@@ -24,6 +24,7 @@ namespace QtEntityUtils
         }
     }
 
+
     void VariantFactory::connectPropertyManager(QtVariantPropertyManager *manager)
     {
         connect(manager, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
@@ -32,6 +33,7 @@ namespace QtEntityUtils
                     this, SLOT(slotPropertyAttributeChanged(QtProperty *, const QString &, const QVariant &)));
         QtVariantEditorFactory::connectPropertyManager(manager);
     }
+
 
     QWidget *VariantFactory::createEditor(QtVariantPropertyManager *manager,
             QtProperty *property, QWidget *parent)
@@ -63,6 +65,7 @@ namespace QtEntityUtils
         return QtVariantEditorFactory::createEditor(manager, property, parent);
     }
 
+
     void VariantFactory::disconnectPropertyManager(QtVariantPropertyManager *manager)
     {
         disconnect(manager, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
@@ -71,6 +74,7 @@ namespace QtEntityUtils
                     this, SLOT(slotPropertyAttributeChanged(QtProperty *, const QString &, const QVariant &)));
         QtVariantEditorFactory::disconnectPropertyManager(manager);
     }
+
 
     void VariantFactory::slotPropertyChanged(QtProperty *property,
                     const QVariant &value)
@@ -92,6 +96,7 @@ namespace QtEntityUtils
                 itEditor.next()->setValue(value.value<QVariantList>());
         }
     }
+
 
     void VariantFactory::slotPropertyAttributeChanged(QtProperty *property,
                 const QString &attribute, const QVariant &value)

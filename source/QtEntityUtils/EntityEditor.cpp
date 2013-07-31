@@ -1,6 +1,7 @@
 #include <QtEntityUtils/EntityEditor>
 #include <QtEntityUtils/VariantFactory>
 #include <QtEntityUtils/VariantManager>
+#include <QtEntityUtils/PropertyObjectsEdit>
 #include <QtPropertyBrowser/QtTreePropertyBrowser>
 #include <QtEntity/EntityManager>
 #include <QtEntity/MetaObjectRegistry>
@@ -27,8 +28,8 @@ namespace QtEntityUtils
         layout()->addWidget(_editor);
 
         connect(_propertyManager, &VariantManager::valueChanged, this, &EntityEditor::propertyValueChanged);
-
     }
+
 
     void EntityEditor::displayEntity(QtEntity::EntityId id, const QVariant& data)
     {
@@ -109,36 +110,12 @@ namespace QtEntityUtils
             const QMetaObject& meta = es->componentMetaObject();
 
             // store property name-value pairs
-            QVariantMap componentvals;
+            QVariantMap componentvals = PropertyObjectEditor::componentToVariantMap(*component);
+
             for(int j = 0; j < meta.propertyCount(); ++j)
             {
                 QMetaProperty prop = meta.property(j);
-				const char* name = prop.name();
-                if(strcmp(name, "objectName") == 0) continue;
-
-                if(prop.userType() == VariantManager::propertyObjectsId())
-                {
-                    QVariantList vl;
-
-                    QtEntity::PropertyObjects po = prop.read(component).value<QtEntity::PropertyObjects>();
-                    foreach(auto o, po)
-                    {
-                        QVariantMap m;
-                        const QMetaObject& meta = *o->metaObject();
-                        m["classname"] = meta.className();
-                        for(int j = 0; j < meta.propertyCount(); ++j)
-                        {
-                            QMetaProperty prop = meta.property(j);
-                            m[prop.name()] = prop.read(o.data());
-                        }
-                        vl.append(m);
-                    }
-                    componentvals[name] = vl;
-                }
-                else
-                {
-                    componentvals[name] = prop.read(component);
-                }
+				const char* name = prop.name();               
 
                 // store property constraints. Prepend a "#|" to identify
                 QVariantMap constraints = es->attributesForProperty(name);
@@ -157,109 +134,50 @@ namespace QtEntityUtils
 
     void EntityEditor::applyEntityData(QtEntity::EntityManager& em, QtEntity::EntityId eid, const QString& componenttype, const QString& propertyname, const QVariant& value)
     {
-        for(auto i = em.begin(); i != em.end(); ++i)
+        QtEntity::EntitySystem* es = em.getSystemByComponentClassName(componenttype);
+        if(es == nullptr)
         {
-            QtEntity::EntitySystem* es = *i;
-            if(es->name() != componenttype) continue;
+            qDebug() << "Could not apply entity data, no entity system of type " << componenttype;
+            return;
+        }
+        
+        QObject* component = es->getComponent(eid);
+        if(!component) 
+        {
+            qDebug() << "Could not apply entity data, no component of type " << componenttype << " on entity " << eid;
+            return;
+        }
 
-            QObject* component = es->getComponent(eid);
-            if(!component) continue;
+        const QMetaObject& meta = es->componentMetaObject();
 
-            const QMetaObject& meta = es->componentMetaObject();
-            for(int j = 0; j < meta.propertyCount(); ++j)
+        bool foundprop = false;
+        QMetaProperty prop;
+        for(int j = 0; j < meta.propertyCount(); ++j)
+        {
+            if(meta.property(j).name() == propertyname) 
             {
-                QMetaProperty prop = meta.property(j);
-                if(prop.name() != propertyname) continue;
-
-                if(prop.userType() == VariantManager::propertyObjectsId())
-                {
-                    QVariantList vars = value.value<QVariantList>();
-                    QtEntity::PropertyObjects objs = prop.read(component).value<QtEntity::PropertyObjects>();
-
-                    // delete objects not in vars list or update existing.
-                    for(auto i = objs.begin(); i != objs.end(); ++i)
-                    {
-                        QString objname = i->data()->objectName();
-                        bool found = false;
-                        foreach(auto j, vars)
-                        {
-                            QVariantMap map = j.value<QVariantMap>();
-                            if(map.contains("objectName") && map["objectName"].toString() == objname)
-                            {
-                                found = true;
-
-                                // object still exists. Update from vars
-                                const QMetaObject* mo = i->data()->metaObject();
-                                for(int k = 0; k < mo->propertyCount(); ++k)
-                                {
-                                    QMetaProperty prp = mo->property(k);
-                                    QString todo_remove =prp.name();
-                                    if(map.contains(prp.name()))
-                                    {
-                                        prp.write(i->data(), map[prp.name()]);
-                                    }
-                                }
-                            }
-                        }
-
-                        // delete object if not found in property list
-                        if(!found)
-                        {
-                            i = objs.erase(i);
-                        }
-                    }
-
-                    // Create new objects from vars
-                    foreach(auto i, vars)
-                    {
-                        QVariantMap map = i.value<QVariantMap>();
-
-                        if(!map.contains("objectName") || map["objectName"].toString() == "")
-                        {
-                            map["objectName"] = QUuid::createUuid().toString();
-
-                            Q_ASSERT(map.contains("classname"));
-                            QString classname = map["classname"].toString();
-
-                            const QMetaObject* mo = QtEntity::metaObjectByClassName(classname);
-                            if(!mo)
-                            {
-                                qDebug() << "Could not instantiate, classname not registered: " << classname;
-                                return;
-                            }
-
-                            QObject* obj = mo->newInstance();
-
-                            if(obj == nullptr)
-                            {
-                                qDebug() << "Could not create object of class " << classname;
-                                continue;
-                            }
-
-
-
-                            for(int j = 0; j < mo->propertyCount(); ++j)
-                            {
-                                QMetaProperty prp = mo->property((j));
-                                if(map.contains(prp.name()))
-                                {
-                                    prp.write(obj, map[prp.name()]);
-                                }
-                            }
-
-                            objs.push_back(QtEntity::PropertyObjectPointer(obj));
-                            prop.write(component, QVariant::fromValue(objs));
-
-                        }
-                    }
-                }
-                else
-                {
-                    prop.write(component, value);
-                }
-                return;
+                foundprop = true;
+                prop = meta.property(j);
+                break;
             }
+        }
 
+        if(!foundprop)
+        {
+            qDebug() << "No property named " << propertyname << " on object of type " << meta.className();
+            return;
+        }
+
+        if(prop.userType() == VariantManager::propertyObjectsId())
+        {
+            QVariantList vars = value.value<QVariantList>();
+            QtEntity::PropertyObjects objs = prop.read(component).value<QtEntity::PropertyObjects>();
+            QtEntity::PropertyObjects objsnew = PropertyObjectEditor::updatePropertyObjectsFromVariantList(objs, vars);
+            prop.write(component, QVariant::fromValue(objsnew));
+        }
+        else
+        {
+            prop.write(component, value);
         }
     }
 

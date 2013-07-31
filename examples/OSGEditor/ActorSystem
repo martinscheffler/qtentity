@@ -57,7 +57,7 @@ public:
         _shapeDrawable->setShape(_sphere);
     }
 
-    void setRadius(float v) { _sphere->setRadius(v); }
+    void setRadius(float v) { _sphere->setRadius(v); _shapeDrawable->dirtyDisplayList();}
     float radius() const { return _sphere->getRadius(); }
 
     QVector3D center() const
@@ -68,6 +68,7 @@ public:
     void setCenter(const QVector3D& v)
     {
         _sphere->setCenter(osg::Vec3d(v.x(), v.y(), v.z()));
+        _shapeDrawable->dirtyDisplayList();
     }
 
 };
@@ -98,6 +99,7 @@ public:
     void setHalfLengths(const QVector3D& v)
     {
         _box->setHalfLengths(osg::Vec3d(v.x(), v.y(), v.z()));
+        _shapeDrawable->dirtyDisplayList();
     }
 
     QVector3D center() const
@@ -109,6 +111,7 @@ public:
     void setCenter(const QVector3D& v)
     {
         _box->setCenter(osg::Vec3d(v.x(), v.y(), v.z()));
+        _shapeDrawable->dirtyDisplayList();
     }
 
 };
@@ -169,8 +172,6 @@ public:
     virtual bool destroyComponent(QtEntity::EntityId id) override;
 
     virtual const QVariantMap attributesForProperty(const QString& name) const;
-
-    void writeNodes();
 
 signals:
 

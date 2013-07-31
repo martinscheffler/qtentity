@@ -11,6 +11,7 @@
 #include <QMetaProperty>
 #include <QDebug>
 #include <QComboBox>
+#include <QUuid>
 
 namespace QtEntityUtils
 {
@@ -39,32 +40,144 @@ namespace QtEntityUtils
         connect(_ui->_removeButton, &QPushButton::clicked, this, &PropertyObjectEditor::removePressed);
         for(auto i = objects.begin(); i != objects.end(); ++i)
         {
-            QVariantMap obj = i->value<QVariantMap>();
-            QString classname = obj["classname"].toString();
-            const QMetaObject* meta = QtEntity::metaObjectByClassName(classname);
-
-            QtProperty* item = _propertyManager->addProperty(QtVariantPropertyManager::groupTypeId(), classname);
-            _editor->addProperty(item);
-            for(int j = 0; j < meta->propertyCount(); ++j)
-            {
-                QMetaProperty prop = meta->property((j));
-                //if(strcmp(prop.name(), "objectName") == 0) continue;
-                QtVariantProperty* propitem = _propertyManager->addProperty(prop.userType(), prop.name());
-                item->addSubProperty(propitem);
-                if(obj.find(prop.name()) != obj.end())
-                {
-                    propitem->setValue(obj[prop.name()]);
-                }
-            }
+            QVariantMap map = i->value<QVariantMap>();
+            QString classname = map["classname"].toString();
+            addObjectProperties(classname, map);
         }
     }
 
 
-    void PropertyObjectEditor::addObject()
+    QVariantMap PropertyObjectEditor::componentToVariantMap(const QObject& object)
     {
-        QString classname = _ui->_classNames->currentText();
-        const QMetaObject* mo = QtEntity::metaObjectByClassName(classname);
-        if(!mo)
+        QVariantMap ret;
+       
+        const QMetaObject& meta = *object.metaObject();
+        
+        for(int j = 0; j < meta.propertyCount(); ++j)
+        {
+            QMetaProperty prop = meta.property(j);
+			const char* name = prop.name();            
+
+            if(prop.userType() == VariantManager::propertyObjectsId())
+            {
+                QVariantList vl;
+
+                QtEntity::PropertyObjects po = prop.read(&object).value<QtEntity::PropertyObjects>();
+                foreach(auto o, po)
+                {
+                    QVariantMap m;
+                    const QMetaObject& meta = *o->metaObject();
+                    m["classname"] = meta.className();
+                    for(int j = 0; j < meta.propertyCount(); ++j)
+                    {
+                        QMetaProperty prop = meta.property(j);
+                        m[prop.name()] = prop.read(o.data());
+                    }
+                    vl.append(m);
+                }
+                ret[name] = vl;
+            }
+            else
+            {
+                ret[name] = prop.read(&object);
+            } 
+        }        
+    
+        return ret;
+    }
+
+
+    void applyPropertiesToObject(const QVariantMap& map, QObject* object)
+    {
+        const QMetaObject* meta = object->metaObject();
+
+        for(int i = 0; i < meta->propertyCount(); ++i)
+        {
+            QMetaProperty prop = meta->property(i);  
+            QString propname = prop.name();
+            if(!map.contains(propname)) continue;
+
+            QVariant val = map[propname];
+
+            if(prop.userType() != VariantManager::propertyObjectsId())
+            {
+                prop.write(object, val);
+            }
+            else
+            {
+                QVariantList vars = val.value<QVariantList>();
+                QtEntity::PropertyObjects subobjs;
+              
+                // Create new objects from vars
+                foreach(auto j, vars)
+                {
+                    QVariantMap objmap = j.value<QVariantMap>();
+                    Q_ASSERT(objmap.contains("classname"));
+                    
+                    // create new UUID
+                    objmap["objectName"] = QUuid::createUuid().toString();
+
+                    QString classname = objmap["classname"].toString();
+
+                    const QMetaObject* mo = QtEntity::metaObjectByClassName(classname);
+                    if(!mo)
+                    {
+                        qDebug() << "Could not instantiate, classname not registered: " << classname;
+                        continue;
+                    }
+
+                    QObject* subobj = mo->newInstance();
+
+                    if(subobj == nullptr)
+                    {
+                        qDebug() << "Could not create object of class " << classname;
+                        continue;
+                    }
+                    
+                    for(int k = 0; k < mo->propertyCount(); ++k)
+                    {
+                        QMetaProperty prp = mo->property(k);
+                        if(objmap.contains(prp.name()))
+                        {
+                            prp.write(subobj, map[prp.name()]);
+                        }
+                    }
+                    subobjs.push_back(QtEntity::PropertyObjectPointer(subobj));  
+                }
+
+                prop.write(object, QVariant::fromValue(subobjs));
+            }            
+        }
+    }
+
+
+    QObject* PropertyObjectEditor::variantMapToObject(const QVariantMap& map)
+    {
+        
+        if(!map.contains("classname")) 
+        {
+            qDebug() << "Cannot convert variant map to object, no classname set!";
+            return nullptr;
+        }
+
+        QString classname = map["classname"].toString();
+        const QMetaObject* meta = QtEntity::metaObjectByClassName(classname);
+        if(!meta) 
+        {
+            qDebug() << "Cannot convert variant map to object, class not registered: " << classname;
+            return nullptr;
+        }
+
+        QObject* retobj = meta->newInstance();
+        applyPropertiesToObject(map, retobj);
+        return retobj;    
+    }
+
+
+    void PropertyObjectEditor::addObjectProperties(const QString& classname, const QVariantMap& obj)
+    {        
+        const QMetaObject* meta = QtEntity::metaObjectByClassName(classname);
+        if(!meta)
         {
             qDebug() << "Could not instantiate, classname not registered: " << classname;
             return;
@@ -72,30 +185,110 @@ namespace QtEntityUtils
 
         QtProperty* item = _propertyManager->addProperty(QtVariantPropertyManager::groupTypeId(), classname);
         _editor->addProperty(item);
-
-        // create instance to fill properties with default constructed values
-        QObject* obj = mo->newInstance();
-        if(obj == nullptr)
+        for(int j = 0; j < meta->propertyCount(); ++j)
         {
-            qDebug() << "Could not create object of class " << classname;
-            return;
-        }
-        for(int j = 0; j < mo->propertyCount(); ++j)
-        {
-            QMetaProperty prop = mo->property((j));
-
+            QMetaProperty prop = meta->property((j));
+            //if(strcmp(prop.name(), "objectName") == 0) continue;
             QtVariantProperty* propitem = _propertyManager->addProperty(prop.userType(), prop.name());
-            if(propitem == nullptr)
+            item->addSubProperty(propitem);
+            if(obj.find(prop.name()) != obj.end())
             {
-                qDebug() << "Could not create property editor for property named " << prop.name();
+                propitem->setValue(obj[prop.name()]);
+            }
+        }
+    }
+
+
+    QtEntity::PropertyObjects PropertyObjectEditor::updatePropertyObjectsFromVariantList(const QtEntity::PropertyObjects& in, const QVariantList& varlist)
+    {
+        QtEntity::PropertyObjects ret;
+        
+        foreach(auto i, varlist)
+        {
+            QVariantMap map = i.value<QVariantMap>();
+            if(!map.contains("classname"))
+            {
+                qDebug() << "Error: Property Objects Variant Map contains no classname value! Skipping.";
+                continue;
+            }
+
+            QString classname = map["classname"].toString();
+
+            // when no object name is set then this is a newly created object. Create new object instance and
+            // add to ret value
+            if(!map.contains("objectName") || map["objectName"].toString() == "")
+            {
+                // create a new object name from random string
+                map["objectName"] = QUuid::createUuid().toString();
+
+                const QMetaObject* mo = QtEntity::metaObjectByClassName(classname);
+                if(!mo)
+                {
+                    qDebug() << "Could not instantiate, classname not registered: " << classname;
+                    continue;
+                }
+
+                QObject* obj = mo->newInstance();
+
+                if(obj == nullptr)
+                {
+                    qDebug() << "Could not create object of class " << classname;
+                    continue;
+                }
+
+                for(int j = 0; j < mo->propertyCount(); ++j)
+                {
+                    QMetaProperty prp = mo->property((j));
+                    if(map.contains(prp.name()))
+                    {
+                        prp.write(obj, map[prp.name()]);
+                    }
+                }
+
+                ret.push_back(QtEntity::PropertyObjectPointer(obj));
             }
             else
             {
-                item->addSubProperty(propitem);
-                propitem->setValue(prop.read(obj));
+                QtEntity::PropertyObjectPointer obj;
+                QString objname = map["objectName"].toString();
+                foreach(auto j, in)
+                {                    
+                    if(j->objectName() == objname)
+                    {
+                        obj = j;
+                        break;
+                    }
+                }
+                if(obj.isNull())
+                {
+                    qDebug() << "Could not update existing object, not found! ObjectName: " << objname;
+                    continue;
+                }
+                const QMetaObject* mo = obj->metaObject();
+                for(int k = 0; k < mo->propertyCount(); ++k)
+                {
+                    QMetaProperty prp = mo->property(k);
+                    QString prpname = prp.name();
+                    if(map.contains(prpname) && map[prpname] != prp.read(obj.data()))
+                    {
+                        prp.write(obj.data(), map[prpname]);
+                    }
+                }
+                ret.push_back(obj);
             }
         }
-        delete obj;
+
+        return ret;
+    }
+
+    void PropertyObjectEditor::addObject()
+    {
+        QString classname = _ui->_classNames->currentText();
+        const QMetaObject* mo = QtEntity::metaObjectByClassName(classname);
+        QObject* instance = mo->newInstance();
+        QVariantMap map = componentToVariantMap(*instance);
+        delete instance;
+        addObjectProperties(classname, map);
     }
 
 
@@ -210,6 +403,7 @@ namespace QtEntityUtils
         connect(_editor, &PropertyObjectEditor::finished, this, &PropertyObjectsEdit::editorClosed);
         _editor->exec();
     }
+
 
     void PropertyObjectsEdit::editorClosed(int result)
     {        

@@ -3,6 +3,7 @@
 #include <QPushButton>
 #include <QVariantList>
 #include <QDialog>
+#include <QtEntity/DataTypes>
 
 class Ui_PropertyObjectsEdit;
 class QtTreePropertyBrowser;
@@ -20,6 +21,11 @@ namespace QtEntityUtils
         PropertyObjectEditor(QVariantList& objects, const QStringList& classnames);
 
         QVariantList propertyObjects() const;
+
+        static QVariantMap componentToVariantMap(const QObject& object);
+        static QObject* variantMapToObject(const QVariantMap& map);
+        static QtEntity::PropertyObjects updatePropertyObjectsFromVariantList(const QtEntity::PropertyObjects& in, const QVariantList& varlist);
+
     protected slots:
 
         void addObject();
@@ -29,6 +35,7 @@ namespace QtEntityUtils
         void removePressed();
 
     private:
+        void addObjectProperties(const QString& classname, const QVariantMap& obj);
 
         QStringList _classNames;
         Ui_PropertyObjectsEdit* _ui;

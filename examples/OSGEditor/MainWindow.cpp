@@ -5,7 +5,6 @@
 #include <QtEntity/DataTypes>
 #include <QtEntityUtils/EntityEditor>
 #include <QDebug>
-#include <QGLWidget>
 
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
