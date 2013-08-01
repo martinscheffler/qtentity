@@ -1,0 +1,162 @@
+#pragma once
+
+#include <QtEntity/Export>
+#include <QtEntity/EntitySystem>
+#include <QtEntity/DataTypes>
+#include <QObject>
+#include <QHash>
+#include <QVariantMap>
+#include <QtEntity/MemoryPool>
+#include <stdexcept>
+
+namespace QtEntity
+{
+
+    /**
+     * @brief EntitySystem objects hold a number of components
+     * which are basic QObject instances. Components are referenced
+     * by an integer handle, the entity id.
+     */
+    template< typename T>
+    class QTENTITY_EXPORT PooledEntitySystem : public EntitySystem
+    {
+        typedef QHash<EntityId, QObject*> ComponentStore;
+    public:
+
+        PooledEntitySystem()
+        : _entityManager(NULL)
+        {
+
+        }
+
+        virtual void setEntityManager(EntityManager* em) { _entityManager = em; }
+        EntityManager* entityManager() const { return _entityManager; }
+
+        virtual QObject* getComponent(EntityId id) const override
+        {
+            auto i = _components.find(id);
+            if(i == _components.end())
+            {
+                return nullptr;
+            }
+            return i.value();
+        }
+
+        virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) override
+        {
+            // check if component already exists
+            if(getComponent(id) != nullptr)
+            {
+                throw std::runtime_error("Component already existss!");
+            }
+
+            // use QMetaObject to construct new instance
+            QObject* obj = this->createObjectInstance(id, properties);
+
+            // out of memory?
+            if(obj == nullptr)
+            {
+                qCritical() << "Could not construct component. Have you declared a default constructor with Q_INVOKABLE?";
+                throw std::runtime_error("Component could not be constructed.");
+            }
+
+            // store
+            _components[id] = obj;
+
+            return obj;
+        }
+
+
+        /**
+         * @brief destroyComponent remove component from system and destruct it
+         * If you override this method then please make sure that you emit componentAboutToDestruct() before
+         * a component is destroyed
+         *
+         * @param id Entity id of component to destruc
+         * @return true if component existed, else false
+         */
+        virtual bool destroyComponent(EntityId id) override
+        {
+            auto i = _components.find(id);
+            if(i == _components.end()) return false;
+            delete i.value();
+            _components.erase(i);
+            return true;
+        }
+
+        /**
+         * @return  meta object type of component class
+         */
+        virtual const QMetaObject& componentMetaObject() const override
+        {
+            return T::staticMetaObject;
+        }
+
+        /**
+         * @brief identifying name of component
+         */
+        virtual const QString name() const override { return componentMetaObject().className(); }
+
+
+        /**
+         * @brief Returns all additional attributes for a property.
+         * This can be overwritten by entity system implementations to return
+         * a map of QVariants. This is especially used for specifying constraints
+         * for the QtPropertyBrowser, but can be used for other means.
+         * @param name Name of the property
+         * @return a map of QVariants
+         */
+        virtual const QVariantMap attributesForProperty(const QString& name) const override { return QVariantMap(); }
+
+    protected:
+
+        /**
+         * @brief Override this if you want to call a custom constructor
+         *        on your component
+         */
+        QObject* createObjectInstance(EntityId id, const QVariantMap& properties)
+        {
+            QObject* obj = componentMetaObject().newInstance();
+
+            if(!properties.empty())
+            {
+
+                const QMetaObject* meta = obj->metaObject();
+                for(int i = 0; i < meta->propertyCount(); ++i)
+                {
+                    QMetaProperty prop = meta->property(i);
+
+                    if(!prop.isWritable())
+                    {
+                        qWarning() << "Trying to initialize a non-writable property. Name is: " << prop.name();
+                    }
+                    else
+                    {
+                        auto var = properties.find(prop.name());
+                        if(var != properties.end())
+                        {
+                            bool success = prop.write(obj, var.value());
+                            if(!success)
+                            {
+                                qWarning() << "Could not set property. Name is: " << prop.name();
+                            }
+                        }
+                    }
+                }
+            }
+            return obj;
+        }
+
+        /**
+         * The entity manager that this entity system is assigned to.
+         * Is NULL if entity system was never added
+         */
+        EntityManager* _entityManager;
+    private:
+
+        ComponentStore _components;
+    };
+
+
+
+}
