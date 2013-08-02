@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtEntity/EntitySystem>
+#include <QtEntity/SimpleEntitySystem>
 #include <QVector3D>
 #include <osg/Group>
 #include <osg/Shape>

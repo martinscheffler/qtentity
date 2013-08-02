@@ -7,6 +7,7 @@
 #include <QtEntity/EntityManager>
 #include <QtEntity/ReaderWriterJSON>
 #include <QtEntity/MetaObjectRegistry>
+#include <QtEntity/SimpleEntitySystem>
 
 using namespace QtEntity;
 

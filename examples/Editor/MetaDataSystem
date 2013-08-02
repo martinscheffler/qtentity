@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtEntity/DataTypes>
-#include <QtEntity/EntitySystem>
+#include <QtEntity/SimpleEntitySystem>
 #include <QObject>
 
 

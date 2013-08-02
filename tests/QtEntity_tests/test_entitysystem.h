@@ -2,6 +2,7 @@
 #include <QtCore/QObject>
 #include <QtGui/QVector2D>
 #include <QtEntity/EntityManager>
+#include <QtEntity/SimpleEntitySystem>
 
 using namespace QtEntity;
 

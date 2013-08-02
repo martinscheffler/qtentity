@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtEntity/EntitySystem>
+#include <QtEntity/SimpleEntitySystem>
 #include <QtEntityUtils/VariantManager>
 
 #include <QRect>

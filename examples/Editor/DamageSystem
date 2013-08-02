@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtEntity/EntitySystem>
+#include <QtEntity/SimpleEntitySystem>
 
 class Damage : public QObject
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtEntity/Export>
-#include <QtEntity/EntitySystem>
+#include <QtEntity/SimpleEntitySystem>
 #include <QVariantMap>
 #include <QStringList>
 

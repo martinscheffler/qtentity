@@ -93,12 +93,6 @@ namespace QtEntity
         }
 
         /**
-         * @brief identifying name of component
-         */
-        virtual const QString name() const override { return componentMetaObject().className(); }
-
-
-        /**
          * @brief Returns all additional attributes for a property.
          * This can be overwritten by entity system implementations to return
          * a map of QVariants. This is especially used for specifying constraints

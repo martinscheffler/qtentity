@@ -1,9 +1,7 @@
 #pragma once
 
-#include <QtEntity/Export>
 #include <QtEntity/DataTypes>
 #include <QObject>
-#include <QHash>
 #include <QVariantMap>
 
 namespace QtEntity
@@ -17,124 +15,41 @@ namespace QtEntity
 
         virtual ~EntitySystem() {}
 
-        virtual QObject* getComponent(EntityId id) const = 0;
-        virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) = 0;
-        virtual bool destroyComponent(EntityId id) = 0;
-        virtual const QMetaObject& componentMetaObject() const = 0;
-        virtual void setEntityManager(EntityManager* em) = 0;
-        virtual const QVariantMap attributesForProperty(const QString& name) const = 0;
-        virtual const QString name() const = 0;
-    };
-
-    /**
-     * @brief EntitySystem objects hold a number of components
-     * which are basic QObject instances. Components are referenced
-     * by an integer handle, the entity id.
-     */
-    class QTENTITY_EXPORT SimpleEntitySystem : public EntitySystem
-    {
-        Q_OBJECT
-
-    public:
-        // data type of storage
-        typedef QHash<EntityId, QObject*> ComponentStore;
-
-        /**
-         * @brief EntitySystem constructor.
-         * @param componentMeta the QMetaObject of the QObject subclass that
-         *                      this entity system uses as components
-         */
-        SimpleEntitySystem(const QMetaObject& componentMeta);
-
-        virtual ~SimpleEntitySystem();
-
         /**
          * This is called by entity manager when system is added to entity manager
          */
-        virtual void setEntityManager(EntityManager* em)
-        {
-            _entityManager = em;
-        }
-
-        /**
-         * @brief fetch entityManager this system is associated with
-         */
-        EntityManager* entityManager() const
-        {
-            return _entityManager;
-        }
+        virtual void setEntityManager(EntityManager* em) = 0;
 
         /**
          * @brief getComponent Return component associated with passed id
          * @param id EntityId of component to fetch
          * @return component or nullptr if it does not exist
          */
-        virtual QObject* getComponent(EntityId id) const;
-
-        template <typename T>
-        bool getComponent(EntityId id, T*& component) const;
-
-        /**
-         * @brief hasComponent returns true if a component is associated with passed id
-         * @param id EntityId of component to check
-         * @return true if exists
-         */
-        bool hasComponent(EntityId id) const;
+        virtual QObject* getComponent(EntityId id) const = 0;
 
         /**
          * @brief createComponent Construct a component from meta type.
          * @throw runtime_exception
-         *
-         * If you override this method then please make sure that you emit componentCreated() when
-         * a component was created
          *
          * @param id Entity id to associate it with
          * @param properties A map of property values to apply to component before adding it to system
          *                   Format is: { name of QMetaProperty => value to set }
          * @return newly constructed component
          */
-        virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap());
+        virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) = 0;
 
         /**
          * @brief destroyComponent remove component from system and destruct it
-         * If you override this method then please make sure that you emit componentAboutToDestruct() before
-         * a component is destroyed
          *
-         * @param id Entity id of component to destruc
+         * @param id Entity id of component to destruct
          * @return true if component existed, else false
          */
-        virtual bool destroyComponent(EntityId id);
+        virtual bool destroyComponent(EntityId id) = 0;
 
         /**
          * @return  meta object type of component class
          */
-        virtual const QMetaObject& componentMetaObject() const;
-
-        /**
-         * @brief identifying name of component
-         */
-        virtual const QString name() const { return _componentMetaObject->className(); }
-
-        /**
-         * Return begin iterator of component container
-         */
-        virtual ComponentStore::iterator begin() { return _components.begin(); }
-
-        /**
-         * Return end iterator of component container
-         */
-        virtual ComponentStore::iterator end() { return _components.end(); }
-
-        /**
-         * Return begin iterator of component container
-         */
-        virtual ComponentStore::const_iterator begin() const { return _components.begin(); }
-
-        /**
-         * Return end iterator of component container
-         */
-        virtual ComponentStore::const_iterator end() const { return _components.end(); }
-
+        virtual const QMetaObject& componentMetaObject() const = 0;
 
         /**
          * @brief Returns all additional attributes for a property.
@@ -144,53 +59,7 @@ namespace QtEntity
          * @param name Name of the property
          * @return a map of QVariants
          */
-        virtual const QVariantMap attributesForProperty(const QString& name) const { return QVariantMap(); }
-
-    signals:
-
-        /**
-         * Gets emitted when a component was just created and added to the system
-         */
-        void componentCreated(QtEntity::EntityId, QObject*);
-
-        /**
-         * Gets emitted right before component is removed from system and deleted
-         */
-        void componentAboutToDestruct(QtEntity::EntityId, QObject*);
-
-    protected:
-
-        /**
-         * Loops through properties of QObject and assigns values from properties map
-         * if they are set
-         * @param obj Write values to properties of this object
-         * @param Read these properties
-         */
-        static void applyParameters(QObject* obj, const QVariantMap& properties);
-
-        /**
-         * @brief Override this if you want to call a custom constructor
-         *        on your component
-         */
-        virtual QObject* createObjectInstance(EntityId id, const QVariantMap& propertyVals);
-
-        /**
-         * The entity manager that this entity system is assigned to.
-         * Is NULL if entity system was never added
-         */
-        EntityManager* _entityManager;
-    private:
-
-        const QMetaObject* _componentMetaObject;
-        ComponentStore _components;
+        virtual const QVariantMap attributesForProperty(const QString& name) const = 0;
     };
-
-    template <typename T>
-    bool SimpleEntitySystem::getComponent(EntityId id, T*& component) const
-    {
-        QObject* obj = this->getComponent(id);
-        component = qobject_cast<T*>(obj);
-        return (component != NULL);
-    }
 
 }

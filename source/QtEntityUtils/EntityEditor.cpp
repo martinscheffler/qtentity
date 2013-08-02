@@ -125,7 +125,7 @@ namespace QtEntityUtils
                 }
 
             }
-            components[es->name()] = componentvals;
+            components[es->componentMetaObject().className()] = componentvals;
 
         }
         return components;
