@@ -20,32 +20,35 @@ namespace QtEntity
     template< typename T>
     class QTENTITY_EXPORT PooledEntitySystem : public EntitySystem
     {
-        typedef QHash<EntityId, QObject*> ComponentStore;
+
     public:
 
         PooledEntitySystem()
         : _entityManager(NULL)
         {
-
+            //_pool.initialize( init_size, chunk_size );
         }
+
 
         virtual void setEntityManager(EntityManager* em) { _entityManager = em; }
         EntityManager* entityManager() const { return _entityManager; }
 
         virtual QObject* getComponent(EntityId id) const override
         {
-            auto i = _components.find(id);
+           /* auto i = _components.find(id);
             if(i == _components.end())
             {
                 return nullptr;
             }
             return i.value();
+            */
+            return nullptr;
         }
 
         virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) override
         {
             // check if component already exists
-            if(getComponent(id) != nullptr)
+            /*if(getComponent(id) != nullptr)
             {
                 throw std::runtime_error("Component already existss!");
             }
@@ -63,7 +66,8 @@ namespace QtEntity
             // store
             _components[id] = obj;
 
-            return obj;
+            return obj;*/
+            return nullptr;
         }
 
 
@@ -77,11 +81,12 @@ namespace QtEntity
          */
         virtual bool destroyComponent(EntityId id) override
         {
-            auto i = _components.find(id);
+            /*auto i = _components.find(id);
             if(i == _components.end()) return false;
             delete i.value();
             _components.erase(i);
-            return true;
+            return true;*/
+            return false;
         }
 
         /**
@@ -108,7 +113,7 @@ namespace QtEntity
          * @brief Override this if you want to call a custom constructor
          *        on your component
          */
-        QObject* createObjectInstance(EntityId id, const QVariantMap& properties)
+        virtual QObject* createObjectInstance(EntityId id, const QVariantMap& properties)
         {
             QObject* obj = componentMetaObject().newInstance();
 
@@ -148,7 +153,7 @@ namespace QtEntity
         EntityManager* _entityManager;
     private:
 
-        ComponentStore _components;
+       // memory_pool<T> _pool;
     };
 
 

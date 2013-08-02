@@ -88,26 +88,26 @@ pool_container(): allocated(nullptr), next_container(nullptr) {}
 
 pool_container( const unsigned& size ): next_container(nullptr)
 {
-allocated = (size == 0) ? nullptr:
-(data_type*) MEMORY_POOL_ALLOCATION( size, sizeof(data_type) );
+    allocated = (size == 0) ? nullptr:
+    (data_type*) MEMORY_POOL_ALLOCATION( size, sizeof(data_type) );
 }
 
 // Dtor
 ~pool_container()
 {
-// Free allocation
-if ( allocated )
-{
-free(allocated);
-allocated = nullptr;
-}
+    // Free allocation
+    if ( allocated )
+    {
+        free(allocated);
+        allocated = nullptr;
+    }
 
-// Destroy attached container
-if ( next_container )
-{
-delete next_container;
-next_container = nullptr;
-}
+    // Destroy attached container
+    if ( next_container )
+    {
+        delete next_container;
+        next_container = nullptr;
+    }
 }
 
 // Get pointer to allocated memory
@@ -119,20 +119,20 @@ inline bool is_allocated() const { return allocated; }
 // Request new allocation
 self_type* extend( const unsigned& size )
 {
-// Check size value
-if ( size == 0 ) return nullptr;
+    // Check size value
+    if ( size == 0 ) return nullptr;
 
-// Check if 'this' is allocated
-if ( !allocated )
-{
-allocated = (data_type*) MEMORY_POOL_ALLOCATION( size, sizeof(data_type) );
-return this;
-}
+    // Check if 'this' is allocated
+    if ( !allocated )
+    {
+    allocated = (data_type*) MEMORY_POOL_ALLOCATION( size, sizeof(data_type) );
+    return this;
+    }
 
-// Pass allocation request to next container
-return next_container ?
-next_container->extend(size):
-( next_container = new self_type(size) );
+    // Pass allocation request to next container
+    return next_container ?
+    next_container->extend(size):
+    ( next_container = new self_type(size) );
 }
 
 private:
@@ -178,62 +178,66 @@ typedef pool_container<T> storage_type;
 // Ctors
 memory_pool() { clear(); }
 memory_pool( const unsigned& _init_size, const unsigned& _chunk_size )
-{ clear(); initialize( _init_size, _chunk_size ); }
+{
+    clear(); initialize( _init_size, _chunk_size );
+}
 
 // Clear everything
 void clear()
 {
-// Disable pointers
-current = last = nullptr;
+    // Disable pointers
+    current = last = nullptr;
 
-// Null chunk size
-chunk_size = 0;
+    // Null chunk size
+    chunk_size = 0;
 
-// Destroy container
-container.~pool_container();
-current_container = &container;
+    // Destroy container
+    container.~pool_container();
+    current_container = &container;
 }
 
 // Initialize pool
 bool initialize( const unsigned& _init_size, const unsigned& _chunk_size )
 {
-// Check if 'this' is already initialized
-if ( container.is_allocated() || _init_size == 0 ) return false;
+    // Check if 'this' is already initialized
+    if ( container.is_allocated() || _init_size == 0 ) return false;
 
-// Otherwise, initialize container
-current_container = container.extend( _init_size );
+    // Otherwise, initialize container
+    current_container = container.extend( _init_size );
 
-// Pointers to data
-current = container.get();
-last = current + _init_size;
+    // Pointers to data
+    current = container.get();
+    last = current + _init_size;
 
-// Update chunk_size value
-chunk_size = _chunk_size;
+    // Update chunk_size value
+    chunk_size = _chunk_size;
 
-// Report setup success
-return true;
+    // Report setup success
+    return true;
 }
 
 // Set new chunk_size
 void set_chunk_size( const unsigned& _chunk_size )
-{ chunk_size = _chunk_size; }
+{
+    chunk_size = _chunk_size;
+}
 
 // Get next element in pool
 data_type* get()
 {
-// Forbid null chunk_size
-if ( chunk_size == 0 ) return nullptr;
+    // Forbid null chunk_size
+    if ( chunk_size == 0 ) return nullptr;
 
-// Extend storage if needed
-if ( current == last )
-{
-current_container = current_container->extend(chunk_size);
-current = current_container->get();
-last = current + chunk_size;
-}
+    // Extend storage if needed
+    if ( current == last )
+    {
+    current_container = current_container->extend(chunk_size);
+    current = current_container->get();
+    last = current + chunk_size;
+    }
 
-// Return pointer to object
-return current++;
+    // Return pointer to object
+    return current++;
 }
 
 private:
