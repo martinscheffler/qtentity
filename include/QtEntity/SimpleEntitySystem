@@ -122,6 +122,16 @@ namespace QtEntity
          */
         virtual const QVariantMap attributesForProperty(const QString& name) const { return QVariantMap(); }
 
+        /**
+         * Return number of components
+         */
+        virtual size_t numComponents() const;
+
+        /**
+         * Return component at given index
+         */
+        virtual QObject* component(size_t at);
+
     signals:
 
         /**

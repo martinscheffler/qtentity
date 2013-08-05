@@ -57,11 +57,17 @@ public:
         _shapeDrawable->setShape(_sphere);
     }
 
-    void setRadius(float v) { _sphere->setRadius(v); _shapeDrawable->dirtyDisplayList();}
+    void setRadius(float v) 
+    { 
+        _sphere->setRadius(v); 
+        _shapeDrawable->dirtyDisplayList();
+    }
+
     float radius() const { return _sphere->getRadius(); }
 
     QVector3D center() const
-    { const osg::Vec3d& c = _sphere->getCenter();
+    { 
+        const osg::Vec3d& c = _sphere->getCenter();
         return QVector3D(c[0], c[1], c[2]);
     }
 

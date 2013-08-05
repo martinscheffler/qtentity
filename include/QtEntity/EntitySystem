@@ -60,6 +60,16 @@ namespace QtEntity
          * @return a map of QVariants
          */
         virtual const QVariantMap attributesForProperty(const QString& name) const = 0;
+
+        /**
+         * Return number of components
+         */
+        virtual size_t numComponents() const = 0;
+
+        /**
+         * Return component at given index
+         */
+        virtual QObject* component(size_t at) = 0;
     };
 
 }

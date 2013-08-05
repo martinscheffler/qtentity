@@ -116,4 +116,18 @@ namespace QtEntity
             }
         }
     }
+
+    
+    size_t SimpleEntitySystem::numComponents() const
+    {
+        return _components.size();
+    }
+
+      
+    QObject* SimpleEntitySystem::component(size_t at)
+    {
+        auto it = _components.begin();
+        std::advance(it, at);
+        return *it;
+    }
 }
