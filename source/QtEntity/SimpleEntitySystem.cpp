@@ -124,7 +124,7 @@ namespace QtEntity
     }
 
       
-    QObject* SimpleEntitySystem::component(size_t at)
+    QObject* SimpleEntitySystem::componentByIndex(size_t at)
     {
         auto it = _components.begin();
         std::advance(it, at);

@@ -130,7 +130,7 @@ namespace QtEntity
         /**
          * Return component at given index
          */
-        virtual QObject* component(size_t at);
+        virtual QObject* componentByIndex(size_t at);
 
     signals:
 

@@ -3,6 +3,7 @@
 #include <QtEntity/EntitySystem>
 #include <QHash>
 
+
 namespace QtEntity
 {
 
@@ -10,48 +11,143 @@ namespace QtEntity
     class PooledEntitySystem : public EntitySystem
     {
     public:
-
-        static int chunk_size = 4;
-
-        PooledEntitySystem(int capacity = 0)
-            : _capacity(capacity)
-            , _size(0)
-            , _components(new T[capacity]())
+        
+        PooledEntitySystem(size_t capacity = 0, size_t chunkSize = 4)
+            : _entityManager(nullptr)
+            , _capacity(capacity)
+            , _chunkSize(chunkSize)
+            , _size(0)            
         {
+            Q_ASSERT(chunkSize > 0);
+            _components = (capacity == 0) ? nullptr : operator new [](capacity * sizeof(T));                
+        }
 
+        ~PooledEntitySystem()
+        {
+            // call all destructors
+            for(size_t i = 0; i != numComponents(); ++i)
+            {
+                static_cast<T*>(componentByIndex(i))->~T();
+            }
+            operator delete[](_components);
         }
 
         virtual void setEntityManager(EntityManager* em) { _entityManager = em; }
         EntityManager* entityManager() const { return _entityManager; }
+        virtual size_t numComponents() const { return _size; }
+        virtual QObject* componentByIndex(size_t at) { return &static_cast<T*>(_components)[at]; }
+        virtual const QVariantMap attributesForProperty(const QString& name) const { return QVariantMap(); }
+        virtual const QMetaObject& componentMetaObject() const { return T::staticMetaObject; }
+
+        size_t size() const { return _size; }
+        size_t capacity() const { return _capacity; }
+
 
         virtual QObject* getComponent(EntityId id) const
         {
             auto i = _indices.find(id);
             if(i == _indices.end()) return nullptr;
-            return _components[i.value()];
+            T* ptr = static_cast<T*>(_components);
+            return &ptr[i.value()];
         }
+
 
         virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap())
         {
-            if(_size == _capacity) reserve(chunk_size);
+            if(_size == _capacity) reserve(_chunkSize);
             size_t index = _size++;
             _indices[id] = index;
-            T* obj = _components[index];
+            T* ptr = static_cast<T*>(_components);
+            T* obj = &ptr[index];
             createObjectInstance(obj, properties);
+            
+            if(!properties.empty())
+            {
+                for(int i = 0; i < componentMetaObject().propertyCount(); ++i)
+                {
+                    QMetaProperty prop = componentMetaObject().property(i);
+
+                    if(!prop.isWritable())
+                    {
+                        qWarning() << "Trying to initialize a non-writable property. Name is: " << prop.name();
+                    }
+                    else
+                    {
+                        auto var = properties.find(prop.name());
+                        if(var != properties.end())
+                        {
+                            bool success = prop.write(obj, var.value());
+                            if(!success)
+                            {
+                                qWarning() << "Could not set property. Name is: " << prop.name();
+                            }
+                        }
+                    }
+                }
+            }
+
             return obj;
         }
 
-        virtual bool destroyComponent(EntityId id) { return false; }
 
-        virtual const QMetaObject& componentMetaObject() const { return T::staticMetaObject; }
+        virtual bool destroyComponent(EntityId id) 
+        { 
+            auto i = _indices.find(id);
+            if(i == _indices.end()) return false;
+            int indexToDestroy = i.value();         
+            
+            // call destructor
+            T* ptr = static_cast<T*>(_components);
+            ptr[indexToDestroy].~T();
+            _indices.remove(id);
 
-        virtual const QVariantMap attributesForProperty(const QString& name) const { return QVariantMap(); }
+            // copy last entry in _components over entry to be destroyed. 
+            // Don't do this if entry to be destroyed is last entry.
+            if(indexToDestroy != _size - 1)
+            {              
+                // find index of last entry in components array.
+                // Does a linear search, but probably short when starting at the end
+                QtEntity::EntityId last = 0;
+                size_t lastindex;
+                QHashIterator<QtEntity::EntityId,size_t> j(_indices);
+                j.toBack();
 
-        virtual size_t numComponents() const { return 0; }
+                while(j.hasPrevious())
+                {
+                    j.previous();
+                    if(j.value() == _size - 1)
+                    {
+                        last = j.key();
+                        lastindex = j.value();
+                        _indices.remove(last);
+                        break;
+                    }
+                }
+                Q_ASSERT(last != 0);
+                // copy last entry in _components over entry to destroy
+                T* toDestroy = &ptr[indexToDestroy];
+                memcpy(toDestroy, &ptr[lastindex], sizeof(T));                
+                _indices[last] = indexToDestroy;
+                
+            }
+            --_size;
+            return true; 
+        }
 
-        virtual QObject* component(size_t at) { return nullptr; }
 
     protected:
+
+        void reserve(int chunk)
+        {
+            void* components = operator new []( (_capacity + chunk) * sizeof(T) );
+            if(_capacity != 0)
+            {
+                memcpy(components, _components, _capacity * sizeof(T));
+                operator delete[](_components);
+            }            
+            _components = components;
+            _capacity += chunk;
+        }
 
         virtual void createObjectInstance(T* component, const QVariantMap& propertyVals)
         {
@@ -59,9 +155,10 @@ namespace QtEntity
         }
 
         EntityManager* _entityManager;
-        T* _components;
+        void* _components;        
         QHash<QtEntity::EntityId,size_t> _indices;
-        int _size;
-        int _capacity;
+        size_t _size;
+        size_t _chunkSize;
+        size_t _capacity;
     };
 }
