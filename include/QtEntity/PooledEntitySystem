@@ -1,0 +1,67 @@
+#pragma once
+
+#include <QtEntity/EntitySystem>
+#include <QHash>
+
+namespace QtEntity
+{
+
+    template<typename T>
+    class PooledEntitySystem : public EntitySystem
+    {
+    public:
+
+        static int chunk_size = 4;
+
+        PooledEntitySystem(int capacity = 0)
+            : _capacity(capacity)
+            , _size(0)
+            , _components(new T[capacity]())
+        {
+
+        }
+
+        virtual void setEntityManager(EntityManager* em) { _entityManager = em; }
+        EntityManager* entityManager() const { return _entityManager; }
+
+        virtual QObject* getComponent(EntityId id) const
+        {
+            auto i = _indices.find(id);
+            if(i == _indices.end()) return nullptr;
+            return _components[i.value()];
+        }
+
+        virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap())
+        {
+            if(_size == _capacity) reserve(chunk_size);
+            size_t index = _size++;
+            _indices[id] = index;
+            T* obj = _components[index];
+            createObjectInstance(obj, properties);
+            return obj;
+        }
+
+        virtual bool destroyComponent(EntityId id) { return false; }
+
+        virtual const QMetaObject& componentMetaObject() const { return T::staticMetaObject; }
+
+        virtual const QVariantMap attributesForProperty(const QString& name) const { return QVariantMap(); }
+
+        virtual size_t numComponents() const { return 0; }
+
+        virtual QObject* component(size_t at) { return nullptr; }
+
+    protected:
+
+        virtual void createObjectInstance(T* component, const QVariantMap& propertyVals)
+        {
+            new (component) T();
+        }
+
+        EntityManager* _entityManager;
+        T* _components;
+        QHash<QtEntity::EntityId,size_t> _indices;
+        int _size;
+        int _capacity;
+    };
+}

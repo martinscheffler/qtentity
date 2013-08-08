@@ -14,6 +14,7 @@ set(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/EntityManager
   ${HEADER_PATH}/EntitySystem
   ${HEADER_PATH}/MetaObjectRegistry
+  ${HEADER_PATH}/PooledEntitySystem
   ${HEADER_PATH}/PrefabSystem
   ${HEADER_PATH}/ReaderWriterJSON
   ${HEADER_PATH}/SimpleEntitySystem
