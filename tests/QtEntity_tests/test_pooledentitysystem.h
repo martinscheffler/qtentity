@@ -2,7 +2,9 @@
 #include <QtCore/QObject>
 #include <QtGui/QVector2D>
 #include <QtEntity/EntityManager>
+#include <QtEntity/SimpleEntitySystem>
 #include <QtEntity/PooledEntitySystem>
+#include <QElapsedTimer>
 
 using namespace QtEntity;
 
@@ -102,5 +104,90 @@ private slots:
         QCOMPARE(static_cast<XTransform*>(ts.getComponent(1))->myInt(), 1);
         QCOMPARE(static_cast<XTransform*>(ts.getComponent(3))->myInt(), 3);
         
+    }
+
+    int speed1(EntitySystem& es)
+    {
+        QElapsedTimer timer;
+        
+        for(int i = 1; i <= 5000; ++i)
+        {
+            es.createComponent(i);
+        }
+
+        for(int i = 1; i <= 5000; i += 4)
+        {
+            es.destroyComponent(i);
+        }
+
+        timer.start();
+        for(int i = 0; i <= 1000000; ++i)
+        {
+            for(int j = 1; j <= 5000; ++j)
+            {
+                QObject* c = es.getComponent(j);
+                if(c == nullptr) continue;
+                XTransform* t = qobject_cast<XTransform*>(c);
+                t->setMyInt(t->myInt() + 1);
+            }
+        }
+
+        return timer.elapsed();
+    }
+
+    int speed2(EntitySystem& es)
+    {
+        QElapsedTimer timer;
+        
+        for(int i = 1; i <= 5000; ++i)
+        {
+            es.createComponent(i);
+        }
+
+        for(int i = 1; i <= 5000; i += 4)
+        {
+            es.destroyComponent(i);
+        }
+
+        timer.start();
+        for(int i = 0; i <= 1000000; ++i)
+        {
+            int count = es.numComponents();
+            for(int j = 0; j < count; ++j)
+            {
+                QObject* c = es.componentByIndex(j);
+                XTransform* t = qobject_cast<XTransform*>(c);
+                t->setMyInt(t->myInt() + 1);
+            }
+        }
+           
+        /*for(int i = 1; i <= 1000; ++i)
+        {
+            es.destroyComponent(i);
+        }*/
+        return timer.elapsed();
+    }
+    
+    void speedTest()
+    {
+        {
+            PooledEntitySystem<XTransform> pooled(0, 8);
+            SimpleEntitySystem simple(XTransform::staticMetaObject);
+
+            float timepooled = float(speed1(pooled)) / 1000.0f;
+            float timesimple = float(speed1(simple)) / 1000.0f;
+            qDebug() << "Time pooled1: " << timepooled;
+            qDebug() << "Time simple1: " << timesimple;
+        }
+
+        {
+            PooledEntitySystem<XTransform> pooled(0, 8);
+            SimpleEntitySystem simple(XTransform::staticMetaObject);
+
+            float timepooled = float(speed2(pooled)) / 1000.0f;
+            //float timesimple = float(speed2(simple)) / 1000.0f;
+            qDebug() << "Time pooled1: " << timepooled;
+            // qDebug() << "Time simple1: " << timesimple;
+        }
     }
 };
