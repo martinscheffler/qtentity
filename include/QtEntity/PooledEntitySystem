@@ -10,8 +10,38 @@ namespace QtEntity
     template<typename T>
     class PooledEntitySystem : public EntitySystem
     {
+        friend class Iterator;
     public:
         
+        class Iterator : public std::iterator<std::forward_iterator_tag, T> 
+        {
+        public:
+            Iterator(PooledEntitySystem<T>* p, size_t index) : _pool(p), _index(index) {}
+            Iterator& operator=(const Iterator& other) { _pool = other._pool; _index = other._index; return *this; }
+            //bool operator==(const Iterator& other) { return(_pool == other._pool && _index == other._index); }
+            bool operator!=(const Iterator& other) { return(_pool != other._pool || _index != other._index); }
+            T* operator*() { return static_cast<T*>(_pool->componentAt(_index)); }
+            T* operator->() { return static_cast<T*>(_pool->componentAt(_index)); }
+            friend bool operator==(const Iterator &lhs, const Iterator& rhs) { return (lhs._pool == rhs._pool && lhs._index == rhs._index); }
+            Iterator& operator++()
+            {
+                ++_index;
+                return *this;
+            }
+
+            Iterator& operator++(int)
+            {
+                Iterator tmp(*this);
+                ++(*this);
+                return tmp;
+            }
+            
+        private:
+            PooledEntitySystem<T>* _pool;
+            size_t _index;
+        };
+
+
         PooledEntitySystem(size_t capacity = 0, size_t chunkSize = 4)
             : _entityManager(nullptr)
             , _capacity(capacity)
@@ -25,17 +55,20 @@ namespace QtEntity
         ~PooledEntitySystem()
         {
             // call all destructors
-            for(size_t i = 0; i != numComponents(); ++i)
+            for(size_t i = 0; i != _size; ++i)
             {
-                static_cast<T*>(componentByIndex(i))->~T();
+                static_cast<T*>(componentAt(i))->~T();
             }
             operator delete[](_components);
         }
 
+        Iterator begin() { return(Iterator(this, 0)); }
+        Iterator end() { return(Iterator(this, _size)); }
+
         virtual void setEntityManager(EntityManager* em) { _entityManager = em; }
         EntityManager* entityManager() const { return _entityManager; }
-        virtual size_t numComponents() const { return _size; }
-        virtual QObject* componentByIndex(size_t at) { return &static_cast<T*>(_components)[at]; }
+        virtual size_t count() const { return _size; }
+        virtual QObject* componentAt(size_t at) { return &static_cast<T*>(_components)[at]; }
         virtual const QVariantMap attributesForProperty(const QString& name) const { return QVariantMap(); }
         virtual const QMetaObject& componentMetaObject() const { return T::staticMetaObject; }
 

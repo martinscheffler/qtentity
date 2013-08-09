@@ -118,13 +118,13 @@ namespace QtEntity
     }
 
     
-    size_t SimpleEntitySystem::numComponents() const
+    size_t SimpleEntitySystem::count() const
     {
         return _components.size();
     }
 
       
-    QObject* SimpleEntitySystem::componentByIndex(size_t at)
+    QObject* SimpleEntitySystem::componentAt(size_t at)
     {
         auto it = _components.begin();
         std::advance(it, at);

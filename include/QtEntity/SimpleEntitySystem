@@ -125,12 +125,12 @@ namespace QtEntity
         /**
          * Return number of components
          */
-        virtual size_t numComponents() const;
+        virtual size_t count() const;
 
         /**
          * Return component at given index
          */
-        virtual QObject* componentByIndex(size_t at);
+        virtual QObject* componentAt(size_t at);
 
     signals:
 

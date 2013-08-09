@@ -106,24 +106,27 @@ private slots:
         
     }
 
+#define NUM_COMPONENTS 500
+#define NUM_ITERATIONS 10000
+
     int speed1(EntitySystem& es)
     {
         QElapsedTimer timer;
-        
-        for(int i = 1; i <= 5000; ++i)
+        timer.start();
+        for(int i = 1; i <= NUM_COMPONENTS; ++i)
         {
             es.createComponent(i);
         }
 
-        for(int i = 1; i <= 5000; i += 4)
+        for(int i = 1; i <= NUM_COMPONENTS; i += 4)
         {
             es.destroyComponent(i);
         }
 
-        timer.start();
-        for(int i = 0; i <= 1000000; ++i)
+        
+        for(int i = 0; i <= NUM_ITERATIONS; ++i)
         {
-            for(int j = 1; j <= 5000; ++j)
+            for(int j = 1; j <= NUM_COMPONENTS; ++j)
             {
                 QObject* c = es.getComponent(j);
                 if(c == nullptr) continue;
@@ -132,39 +135,45 @@ private slots:
             }
         }
 
+        for(int i = 1; i <= NUM_COMPONENTS; ++i)
+        {
+            es.destroyComponent(i);
+        }
+
         return timer.elapsed();
     }
 
     int speed2(EntitySystem& es)
     {
+
         QElapsedTimer timer;
-        
-        for(int i = 1; i <= 5000; ++i)
+        timer.start();
+        for(int i = 1; i <= NUM_COMPONENTS; ++i)
         {
             es.createComponent(i);
         }
 
-        for(int i = 1; i <= 5000; i += 4)
+        for(int i = 1; i <= NUM_COMPONENTS; i += 4)
         {
             es.destroyComponent(i);
         }
 
-        timer.start();
-        for(int i = 0; i <= 1000000; ++i)
+        
+        for(int i = 0; i <= NUM_ITERATIONS; ++i)
         {
-            int count = es.numComponents();
+            int count = es.count();
             for(int j = 0; j < count; ++j)
             {
-                QObject* c = es.componentByIndex(j);
+                QObject* c = es.componentAt(j);
                 XTransform* t = qobject_cast<XTransform*>(c);
                 t->setMyInt(t->myInt() + 1);
             }
         }
            
-        /*for(int i = 1; i <= 1000; ++i)
+        for(int i = 1; i <= NUM_COMPONENTS; ++i)
         {
             es.destroyComponent(i);
-        }*/
+        }
         return timer.elapsed();
     }
     
@@ -188,6 +197,42 @@ private slots:
             //float timesimple = float(speed2(simple)) / 1000.0f;
             qDebug() << "Time pooled1: " << timepooled;
             // qDebug() << "Time simple1: " << timesimple;
+        }
+    }
+
+    void iteratorTest1()
+    {
+        PooledEntitySystem<XTransform> pooled(0, 8);
+        QVERIFY(pooled.begin() == pooled.end());
+
+        QVariantMap m;
+		m["myint"] = 1; pooled.createComponent(1, m);
+        m["myint"] = 2; pooled.createComponent(2, m);
+        m["myint"] = 3; pooled.createComponent(3, m);
+        PooledEntitySystem<XTransform>::Iterator i = pooled.begin();
+        XTransform* t = *i;
+        QCOMPARE(t, static_cast<XTransform*>(pooled.getComponent(1)));
+        QCOMPARE(*++i, static_cast<XTransform*>(pooled.getComponent(2)));
+        QCOMPARE(*++i, static_cast<XTransform*>(pooled.getComponent(3)));
+        PooledEntitySystem<XTransform>::Iterator j = ++i;
+        PooledEntitySystem<XTransform>::Iterator end = pooled.end();
+        QCOMPARE(j, end);
+    }
+
+    void iteratorTest2()
+    {
+        PooledEntitySystem<XTransform> pooled(0, 8);
+        QVariantMap m;
+        for(int i = 1; i <= 10; ++i)
+        {
+            m["myint"] = i;
+            pooled.createComponent(i, m);
+        }
+        int count = 1;
+        for(PooledEntitySystem<XTransform>::Iterator i = pooled.begin(); i != pooled.end(); ++i)
+        {
+            XTransform* o = *i;
+            QCOMPARE(o, static_cast<XTransform*>(pooled.getComponent(count++)));
         }
     }
 };
