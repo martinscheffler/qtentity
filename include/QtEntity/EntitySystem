@@ -71,11 +71,55 @@ namespace QtEntity
          */
         virtual QObject* componentAt(size_t at) = 0;
 
-        /*class Iterator
+        class Iterator;
+
+        /** polymorphic iterators.
+         * Using these is slower 
+        */
+        virtual Iterator pbegin() = 0;
+        virtual Iterator pend() = 0;
+
+
+        class VIterator
         {
         public:
-            virtual ~Iterator() {}
-        };*/
+            virtual VIterator* clone() = 0;            
+            virtual QObject* operator*() = 0;
+            virtual QObject* operator->() = 0;
+            virtual bool equal(VIterator* other) = 0;
+            virtual void increment() = 0;
+        };
+
+        class Iterator : public std::iterator<std::forward_iterator_tag, QObject*> 
+        {
+        public:
+            Iterator(VIterator* vit) : _viter(vit) {}
+            Iterator(const Iterator& other) : _viter(other._viter->clone()) {}
+            ~Iterator() { delete _viter; }
+            Iterator operator=(const Iterator& other) { _viter = other._viter->clone(); return *this;  }
+            bool operator!=(const Iterator& other) { return !(_viter->equal(other._viter)); }
+            QObject* operator*() { return _viter->operator*(); }
+            QObject* operator->() { return _viter->operator->(); }
+            friend bool operator==(const Iterator &lhs, const Iterator& rhs) { return lhs._viter->equal(rhs._viter); }
+            Iterator& operator++()
+            {
+                _viter->increment();
+                return *this;
+            }
+
+            Iterator operator++(int)
+            {
+                Iterator tmp(*this);
+                ++(*this);
+                return tmp;
+            }
+            
+        private:
+            
+            VIterator* _viter;
+        };
+
+        
     };
 
 }

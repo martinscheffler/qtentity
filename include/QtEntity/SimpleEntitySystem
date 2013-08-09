@@ -112,6 +112,9 @@ namespace QtEntity
         virtual ComponentStore::const_iterator end() const { return _components.end(); }
 
 
+        virtual EntitySystem::Iterator pbegin();
+        virtual EntitySystem::Iterator pend();
+
         /**
          * @brief Returns all additional attributes for a property.
          * This can be overwritten by entity system implementations to return

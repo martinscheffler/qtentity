@@ -29,7 +29,7 @@ namespace QtEntity
                 return *this;
             }
 
-            Iterator& operator++(int)
+            Iterator operator++(int)
             {
                 Iterator tmp(*this);
                 ++(*this);
@@ -64,6 +64,10 @@ namespace QtEntity
 
         Iterator begin() { return(Iterator(this, 0)); }
         Iterator end() { return(Iterator(this, _size)); }
+
+        // TODO implement!
+        virtual EntitySystem::Iterator pbegin() { return EntitySystem::Iterator(nullptr); }
+        virtual EntitySystem::Iterator pend() { return EntitySystem::Iterator(nullptr); }
 
         virtual void setEntityManager(EntityManager* em) { _entityManager = em; }
         EntityManager* entityManager() const { return _entityManager; }
