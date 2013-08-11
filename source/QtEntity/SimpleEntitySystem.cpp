@@ -6,45 +6,6 @@
 namespace QtEntity
 {
 
-    class SimpleVIterator : public EntitySystem::VIterator
-    {
-    public:
-
-        SimpleVIterator(SimpleEntitySystem::ComponentStore::Iterator it)
-            : _iter(it)
-        {
-        }
-
-        virtual VIterator* clone()
-        {
-            return new SimpleVIterator(_iter);
-        }
-
-        virtual QObject* operator*() 
-        {
-            return *_iter;
-        }
-
-        virtual QObject* operator->() 
-        {
-            return *_iter;
-        }
-
-        virtual bool equal(VIterator* other) 
-        {
-            Q_ASSERT(typeid(other) == typeid(SimpleVIterator));
-            return static_cast<const SimpleVIterator*>(other)->_iter == _iter;
-        }
-
-        virtual void increment() 
-        {
-            ++_iter;
-        }
-
-    private:
-        SimpleEntitySystem::ComponentStore::iterator _iter;
-    };
-
     SimpleEntitySystem::SimpleEntitySystem(const QMetaObject& componentMeta)
         : _entityManager(NULL)
         , _componentMetaObject(&componentMeta)
@@ -163,23 +124,15 @@ namespace QtEntity
         return _components.size();
     }
 
-      
-    QObject* SimpleEntitySystem::componentAt(size_t at)
-    {
-        auto it = _components.begin();
-        std::advance(it, at);
-        return *it;
-    }
-
 
     EntitySystem::Iterator SimpleEntitySystem::pbegin()
     {
-        return EntitySystem::Iterator(new SimpleVIterator(begin()));
+        return EntitySystem::Iterator(new VIteratorImpl<ComponentStore::Iterator>(begin()));
     }
 
 
     EntitySystem::Iterator SimpleEntitySystem::pend()
     {
-        return EntitySystem::Iterator(new SimpleVIterator(end()));
+        return EntitySystem::Iterator(new VIteratorImpl<ComponentStore::Iterator>(end()));
     }
 }

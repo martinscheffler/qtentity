@@ -66,11 +66,6 @@ namespace QtEntity
          */
         virtual size_t count() const = 0;
 
-        /**
-         * Return component at given index
-         */
-        virtual QObject* componentAt(size_t at) = 0;
-
         class Iterator;
 
         /** polymorphic iterators.
@@ -84,11 +79,23 @@ namespace QtEntity
         {
         public:
             virtual VIterator* clone() = 0;            
-            virtual QObject* operator*() = 0;
-            virtual QObject* operator->() = 0;
+            virtual QObject* object() = 0;
             virtual bool equal(VIterator* other) = 0;
             virtual void increment() = 0;
         };
+
+        template <typename U>
+        class VIteratorImpl : public VIterator
+        {
+            U _iter;
+        public:
+            VIteratorImpl(const U& it) :_iter(it) {}
+            virtual VIterator* clone() { return new VIteratorImpl<U>(_iter); }
+            virtual QObject* object() { return *_iter; }
+            virtual bool equal(VIterator* other) { return _iter == static_cast<VIteratorImpl<U>*>(other)->_iter; }
+            virtual void increment() { ++_iter; }
+        };
+
 
         class Iterator : public std::iterator<std::forward_iterator_tag, QObject*> 
         {
@@ -96,10 +103,10 @@ namespace QtEntity
             Iterator(VIterator* vit) : _viter(vit) {}
             Iterator(const Iterator& other) : _viter(other._viter->clone()) {}
             ~Iterator() { delete _viter; }
-            Iterator operator=(const Iterator& other) { _viter = other._viter->clone(); return *this;  }
+            Iterator operator=(const Iterator& other) { delete _viter; _viter = other._viter->clone(); return *this;  }
             bool operator!=(const Iterator& other) { return !(_viter->equal(other._viter)); }
-            QObject* operator*() { return _viter->operator*(); }
-            QObject* operator->() { return _viter->operator->(); }
+            QObject* operator*() { return _viter->object(); }
+            QObject* operator->() { return _viter->object(); }
             friend bool operator==(const Iterator &lhs, const Iterator& rhs) { return lhs._viter->equal(rhs._viter); }
             Iterator& operator++()
             {

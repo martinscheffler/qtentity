@@ -2,7 +2,7 @@
 
 #include <QtEntity/EntitySystem>
 #include <QHash>
-
+#include <stdexcept>
 
 namespace QtEntity
 {
@@ -66,13 +66,13 @@ namespace QtEntity
         Iterator end() { return(Iterator(this, _size)); }
 
         // TODO implement!
-        virtual EntitySystem::Iterator pbegin() { return EntitySystem::Iterator(nullptr); }
-        virtual EntitySystem::Iterator pend() { return EntitySystem::Iterator(nullptr); }
+        virtual EntitySystem::Iterator pbegin() { return EntitySystem::Iterator(new VIteratorImpl<Iterator>(begin())); }
+        virtual EntitySystem::Iterator pend() { return EntitySystem::Iterator(new VIteratorImpl<Iterator>(end())); }
 
         virtual void setEntityManager(EntityManager* em) { _entityManager = em; }
         EntityManager* entityManager() const { return _entityManager; }
         virtual size_t count() const { return _size; }
-        virtual QObject* componentAt(size_t at) { return &static_cast<T*>(_components)[at]; }
+        QObject* componentAt(size_t at) { return &static_cast<T*>(_components)[at]; }
         virtual const QVariantMap attributesForProperty(const QString& name) const { return QVariantMap(); }
         virtual const QMetaObject& componentMetaObject() const { return T::staticMetaObject; }
 
@@ -91,6 +91,10 @@ namespace QtEntity
 
         virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap())
         {
+            if(getComponent(id) != nullptr)
+            {
+                throw std::runtime_error("Component already existss!");
+            }
             if(_size == _capacity) reserve(_chunkSize);
             size_t index = _size++;
             _indices[id] = index;

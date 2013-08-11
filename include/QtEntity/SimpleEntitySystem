@@ -130,11 +130,6 @@ namespace QtEntity
          */
         virtual size_t count() const;
 
-        /**
-         * Return component at given index
-         */
-        virtual QObject* componentAt(size_t at);
-
     signals:
 
         /**

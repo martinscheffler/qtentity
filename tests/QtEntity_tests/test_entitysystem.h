@@ -72,4 +72,35 @@ private slots:
         QVERIFY(c3 == nullptr);
     }
 
+    void iteratorTest1()
+    {
+        SimpleEntitySystem ts(Transform::staticMetaObject);
+        ts.createComponent(1);
+        auto i = ts.pbegin();
+        QObject* o = *i;
+        QObject* o2 = ts.getComponent(1);
+        QCOMPARE(o, o2);
+
+    }
+
+    void iteratorTest2()
+    {
+        SimpleEntitySystem ts(Transform::staticMetaObject);
+        QVariantMap m;
+        for(int i = 1; i <= 5; ++i)
+        {
+            m["myint"] = i;
+            ts.createComponent(i, m);
+        }
+        int sum = 0;
+        auto end = ts.pend();
+        for(auto i = ts.pbegin(); i != end; ++i)
+        {
+            QObject* o = *i;
+            Transform* t = static_cast<Transform*>(o);
+            sum += t->myInt();
+        }
+
+        QCOMPARE(sum, 15);
+    }
 };
