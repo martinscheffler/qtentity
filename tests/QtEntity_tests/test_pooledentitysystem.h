@@ -32,8 +32,9 @@ public:
         return _myint; 
     }
 
-    QVector2D _myvec2;
     qint32 _myint;
+    QVector2D _myvec2;
+
 
 };
 
@@ -168,11 +169,11 @@ private slots:
         PooledEntitySystem<XTransform> ts(0, 2);
         QVariantMap m;
 		m["myint"] = 1;		
-		QObject* c1 = ts.createComponent(1, m);
+        ts.createComponent(1, m);
         m["myint"] = 2;
-        QObject* c2 = ts.createComponent(2, m);
+        ts.createComponent(2, m);
         m["myint"] = 3;
-        QObject* c3 = ts.createComponent(3, m);
+        ts.createComponent(3, m);
         
         QCOMPARE(ts.size(), (size_t)3);
         ts.destroyComponent(2);

@@ -78,6 +78,7 @@ namespace QtEntity
         class VIterator
         {
         public:
+            virtual ~VIterator() {}
             virtual VIterator* clone() = 0;            
             virtual QObject* object() = 0;
             virtual bool equal(VIterator* other) = 0;

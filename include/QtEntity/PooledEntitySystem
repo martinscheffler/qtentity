@@ -132,7 +132,7 @@ namespace QtEntity
         { 
             auto i = _indices.find(id);
             if(i == _indices.end()) return false;
-            int indexToDestroy = i.value();         
+            size_t indexToDestroy = i.value();
             
             // call destructor
             T* ptr = static_cast<T*>(_components);
@@ -193,10 +193,13 @@ namespace QtEntity
         }
 
         EntityManager* _entityManager;
-        void* _components;        
-        QHash<QtEntity::EntityId,size_t> _indices;
-        size_t _size;
-        size_t _chunkSize;
+
         size_t _capacity;
+        size_t _chunkSize;
+        size_t _size;
+
+        void* _components;
+        QHash<QtEntity::EntityId,size_t> _indices;
+
     };
 }
