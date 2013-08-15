@@ -1,21 +1,34 @@
-qtentity
+QtEntity
 ========
 
-A component entity system based on Qt's metatype system and signal/slot communication.
-This can be used for game or simulation programming.
-The basic idea is this: Game object functionality is not shared by inheritance but by composition.
-Each game object is an aggregation of components, linked by a common entity id.
+QtEntity is an entity component system using the Qt framework. It can aid in the creation of games, simulation systems or other applications that need to handle lots of state in a flexible way. Functionality of game or simulation objects can be separated into components and composed during runtime in a flexible and efficient way. 
 
-Base of the component entity system is the entity manager. It holds a number of entity systems.
-Each entity system holds a list of components, indexed by entity id.
+All components derive from the Qt base class QObject. QtEntity uses the Qt property system for component introspection, serialization and scripting. The Qt meta type system is used for component construction and for handling property object arrays.
 
-Any class derived from QObject can be used for components. Qt's property system is used for in-game introspection and serialization.
+
+Entity Component System Basics
+-------------
+From  [http://entity-systems.wikidot.com/]
+	Entity Systems (ES) are a technique/architecture for building complex extensible projects (mostly: computer games) based around pluggable behaviours and lean, fast, modular data.
+	This makes the programming process leaner and easier to extend, with advantages in: performance, extensibility, and game-design flexibility
+
+Entities are collections of components. A spaceship entity may consist of a drawable component, a physics component, a sound component and a position component. The way the spaceship entity is decomposed into components depends on the application being developed and may be done in a number of ways.  
+
+The class EntitySystem is responsible for storing components. An EntitySystem instance holds all instances of a specific component class. The components are stored indexed by an EntityId, which is simply an integer.  Because all instances of a component class are in one place it is extremely efficient and simple to iterate them.
+The EntitySystem provides methods to create, retrieve and delete components for a given EntityId. It is not possible to create multiple components with the same id in an entity system.
+
+All EntitySystems are stored in the EntityManager. Usually there is only one EntityManager instance in an application. Access to the EntityManager gives access to all entity systems and the components they hold.
+The EntityManager provides a number of convenience methods to create, retrieve or delete components in its systems.
+
+Usage of Qt functionality
+-------------
+All components in QtEntity derive from QObject. Component subclasses must use the Q_OBJECT macro to establish their own Qt meta type. Components can have QProperties. These are used in editor tools for introspection and manipulation and also for serializing to JSON or other formats. 
 
 Example of an entity system holding components with a single int value:
 
 	
 	#pragma once
-	#include <QtEntity/EntitySystem>
+	#include <QtEntity/SimpleEntitySystem>
 
 	class Damage : public QObject
 	{
@@ -26,7 +39,7 @@ Example of an entity system holding components with a single int value:
 
 	public:
 
-		// Have to declare constructor as invokable so Qt can construct this
+		// Have to declare default constructor as invokable so Qt can construct this
 		Q_INVOKABLE Damage() : _energy(0) { }
 
 		void setEnergy(int v) { _energy = v; }
@@ -58,7 +71,7 @@ Now create an entity and add a damage component to it:
 	Damage* damage; em.createComponent(eid, damage);
 
 	// C++11 alternative:
-	auto damage = em.createComponent<Damage>(eid);
+	// auto damage = em.createComponent<Damage>(eid);
 
 You can retrieve components later by doing:
 
