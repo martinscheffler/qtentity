@@ -110,7 +110,7 @@ namespace QtEntity
         QJsonObject::const_iterator n = json.find("classname");
         if(n == json.end()) return false;
         QString classname = n.value().toString();
-        EntitySystem* es = em.getSystemByComponentClassName(classname);
+        EntitySystem* es = em.system(classname);
         if(es == 0)
         {
             return false;

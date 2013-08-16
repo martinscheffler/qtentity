@@ -134,7 +134,7 @@ namespace QtEntityUtils
 
     void EntityEditor::applyEntityData(QtEntity::EntityManager& em, QtEntity::EntityId eid, const QString& componenttype, const QString& propertyname, const QVariant& value)
     {
-        QtEntity::EntitySystem* es = em.getSystemByComponentClassName(componenttype);
+        QtEntity::EntitySystem* es = em.system(componenttype);
         if(es == nullptr)
         {
             qDebug() << "Could not apply entity data, no entity system of type " << componenttype;

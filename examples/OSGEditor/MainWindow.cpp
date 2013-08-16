@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     // connect signals of meta data system to entity list
     ActorSystem* as;
-    _game->entityManager().getEntitySystem(as);
+    _game->entityManager().system(as);
     connect(as, &ActorSystem::entityAdded,   this, &MainWindow::entityAdded);
     connect(as, &ActorSystem::entityRemoved, this, &MainWindow::entityRemoved);
     connect(as, &ActorSystem::entityChanged, this, &MainWindow::entityChanged);

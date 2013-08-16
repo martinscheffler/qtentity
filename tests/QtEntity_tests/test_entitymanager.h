@@ -29,12 +29,12 @@ private slots:
     {
         EntityManager em;
 
-        EntitySystem* esnothing = em.getSystemByComponentType(MocComponent::staticMetaObject);
+        EntitySystem* esnothing = em.systemByComponentType(MocComponent::staticMetaObject);
         QVERIFY(esnothing == nullptr);
 
         auto es = new MocEntitySystem();
         em.addEntitySystem(es);
-        EntitySystem* es2 = em.getSystemByComponentType(MocComponent::staticMetaObject);
+        EntitySystem* es2 = em.systemByComponentType(MocComponent::staticMetaObject);
         QVERIFY(es == es2);
     }
 
@@ -42,12 +42,12 @@ private slots:
     {
         EntityManager em;
 
-        EntitySystem* esnothing = em.getSystemBySystemType(MocEntitySystem::staticMetaObject);
+        EntitySystem* esnothing = em.systemBySystemType(MocEntitySystem::staticMetaObject);
         QVERIFY(esnothing == nullptr);
 
         auto es = new MocEntitySystem();
         em.addEntitySystem(es);
-        EntitySystem* es2 = em.getSystemBySystemType(MocEntitySystem::staticMetaObject);
+        EntitySystem* es2 = em.systemBySystemType(MocEntitySystem::staticMetaObject);
         QVERIFY(es == es2);
     }
 
@@ -58,7 +58,7 @@ private slots:
         auto es = new MocEntitySystem();
         em.addEntitySystem(es);
         em.removeEntitySystem(es);
-        EntitySystem* es2 = em.getSystemByComponentType(MocComponent::staticMetaObject);
+        EntitySystem* es2 = em.systemByComponentType(MocComponent::staticMetaObject);
         QVERIFY(nullptr == es2);
         delete es;
     }
@@ -69,7 +69,7 @@ private slots:
         auto es = new MocEntitySystem();
         em.addEntitySystem(es);
         MocEntitySystem* es2;
-        bool success = em.getEntitySystem(es2);
+        bool success = em.system(es2);
         QVERIFY(success);
         QVERIFY(em.hasEntitySystem(es));
         QVERIFY(es == es2);

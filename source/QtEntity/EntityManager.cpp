@@ -68,14 +68,7 @@ namespace QtEntity
     }
 
 
-    EntitySystem* EntityManager::getSystemByComponentType(const QMetaObject& componentMetaObject) const
-    {
-        EntitySystemStore::const_iterator it = _systemsByComponentType.find(&componentMetaObject);
-        return (it == _systemsByComponentType.end()) ? nullptr : it.value();
-    }
-
-
-    EntitySystem* EntityManager::getSystemByComponentClassName(const QString& classname) const
+    EntitySystem* EntityManager::system(const QString& classname) const
     {
         for(auto i = _systemsByComponentType.begin(); i != _systemsByComponentType.end(); ++i)
         {
@@ -88,7 +81,14 @@ namespace QtEntity
     }
 
 
-    EntitySystem* EntityManager::getSystemBySystemType(const QMetaObject& systemMetaObject) const
+    EntitySystem* EntityManager::systemByComponentType(const QMetaObject& componentMetaObject) const
+    {
+        EntitySystemStore::const_iterator it = _systemsByComponentType.find(&componentMetaObject);
+        return (it == _systemsByComponentType.end()) ? nullptr : it.value();
+    }
+
+
+    EntitySystem* EntityManager::systemBySystemType(const QMetaObject& systemMetaObject) const
     {
         EntitySystemStore::const_iterator it = _systemsBySystemType.find(&systemMetaObject);
         return (it == _systemsBySystemType.end()) ? nullptr : it.value();
@@ -98,7 +98,7 @@ namespace QtEntity
     QObject* EntityManager::createComponentByType(EntityId id, const QMetaObject& componentMetaObject,
                                                   const QVariantMap& props)
     {
-        EntitySystem* s = this->getSystemByComponentType(componentMetaObject);
+        EntitySystem* s = this->systemByComponentType(componentMetaObject);
 
         if(s == nullptr || s->getComponent(id) != nullptr)
         {

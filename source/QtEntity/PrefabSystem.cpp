@@ -58,7 +58,7 @@ namespace QtEntity
             // update existing components in prefab and delete components no longer in prefab
             for(auto j = prefab->components().begin(); j != prefab->components().end(); ++j)
             {
-                EntitySystem* es = entityManager()->getSystemByComponentClassName(j.key());
+                EntitySystem* es = entityManager()->system(j.key());
                 Q_ASSERT(es);
                 if(!es) continue;
 
@@ -119,7 +119,7 @@ namespace QtEntity
                 QString key = i.key();
                 if(prefab->components().find(key) == prefab->components().end())
                 {
-                    EntitySystem* es = entityManager()->getSystemByComponentClassName(key);
+                    EntitySystem* es = entityManager()->system(key);
                     Q_ASSERT(es);
                     if(!es) continue;
                     for(auto k = this->begin(); k != this->end(); ++k)
@@ -147,7 +147,7 @@ namespace QtEntity
         {
             const QString& classname = i.key();
             const QVariant& var = i.value();
-            EntitySystem* es = entityManager()->getSystemByComponentClassName(classname);
+            EntitySystem* es = entityManager()->system(classname);
             if(es)
             {
                 es->createComponent(id, var.value<QVariantMap>());

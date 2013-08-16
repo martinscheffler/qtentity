@@ -32,24 +32,46 @@ namespace QtEntity
         EntityId createEntityId();
 
         /**
-         * Templated method to get an entity system.
-         * Usage:
-         * MyEntitySystem* sys;
-         * if(em.getEntitySystem(es)) {...}
-         * @param out receives pointer to entity system
-         * @return true if entity system was found.
+         * @brief system returns an entity system that holds components
+         *        that are of the type with given classname.
+         *        Iterates through all entity systems, so has O(n/2) of number of entity systems
+         * @return nullptr if not found, else the system
          */
-        template <typename T>
-        bool getEntitySystem(T*& out) const;
+        EntitySystem* system(const QString& classname) const;
+
+        /**
+         * @brief systemBySystemType returns an entity system of type described
+         * by the passed QMetaObject.
+         * @return nullptr if not found, else the system
+         */
+        EntitySystem* systemBySystemType(const QMetaObject& systemMetaObject) const;
+
+        /**
+         * @brief systemByComponentType returns an entity system that holds components
+         *        that are of the type described in the passed QMetaObject.
+         * @return nullptr if not found, else the system
+         */
+        EntitySystem* systemByComponentType(const QMetaObject& componentMetaObject) const;
 
         /**
          * Templated method to get an entity system.
          * Usage:
-         * MyEntitySystem* sys = em.getEntitySystem<MyEntitySystem>();
+         * MyEntitySystem* sys;
+         * if(em.system(es)) {...}
+         * @param out receives pointer to entity system
+         * @return true if entity system was found.
+         */
+        template <typename T>
+        bool system(T*& out) const;
+
+        /**
+         * Templated method to get an entity system.
+         * Usage:
+         * MyEntitySystem* sys = em.system<MyEntitySystem>();
          * @return the entity system or nullptr if not found
          */
         template <typename T>
-        T* getEntitySystem() const;
+        T* system() const;
 
         /**
          * Templated method to get an existing component.
@@ -162,27 +184,6 @@ namespace QtEntity
          */
         bool hasEntitySystem(EntitySystem* es);
 
-        /**
-         * @brief getSystemByComponentType returns an entity system that holds components
-         *        that are of the type described in the passed QMetaObject.
-         * @return nullptr if not found, else the system
-         */
-        EntitySystem* getSystemByComponentType(const QMetaObject& componentMetaObject) const;
-
-        /**
-         * @brief getSystemByComponentClassName returns an entity system that holds components
-         *        that are of the type with given classname.
-         *        Iterates through all entity systems, so has O(n/2) of number of entity systems
-         * @return nullptr if not found, else the system
-         */
-        EntitySystem* getSystemByComponentClassName(const QString& classname) const;
-
-        /**
-         * @brief getSystemBySystemType returns an entity system of type described
-         * by the passed QMetaObject.
-         * @return nullptr if not found, else the system
-         */
-        EntitySystem* getSystemBySystemType(const QMetaObject& systemMetaObject) const;
 
         /**
          * @brief createComponentByType Creates a new component of given type and
@@ -212,25 +213,25 @@ namespace QtEntity
 
 
     template <typename T>
-    bool EntityManager::getEntitySystem(T*& out) const
+    bool EntityManager::system(T*& out) const
     {
-        EntitySystem* es = this->getSystemBySystemType(T::staticMetaObject);
+        EntitySystem* es = this->systemBySystemType(T::staticMetaObject);
         out = qobject_cast<T*>(es);
         return (out != nullptr);
     }
 
 
     template <typename T>
-    T* EntityManager::getEntitySystem() const
+    T* EntityManager::system() const
     {
-        return qobject_cast<T*>(this->getSystemBySystemType(T::staticMetaObject));
+        return qobject_cast<T*>(this->systemBySystemType(T::staticMetaObject));
     }
 
 
     template <typename T>
     bool EntityManager::getComponent(EntityId id, T*& component) const
     {
-        EntitySystem* s = this->getSystemByComponentType(T::staticMetaObject);
+        EntitySystem* s = this->systemByComponentType(T::staticMetaObject);
         QObject* c;
         if(s == nullptr || nullptr == (c = s->getComponent(id)))
         {
@@ -245,7 +246,7 @@ namespace QtEntity
     template <typename T>
     T* EntityManager::getComponent(EntityId id) const
     {
-        EntitySystem* s = this->getSystemByComponentType(T::staticMetaObject);
+        EntitySystem* s = this->systemByComponentType(T::staticMetaObject);
         QObject* c;
         if(s == nullptr || nullptr == (c = s->getComponent(id)))
         {
@@ -275,7 +276,7 @@ namespace QtEntity
     template <typename T>
     bool EntityManager::getOrCreateComponent(EntityId id, T*& component, const QVariantMap& properties)
     {
-        EntitySystem* s = this->getSystemByComponentType(T::staticMetaObject);
+        EntitySystem* s = this->systemByComponentType(T::staticMetaObject);
 
         if(s == nullptr) return false;
         component = qobject_cast<T*>(s->getComponent(id));
@@ -290,7 +291,7 @@ namespace QtEntity
     template <typename T>
     bool EntityManager::destroyComponent(EntityId id)
     {
-        EntitySystem* s = this->getSystemByComponentType(T::staticMetaObject);
+        EntitySystem* s = this->systemByComponentType(T::staticMetaObject);
         if(s == nullptr) return false;
         return s->destroyComponent(id);
     }
