@@ -20,7 +20,7 @@ Game::Game(QObject* parent)
 
     _viewer->setSceneData(rootNode);
     _actorSystem = new ActorSystem(rootNode);
-    _entityManager.addEntitySystem(_actorSystem);
+    _entityManager.addSystem(_actorSystem);
 
     osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
     ds->setNumMultiSamples(4);

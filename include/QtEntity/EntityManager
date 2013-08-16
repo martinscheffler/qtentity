@@ -166,24 +166,23 @@ namespace QtEntity
          * deleted when entity manager is deleted.
          * @throw runtime_error if entity system already in manager
          */
-        void addEntitySystem(EntitySystem* es);
+        void addSystem(EntitySystem* es);
 
         /**
-         * @brief removeEntitySystem removes entity system from manager.
+         * @brief removeSystem removes entity system from manager.
          * The user takes ownership of the entity system after it is removed from entity manager.
          * @param es remove entity system of this type
          * @return false if entity system was not in manager in the first place,
          *          true if it could be removed.
          */
-        bool removeEntitySystem(EntitySystem* es);
+        bool removeSystem(EntitySystem* es);
 
         /**
-         * @brief hasEntitySystem returns true if an entity system of given type
+         * @brief hasSystem returns true if an entity system of given type
          *        is present.
          * @return true if exists
          */
-        bool hasEntitySystem(EntitySystem* es);
-
+        bool hasSystem(EntitySystem* es);
 
         /**
          * @brief createComponentByType Creates a new component of given type and

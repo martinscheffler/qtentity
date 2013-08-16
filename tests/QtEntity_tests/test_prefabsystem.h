@@ -29,10 +29,10 @@ private slots:
     {
         EntityManager em;
         PrefabSystem* ps = new PrefabSystem();
-        em.addEntitySystem(ps);
+        em.addSystem(ps);
 
         SimpleEntitySystem* es = new SimpleEntitySystem(MyComponent::staticMetaObject);
-        em.addEntitySystem(es);
+        em.addSystem(es);
 
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
@@ -60,10 +60,10 @@ private slots:
     {
         EntityManager em;
         PrefabSystem* ps = new PrefabSystem();
-        em.addEntitySystem(ps);
+        em.addSystem(ps);
 
         SimpleEntitySystem* es = new SimpleEntitySystem(MyComponent::staticMetaObject);
-        em.addEntitySystem(es);
+        em.addSystem(es);
 
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
@@ -93,10 +93,10 @@ private slots:
     {
         EntityManager em;
         PrefabSystem* ps = new PrefabSystem();
-        em.addEntitySystem(ps);
+        em.addSystem(ps);
 
         SimpleEntitySystem* es = new SimpleEntitySystem(MyComponent::staticMetaObject);
-        em.addEntitySystem(es);
+        em.addSystem(es);
 
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
@@ -129,10 +129,10 @@ private slots:
     {
         EntityManager em;
         PrefabSystem* ps = new PrefabSystem();
-        em.addEntitySystem(ps);
+        em.addSystem(ps);
 
         SimpleEntitySystem* es = new SimpleEntitySystem(MyComponent::staticMetaObject);
-        em.addEntitySystem(es);
+        em.addSystem(es);
 
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;

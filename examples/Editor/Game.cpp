@@ -23,11 +23,11 @@ Game::Game(Renderer* renderer)
     , _shapesys(new ShapeSystem(renderer))
     , _playerid(0)
 {
-    _entityManager.addEntitySystem(_bulletsys);
-    _entityManager.addEntitySystem(_damagesys);
-    _entityManager.addEntitySystem(_metasys);
-    _entityManager.addEntitySystem(_enemysys);
-    _entityManager.addEntitySystem(_shapesys);
+    _entityManager.addSystem(_bulletsys);
+    _entityManager.addSystem(_damagesys);
+    _entityManager.addSystem(_metasys);
+    _entityManager.addSystem(_enemysys);
+    _entityManager.addSystem(_shapesys);
 
     _renderer->createShape(QPixmap(":/assets/space.jpg"), QPointF(0,0), -10);
 

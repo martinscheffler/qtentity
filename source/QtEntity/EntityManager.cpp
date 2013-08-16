@@ -35,7 +35,7 @@ namespace QtEntity
     }
 
 
-    void EntityManager::addEntitySystem(EntitySystem* es)
+    void EntityManager::addSystem(EntitySystem* es)
     {
         const QMetaObject* mo = &es->componentMetaObject();
         if(_systemsBySystemType.contains(es->metaObject()))
@@ -48,13 +48,13 @@ namespace QtEntity
     }
 
 
-    bool EntityManager::hasEntitySystem(EntitySystem* es)
+    bool EntityManager::hasSystem(EntitySystem* es)
     {
         return _systemsBySystemType.contains(es->metaObject());
     }
 
 
-    bool EntityManager::removeEntitySystem(EntitySystem* es)
+    bool EntityManager::removeSystem(EntitySystem* es)
     {
         EntitySystemStore::iterator i = _systemsBySystemType.find(es->metaObject());
         if(i == _systemsBySystemType.end()) return false;

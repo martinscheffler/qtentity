@@ -33,7 +33,7 @@ private slots:
         QVERIFY(esnothing == nullptr);
 
         auto es = new MocEntitySystem();
-        em.addEntitySystem(es);
+        em.addSystem(es);
         EntitySystem* es2 = em.systemByComponentType(MocComponent::staticMetaObject);
         QVERIFY(es == es2);
     }
@@ -46,18 +46,18 @@ private slots:
         QVERIFY(esnothing == nullptr);
 
         auto es = new MocEntitySystem();
-        em.addEntitySystem(es);
+        em.addSystem(es);
         EntitySystem* es2 = em.systemBySystemType(MocEntitySystem::staticMetaObject);
         QVERIFY(es == es2);
     }
 
-    void removeEntitySystem()
+    void removeSystem()
     {
         EntityManager em;
 
         auto es = new MocEntitySystem();
-        em.addEntitySystem(es);
-        em.removeEntitySystem(es);
+        em.addSystem(es);
+        em.removeSystem(es);
         EntitySystem* es2 = em.systemByComponentType(MocComponent::staticMetaObject);
         QVERIFY(nullptr == es2);
         delete es;
@@ -67,11 +67,11 @@ private slots:
     {
         EntityManager em;
         auto es = new MocEntitySystem();
-        em.addEntitySystem(es);
+        em.addSystem(es);
         MocEntitySystem* es2;
         bool success = em.system(es2);
         QVERIFY(success);
-        QVERIFY(em.hasEntitySystem(es));
+        QVERIFY(em.hasSystem(es));
         QVERIFY(es == es2);
     }
 
@@ -79,7 +79,7 @@ private slots:
     {
         EntityManager em;
         auto es = new MocEntitySystem();
-        em.addEntitySystem(es);
+        em.addSystem(es);
         MocComponent *comp, *comp2;
         em.createComponent(1, comp);
 
@@ -92,7 +92,7 @@ private slots:
     {
         EntityManager em;
         auto es = new MocEntitySystem();
-        em.addEntitySystem(es);
+        em.addSystem(es);
         MocComponent *comp, *comp2;
         em.createComponent(1, comp);
 
@@ -104,7 +104,7 @@ private slots:
     {
         EntityManager em;
         auto es = new MocEntitySystem();
-        em.addEntitySystem(es);
+        em.addSystem(es);
         auto c1 = em.createComponent<MocComponent>(1);
 
         MocComponent* c2;
@@ -117,7 +117,7 @@ private slots:
     {
         EntityManager em;
         auto es = new MocEntitySystem();
-        em.addEntitySystem(es);
+        em.addSystem(es);
         MocComponent *comp, *comp2;
         em.createComponent(1, comp);
         em.createComponent(2, comp2);
@@ -134,7 +134,7 @@ private slots:
     {
         EntityManager em;
         auto es = new MocEntitySystem();
-        em.addEntitySystem(es);
+        em.addSystem(es);
         MocComponent *comp;
         em.createComponent(1, comp);
         em.destroyEntity(1);
@@ -147,7 +147,7 @@ private slots:
     {
         EntityManager em;
         auto es = new MocEntitySystem();
-        em.addEntitySystem(es);
+        em.addSystem(es);
         MocComponent *comp, *comp2;
         em.getOrCreateComponent(1, comp);
 

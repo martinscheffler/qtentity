@@ -137,7 +137,7 @@ private slots:
         QJsonDocument doc = QJsonDocument::fromJson(jsonstr.toUtf8());
         QVERIFY(doc.isObject());
         EntityManager em;
-        em.addEntitySystem(new DataHolderSystem());
+        em.addSystem(new DataHolderSystem());
 
         bool success = ReaderWriterJSON::jsonToComponent(em, 1, doc.object());
         QVERIFY(success);
