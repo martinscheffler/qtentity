@@ -77,7 +77,7 @@ namespace QtEntity
         size_t capacity() const { return _capacity; }
 
 
-        virtual QObject* getComponent(EntityId id) const
+        virtual QObject* component(EntityId id) const
         {
             auto i = _indices.find(id);
             if(i == _indices.end()) return nullptr;
@@ -88,7 +88,7 @@ namespace QtEntity
 
         virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap())
         {
-            if(getComponent(id) != nullptr)
+            if(component(id) != nullptr)
             {
                 throw std::runtime_error("Component already existss!");
             }

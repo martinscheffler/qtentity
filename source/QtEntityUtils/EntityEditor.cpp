@@ -104,7 +104,7 @@ namespace QtEntityUtils
         for(auto i = em.begin(); i != em.end(); ++i)
         {
             QtEntity::EntitySystem* es = *i;
-            QObject* component = es->getComponent(eid);
+            QObject* component = es->component(eid);
             if(component == nullptr) continue;
 
             const QMetaObject& meta = es->componentMetaObject();
@@ -141,7 +141,7 @@ namespace QtEntityUtils
             return;
         }
         
-        QObject* component = es->getComponent(eid);
+        QObject* component = es->component(eid);
         if(!component) 
         {
             qDebug() << "Could not apply entity data, no component of type " << componenttype << " on entity " << eid;
@@ -182,7 +182,7 @@ namespace QtEntityUtils
     }
 
 
-    QString getComponentNameForProperty(QtAbstractPropertyManager* manager, QtProperty *property)
+    QString componentNameForProperty(QtAbstractPropertyManager* manager, QtProperty *property)
     {
         QSet<QtProperty*> comps = manager->properties();
         foreach(auto comp, comps)
@@ -205,7 +205,7 @@ namespace QtEntityUtils
 
     void EntityEditor::propertyValueChanged(QtProperty *property, const QVariant &val)
     {
-        QString componentName = getComponentNameForProperty(_propertyManager, property);
+        QString componentName = componentNameForProperty(_propertyManager, property);
         if(!componentName.isEmpty())
         {
             emit entityDataChanged(_entityId, componentName, property->propertyName(), val);

@@ -100,7 +100,7 @@ namespace QtEntity
     {
         EntitySystem* s = this->systemByComponentType(componentMetaObject);
 
-        if(s == nullptr || s->getComponent(id) != nullptr)
+        if(s == nullptr || s->component(id) != nullptr)
         {
             return nullptr;
         }

@@ -43,11 +43,11 @@ private slots:
 		m["myvec2"] =  QVector2D(77.0,88.0);
         QObject* c = ts.createComponent(1, m);
 
-        QObject* c2 = ts.getComponent(1);
+        QObject* c2 = ts.component(1);
         QVERIFY(c == c2);
         QVERIFY(ts.hasComponent(1));
 
-        QObject* c3 = ts.getComponent(2);
+        QObject* c3 = ts.component(2);
         QVERIFY(c3 == nullptr);
 
         Transform* tr = qobject_cast<Transform*>(c);
@@ -63,12 +63,12 @@ private slots:
     {
         SimpleEntitySystem ts(Transform::staticMetaObject);
         QObject* c = ts.createComponent(1);
-        QObject* c2 = ts.getComponent(1);
+        QObject* c2 = ts.component(1);
         QVERIFY(c == c2);
         QVERIFY(ts.hasComponent(1));
         ts.destroyComponent(1);
         QVERIFY(!ts.hasComponent(1));
-        QObject* c3 = ts.getComponent(1);
+        QObject* c3 = ts.component(1);
         QVERIFY(c3 == nullptr);
     }
 
@@ -78,7 +78,7 @@ private slots:
         ts.createComponent(1);
         auto i = ts.pbegin();
         QObject* o = *i;
-        QObject* o2 = ts.getComponent(1);
+        QObject* o2 = ts.component(1);
         QCOMPARE(o, o2);
 
     }

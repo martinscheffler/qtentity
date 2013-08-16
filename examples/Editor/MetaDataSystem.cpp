@@ -42,7 +42,7 @@ QObject* MetaDataSystem::createComponent(QtEntity::EntityId id, const QVariantMa
     if(obj != NULL)
     {
         MetaData* entry;
-        if(this->getComponent(id, entry))
+        if(this->component(id, entry))
         {
             emit entityAdded(id, entry->name(), entry->additionalInfo());
         }
@@ -62,7 +62,7 @@ QObject* MetaDataSystem::createObjectInstance(QtEntity::EntityId id, const QVari
 bool MetaDataSystem::destroyComponent(QtEntity::EntityId id)
 {
     MetaData* entry;
-    if(this->getComponent(id, entry))
+    if(this->component(id, entry))
     {
         emit entityRemoved(id);
     }

@@ -22,7 +22,7 @@ namespace QtEntity
 	}
 
 
-    QObject* SimpleEntitySystem::getComponent(EntityId id) const
+    QObject* SimpleEntitySystem::component(EntityId id) const
     {
         auto i = _components.find(id);
         if(i == _components.end())
@@ -35,14 +35,14 @@ namespace QtEntity
 
     bool SimpleEntitySystem::hasComponent(EntityId id) const
     {
-        return (this->getComponent(id) != nullptr);
+        return (this->component(id) != nullptr);
     }
 
 
     QObject* SimpleEntitySystem::createComponent(EntityId id, const QVariantMap& propertyVals)
     {
         // check if component already exists
-        if(getComponent(id) != nullptr)
+        if(component(id) != nullptr)
         {
             throw std::runtime_error("Component already existss!");
         }

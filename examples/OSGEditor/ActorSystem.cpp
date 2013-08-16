@@ -77,7 +77,7 @@ QObject* ActorSystem::createComponent(QtEntity::EntityId id, const QVariantMap& 
     if(obj != NULL)
     {
         Actor* entry;
-        if(this->getComponent(id, entry))
+        if(this->component(id, entry))
         {
             emit entityAdded(id, entry->name());
         }
@@ -89,7 +89,7 @@ QObject* ActorSystem::createComponent(QtEntity::EntityId id, const QVariantMap& 
 bool ActorSystem::destroyComponent(QtEntity::EntityId id)
 {
     Actor* entry;
-    if(this->getComponent(id, entry))
+    if(this->component(id, entry))
     {
         emit entityRemoved(id);
     }

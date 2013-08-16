@@ -86,7 +86,7 @@ namespace QtEntity
                         PrefabInstance* pi = qobject_cast<PrefabInstance*>(k.value());
                         if(pi->prefab() == prefab)
                         {
-                            QObject* component = es->getComponent(k.key());
+                            QObject* component = es->component(k.key());
                             Q_ASSERT(component);
                             if(!component) continue;
 

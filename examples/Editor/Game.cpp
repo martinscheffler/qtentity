@@ -143,7 +143,7 @@ void Game::step(int frameNumber, int totalTime, int delta)
     _enemysys->step(frameNumber, totalTime, delta);
 
     Shape* player;
-    _entityManager.getComponent(_playerid, player);
+    _entityManager.component(_playerid, player);
     QPoint pos = player->position();
     if(_leftpressed)
     {

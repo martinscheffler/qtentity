@@ -130,11 +130,11 @@ private slots:
 		m["myvec2"] =  QVector2D(77.0,88.0);
         QObject* c = ts.createComponent(1, m);
 
-        QObject* c2 = ts.getComponent(1);
+        QObject* c2 = ts.component(1);
         QVERIFY(c == c2);
-        QVERIFY(ts.getComponent(1) != nullptr);
+        QVERIFY(ts.component(1) != nullptr);
 
-        QObject* c3 = ts.getComponent(2);
+        QObject* c3 = ts.component(2);
         QVERIFY(c3 == nullptr);
 
         XTransform* tr = qobject_cast<XTransform*>(c);
@@ -179,8 +179,8 @@ private slots:
         ts.destroyComponent(2);
         QCOMPARE(ts.size(), (size_t)2);
 
-        QCOMPARE(static_cast<XTransform*>(ts.getComponent(1))->myInt(), 1);
-        QCOMPARE(static_cast<XTransform*>(ts.getComponent(3))->myInt(), 3);
+        QCOMPARE(static_cast<XTransform*>(ts.component(1))->myInt(), 1);
+        QCOMPARE(static_cast<XTransform*>(ts.component(3))->myInt(), 3);
         
     }
 
@@ -219,9 +219,9 @@ private slots:
         m["myint"] = 3; pooled.createComponent(3, m);
         PooledEntitySystem<XTransform>::Iterator i = pooled.begin();
         XTransform* t = *i;
-        QCOMPARE(t, static_cast<XTransform*>(pooled.getComponent(1)));
-        QCOMPARE(*++i, static_cast<XTransform*>(pooled.getComponent(2)));
-        QCOMPARE(*++i, static_cast<XTransform*>(pooled.getComponent(3)));
+        QCOMPARE(t, static_cast<XTransform*>(pooled.component(1)));
+        QCOMPARE(*++i, static_cast<XTransform*>(pooled.component(2)));
+        QCOMPARE(*++i, static_cast<XTransform*>(pooled.component(3)));
         PooledEntitySystem<XTransform>::Iterator j = ++i;
         PooledEntitySystem<XTransform>::Iterator end = pooled.end();
         QCOMPARE(j, end);
@@ -240,7 +240,7 @@ private slots:
         for(PooledEntitySystem<XTransform>::Iterator i = pooled.begin(); i != pooled.end(); ++i)
         {
             XTransform* o = *i;
-            QCOMPARE(o, static_cast<XTransform*>(pooled.getComponent(count++)));
+            QCOMPARE(o, static_cast<XTransform*>(pooled.component(count++)));
         }
     }
 
@@ -257,7 +257,7 @@ private slots:
         for(EntitySystem::Iterator i = pooled.pbegin(); i != pooled.pend(); ++i)
         {
             XTransform* o = static_cast<XTransform*>(*i);
-            QCOMPARE(o, static_cast<XTransform*>(pooled.getComponent(count++)));
+            QCOMPARE(o, static_cast<XTransform*>(pooled.component(count++)));
         }
     }
 };

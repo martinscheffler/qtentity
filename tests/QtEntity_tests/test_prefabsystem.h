@@ -48,7 +48,7 @@ private slots:
         props["path"] = "bla.prefab";
         em.createComponent(1, instance, props);
 
-        auto test = em.getComponent<MyComponent>(1);
+        auto test = em.component<MyComponent>(1);
         QVERIFY(test != nullptr);
         QCOMPARE(12345, test->myInt());
 
@@ -79,7 +79,7 @@ private slots:
         props["path"] = "bla.prefab";
         em.createComponent(1, instance, props);
 
-        auto test = em.getComponent<MyComponent>(1);
+        auto test = em.component<MyComponent>(1);
         QVERIFY(test != nullptr);
         QCOMPARE(12345, test->myInt());
 
@@ -112,15 +112,15 @@ private slots:
         props["path"] = "bla.prefab";
         em.createComponent(1, instance, props);
 
-        auto test = em.getComponent<MyComponent>(1);
+        auto test = em.component<MyComponent>(1);
         QVERIFY(test != nullptr);
         QCOMPARE(12345, test->myInt());
-        auto x = em.getComponent<MyComponent>(1);
+        auto x = em.component<MyComponent>(1);
         QVERIFY(x);
         components.clear();
         ps->updatePrefab("bla.prefab", components, true);
 
-        auto y = em.getComponent<MyComponent>(1);
+        auto y = em.component<MyComponent>(1);
         QVERIFY(y == nullptr);
     }
 
@@ -148,14 +148,14 @@ private slots:
         props["path"] = "bla.prefab";
         em.createComponent(1, instance, props);
 
-        auto test = em.getComponent<MyComponent>(1);
+        auto test = em.component<MyComponent>(1);
         QVERIFY(test == nullptr);
 
         mycomponent["myint"] = 6789;
         components[cn] = mycomponent;
         components[cn] = mycomponent;
         ps->updatePrefab("bla.prefab", components, true);
-        test = em.getComponent<MyComponent>(1);
+        test = em.component<MyComponent>(1);
         QVERIFY(test != nullptr);
         QCOMPARE(6789, test->myInt());
     }

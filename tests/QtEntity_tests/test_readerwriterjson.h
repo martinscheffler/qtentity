@@ -141,7 +141,7 @@ private slots:
 
         bool success = ReaderWriterJSON::jsonToComponent(em, 1, doc.object());
         QVERIFY(success);
-        DataHolder* dh = em.getComponent<DataHolder>(1);
+        DataHolder* dh = em.component<DataHolder>(1);
         QVERIFY(dh);
         QCOMPARE(dh->myInt(), 666);
         PropertyObjects objs = dh->myObjects();

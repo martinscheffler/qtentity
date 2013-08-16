@@ -78,23 +78,23 @@ namespace QtEntity
          * If component was not fonud then component is set to nullptr
          * Usage:
          * MyComponent* comp;
-         * if(em.getComponent(entityId, comp)) {...}
+         * if(em.component(entityId, comp)) {...}
          * @param id Entity id of component to fetch
          * @param component receives pointer to component if found
          * @return true if component was found, else false
          */
         template <typename T>
-        bool getComponent(EntityId id, T*& component) const;
+        bool component(EntityId id, T*& component) const;
 
         /**
          * Templated method to get an existing component.
          * Usage:
-         * MyComponent* comp = em.getComponent<ComponentType>(id);
+         * MyComponent* comp = em.component<ComponentType>(id);
          * @param id Entity id of component to fetch
          * @return pointer to component or nullptr if component could not be fetched
          */
         template <typename T>
-        T* getComponent(EntityId id) const;
+        T* component(EntityId id) const;
 
         /**
          * Templated method to create a new component.
@@ -229,11 +229,11 @@ namespace QtEntity
 
 
     template <typename T>
-    bool EntityManager::getComponent(EntityId id, T*& component) const
+    bool EntityManager::component(EntityId id, T*& component) const
     {
         EntitySystem* s = this->systemByComponentType(T::staticMetaObject);
         QObject* c;
-        if(s == nullptr || nullptr == (c = s->getComponent(id)))
+        if(s == nullptr || nullptr == (c = s->component(id)))
         {
             component = nullptr;
             return false;
@@ -244,11 +244,11 @@ namespace QtEntity
 
 
     template <typename T>
-    T* EntityManager::getComponent(EntityId id) const
+    T* EntityManager::component(EntityId id) const
     {
         EntitySystem* s = this->systemByComponentType(T::staticMetaObject);
         QObject* c;
-        if(s == nullptr || nullptr == (c = s->getComponent(id)))
+        if(s == nullptr || nullptr == (c = s->component(id)))
         {
             return nullptr;
         }
@@ -279,7 +279,7 @@ namespace QtEntity
         EntitySystem* s = this->systemByComponentType(T::staticMetaObject);
 
         if(s == nullptr) return false;
-        component = qobject_cast<T*>(s->getComponent(id));
+        component = qobject_cast<T*>(s->component(id));
 
         if(component != nullptr) return true;
 

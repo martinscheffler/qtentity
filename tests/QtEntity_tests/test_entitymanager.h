@@ -83,7 +83,7 @@ private slots:
         MocComponent *comp, *comp2;
         em.createComponent(1, comp);
 
-        bool success = em.getComponent(1, comp2);
+        bool success = em.component(1, comp2);
         QVERIFY(success);
         QVERIFY(comp == comp2);
     }
@@ -96,7 +96,7 @@ private slots:
         MocComponent *comp, *comp2;
         em.createComponent(1, comp);
 
-        comp2 = em.getComponent<MocComponent>(1);
+        comp2 = em.component<MocComponent>(1);
         QVERIFY(comp == comp2);
     }
 
@@ -108,7 +108,7 @@ private slots:
         auto c1 = em.createComponent<MocComponent>(1);
 
         MocComponent* c2;
-        bool success = em.getComponent(1, c2);
+        bool success = em.component(1, c2);
         QVERIFY(success);
         QVERIFY(c1 == c2);
     }
@@ -123,9 +123,9 @@ private slots:
         em.createComponent(2, comp2);
         em.destroyComponent<MocComponent>(1);
 
-        bool success = em.getComponent(1, comp);
+        bool success = em.component(1, comp);
         QVERIFY(!success);
-        success = em.getComponent(2, comp2);
+        success = em.component(2, comp2);
         QVERIFY(success);
     }
 
@@ -138,7 +138,7 @@ private slots:
         MocComponent *comp;
         em.createComponent(1, comp);
         em.destroyEntity(1);
-        bool success = em.getComponent(1, comp);
+        bool success = em.component(1, comp);
         QVERIFY(!success);
         
     }
