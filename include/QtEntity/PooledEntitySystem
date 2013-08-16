@@ -7,12 +7,26 @@
 namespace QtEntity
 {
 
+    /**
+     * An implementation of the EntitySystem interface.
+     * All components are held in a consecutive block of memory.
+     * This makes iterating them very fast.
+     * Deleting an object works by swapping the last component in the
+     * memory block with the deleted component.
+     * Danger: Deleting components can invalidate pointers to existing components.
+     * This means that pointers to components should not be stored, instead components
+     * should always be fetched with EntitySystem::component() directly before use,
+     * pointers to components should not be stored somewhere else!!!
+     */
     template<typename T>
     class PooledEntitySystem : public EntitySystem
     {
         friend class Iterator;
     public:
         
+        /**
+         * Fwd iterator for PooledEntitySystem components
+         */
         class Iterator : public std::iterator<std::forward_iterator_tag, T> 
         {
         public:
@@ -40,6 +54,11 @@ namespace QtEntity
         };
 
 
+        /**
+         * @brief PooledEntitySystem constructor.
+         * @param capacity Allocate place for that many components initially.
+         * @param chunkSize When capacity is depleted allocate place for that many additional components
+         */
         PooledEntitySystem(size_t capacity = 0, size_t chunkSize = 4)
             : _entityManager(nullptr)
             , _capacity(capacity)
@@ -60,22 +79,23 @@ namespace QtEntity
             operator delete[](_components);
         }
 
+        // Concrete iterator, use these!
         Iterator begin() { return(Iterator(_size == 0 ? nullptr : static_cast<T*>(_components))); }
         Iterator end() { T* ptr = static_cast<T*>(_components);return(Iterator(_size == 0 ? nullptr : &ptr[_size])); }
 
-        // TODO implement!
+        // Polymorphic iterator, slower!
         virtual EntitySystem::Iterator pbegin() { return EntitySystem::Iterator(new VIteratorImpl<Iterator>(begin())); }
         virtual EntitySystem::Iterator pend() { return EntitySystem::Iterator(new VIteratorImpl<Iterator>(end())); }
 
         virtual void setEntityManager(EntityManager* em) { _entityManager = em; }
         EntityManager* entityManager() const { return _entityManager; }
+
         virtual size_t count() const { return _size; }
+
         virtual const QVariantMap attributesForProperty(const QString& name) const { return QVariantMap(); }
         virtual const QMetaObject& componentMetaObject() const { return T::staticMetaObject; }
 
-        size_t size() const { return _size; }
         size_t capacity() const { return _capacity; }
-
 
         virtual QObject* component(EntityId id) const
         {

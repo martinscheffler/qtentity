@@ -5,6 +5,15 @@
 
 namespace QtEntity
 {    
+    /**
+      * A central point for registering QMetaObjects for constructing QObjects.
+      * This is used for adding QObjects to QProperty PropertyObject vectors
+      **/
     QTENTITY_EXPORT void registerMetaObject(const QMetaObject& mo);
+
+    /**
+      * fetch QMetaObject with a given classname that was previously registered with
+      * registerMetaObject
+      */
     QTENTITY_EXPORT const QMetaObject* metaObjectByClassName(const QString& classname);    
 }

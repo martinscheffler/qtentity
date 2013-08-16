@@ -10,7 +10,7 @@ namespace QtEntity
     class EntityManager;
 
     /**
-     * A pure virtual interface class for defining entity systems.
+     * An interface class for defining entity systems.
      * Entity systems are responsible for storing and managing components.
      * Each entity system instance holds components of a specific type.
      */

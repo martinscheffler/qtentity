@@ -60,7 +60,6 @@ namespace QtEntity
         // store
         _components[id] = obj;
 
-        emit componentCreated(id, obj);
         return obj;
     }
 
@@ -69,7 +68,6 @@ namespace QtEntity
     {        
         auto i = _components.find(id);
         if(i == _components.end()) return false;
-        emit componentAboutToDestruct(id, i.value());
         delete i.value();
         _components.erase(i);
         return true;

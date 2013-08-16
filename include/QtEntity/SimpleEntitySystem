@@ -8,9 +8,8 @@ namespace QtEntity
 {
 
     /**
-     * @brief EntitySystem objects hold a number of components
-     * which are basic QObject instances. Components are referenced
-     * by an integer handle, the entity id.
+     * A basic implementation of an EntitySystem.
+     * Components are created with new() and stored in a HashMap.
      */
     class QTENTITY_EXPORT SimpleEntitySystem : public EntitySystem
     {
@@ -94,22 +93,22 @@ namespace QtEntity
         /**
          * Return begin iterator of component container
          */
-        virtual ComponentStore::iterator begin() { return _components.begin(); }
+        ComponentStore::iterator begin() { return _components.begin(); }
 
         /**
          * Return end iterator of component container
          */
-        virtual ComponentStore::iterator end() { return _components.end(); }
+        ComponentStore::iterator end() { return _components.end(); }
 
         /**
          * Return begin iterator of component container
          */
-        virtual ComponentStore::const_iterator begin() const { return _components.begin(); }
+        ComponentStore::const_iterator begin() const { return _components.begin(); }
 
         /**
          * Return end iterator of component container
          */
-        virtual ComponentStore::const_iterator end() const { return _components.end(); }
+        ComponentStore::const_iterator end() const { return _components.end(); }
 
 
         virtual EntitySystem::Iterator pbegin();
@@ -129,18 +128,6 @@ namespace QtEntity
          * Return number of components
          */
         virtual size_t count() const;
-
-    signals:
-
-        /**
-         * Gets emitted when a component was just created and added to the system
-         */
-        void componentCreated(QtEntity::EntityId, QObject*);
-
-        /**
-         * Gets emitted right before component is removed from system and deleted
-         */
-        void componentAboutToDestruct(QtEntity::EntityId, QObject*);
 
     protected:
 
