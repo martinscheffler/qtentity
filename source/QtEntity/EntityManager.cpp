@@ -94,25 +94,4 @@ namespace QtEntity
         return (it == _systemsBySystemType.end()) ? nullptr : it.value();
     }
 
-
-    QObject* EntityManager::createComponentByType(EntityId id, const QMetaObject& componentMetaObject,
-                                                  const QVariantMap& props)
-    {
-        EntitySystem* s = this->systemByComponentType(componentMetaObject);
-
-        if(s == nullptr || s->component(id) != nullptr)
-        {
-            return nullptr;
-        }
-        try
-        {
-            QObject* component = s->createComponent(id, props);
-            return component;
-        }
-        catch(std::bad_alloc&)
-        {
-            qCritical() << "Could not create component, bad allocation!";
-            return nullptr;
-        }
-    }
 }

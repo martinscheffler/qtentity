@@ -12,18 +12,21 @@ namespace QtEntity
      * Each entity is identified by a unique EntityId. The id is assigned
      * at runtime and is completely arbitrary. All components are indexed by
      * this entity id.
+     * EntityIds should be created by EntityManager::createEntityId.
      */
     typedef uint32_t EntityId;
 
     /**
-     * @brief PropertyObjectPointer Pointer to a QObject. This is used in PropertyObjects.
+     * @brief PropertyObjectPointer Pointer to a QObject. See below for
+     *        explanation
      */
     typedef QSharedPointer<QObject> PropertyObjectPointer;
 
     /**
      * @brief PropertyObjects A vector of QObjects.
-     * Used as data type for array properties in components.
-     * Entries need not be of the same QObject class.
+     * A QProperty can hold a PropertyObjects vector where each entry points
+     * to a QObject. These QObjects can be serialized to JSON or
+     * manipulated with the Property Editor.
      */
     typedef QVector<PropertyObjectPointer> PropertyObjects;
 

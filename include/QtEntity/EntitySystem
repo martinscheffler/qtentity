@@ -9,16 +9,16 @@ namespace QtEntity
     // fwd declaration
     class EntityManager;
 
+    /**
+     * A pure virtual interface class for defining entity systems.
+     * Entity systems are responsible for storing and managing components.
+     * Each entity system instance holds components of a specific type.
+     */
     class EntitySystem : public QObject
     {
     public:
 
         virtual ~EntitySystem() {}
-
-        /**
-         * This is called by entity manager when system is added to entity manager
-         */
-        virtual void setEntityManager(EntityManager* em) = 0;
 
         /**
          * @brief component Return component associated with passed id
@@ -47,14 +47,14 @@ namespace QtEntity
         virtual bool destroyComponent(EntityId id) = 0;
 
         /**
-         * @return  meta object type of component class
+         * @return meta object type of component class
          */
         virtual const QMetaObject& componentMetaObject() const = 0;
 
         /**
-         * @brief Returns all additional attributes for a property.
-         * This can be overwritten by entity system implementations to return
-         * a map of QVariants. This is especially used for specifying constraints
+         * @brief Returns meta attributes for a property.
+         * Implementations have to return a map of QVariants which can be empty.
+         * This is especially used for specifying constraints
          * for the QtPropertyBrowser, but can be used for other means.
          * @param name Name of the property
          * @return a map of QVariants
@@ -62,19 +62,34 @@ namespace QtEntity
         virtual const QVariantMap attributesForProperty(const QString& name) const = 0;
 
         /**
-         * Return number of components
+         * @return number of components
          */
         virtual size_t count() const = 0;
 
+        /**
+         * This is called by entity manager when system is added to entity manager
+         */
+        virtual void setEntityManager(EntityManager* em) = 0;
+
         class Iterator;
 
-        /** polymorphic iterators.
-         * Using these is slower 
+        /**
+         * pend() and pbegin() implementations have to return EntitySystem::Iterator instances.
+         * These are polymorphic iterators which can be used to iterate over all components
+         * without having to know the component type.
+         * Using these is slower than using the type specific begin() and end() iterators
+         * and should only be used if specific type information is not present.
+         * Example implementation:
+         *    return EntitySystem::Iterator(new VIteratorImpl<std::vector<MyComponent>::Iterator>(begin()));
+         * where std::vector<MyComponent> is the type of the container holding the components.
         */
         virtual Iterator pbegin() = 0;
         virtual Iterator pend() = 0;
 
-
+        /**
+         * Abstract iterator interface for implementing forward iterators.
+         * Used in EntitySystem::Iterator for wrapping other iterators in a polymorphic interface.
+         */
         class VIterator
         {
         public:
@@ -85,6 +100,10 @@ namespace QtEntity
             virtual void increment() = 0;
         };
 
+        /**
+         * Convenience template for implementing VIterator interface with a concrete Iterator class.
+         * U is the type of the concrete iterator.
+         */
         template <typename U>
         class VIteratorImpl : public VIterator
         {
@@ -97,7 +116,10 @@ namespace QtEntity
             virtual void increment() { ++_iter; }
         };
 
-
+        /**
+         * @brief The Iterator class for iterating through all components of an EntitySystem.
+         * Uses a VIterator heap object for accessing the concrete underlying iterator.
+         */
         class Iterator : public std::iterator<std::forward_iterator_tag, QObject*> 
         {
         public:
@@ -121,12 +143,11 @@ namespace QtEntity
                 ++(*this);
                 return tmp;
             }
-            
+
         private:
             
             VIterator* _viter;
         };
-
         
     };
 

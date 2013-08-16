@@ -8,11 +8,10 @@
 namespace QtEntity
 {
     /**
-     * @brief The EntityManager class holds a number of entity systems, which hold components.
-     * EntityManager holds all entity systems in a data structure.
+     * @brief The EntityManager class holds a number of entity systems in a data structure.
      * It offers methods to add and remove entity systems, also
-     * convenience methods to get, add or remove components from its systems.
-     * Also the entity manager assigns entity IDs which are basically integers counting up.
+     * convenience methods to get, add or remove components from these systems.
+     * The entity manager is also responsible for creating unique entity IDs which are basically integers counting up.
      */
     class QTENTITY_EXPORT EntityManager
     {
@@ -72,6 +71,30 @@ namespace QtEntity
          */
         template <typename T>
         T* system() const;
+
+        /**
+         * @brief Add an entity system to the entity manager.
+         * The entity manager takes ownership of the system, it is
+         * deleted when entity manager is deleted.
+         * @throw runtime_error if entity system already in manager
+         */
+        void addSystem(EntitySystem* es);
+
+        /**
+         * @brief removeSystem removes entity system from manager.
+         * The user takes ownership of the entity system after it is removed from entity manager.
+         * @param es remove entity system of this type
+         * @return false if entity system was not in manager in the first place,
+         *          true if it could be removed.
+         */
+        bool removeSystem(EntitySystem* es);
+
+        /**
+         * @brief hasSystem returns true if an entity system of given type
+         *        is present.
+         * @return true if exists
+         */
+        bool hasSystem(EntitySystem* es);
 
         /**
          * Templated method to get an existing component.
@@ -161,42 +184,8 @@ namespace QtEntity
         void destroyEntity(EntityId id);
 
         /**
-         * @brief Add an entity system to the entity manager.
-         * The entity manager takes ownership of the system, it is
-         * deleted when entity manager is deleted.
-         * @throw runtime_error if entity system already in manager
+         * iterators for entity systems
          */
-        void addSystem(EntitySystem* es);
-
-        /**
-         * @brief removeSystem removes entity system from manager.
-         * The user takes ownership of the entity system after it is removed from entity manager.
-         * @param es remove entity system of this type
-         * @return false if entity system was not in manager in the first place,
-         *          true if it could be removed.
-         */
-        bool removeSystem(EntitySystem* es);
-
-        /**
-         * @brief hasSystem returns true if an entity system of given type
-         *        is present.
-         * @return true if exists
-         */
-        bool hasSystem(EntitySystem* es);
-
-        /**
-         * @brief createComponentByType Creates a new component of given type and
-         *        assigns it to id.
-         * @param id assign component to this Id
-         * @param componentMetaObject type of component to create
-         * @param properties A map of property values to apply to component before adding it to system
-         *                   Format is: { name of QMetaProperty => value to set }
-         * @return component that was created.
-         */
-        QObject* createComponentByType(EntityId id, const QMetaObject& componentMetaObject,
-                                       const QVariantMap& properties);
-
-        // iterators for entity systems
         EntitySystemStore::iterator begin() { return _systemsBySystemType.begin(); }
         EntitySystemStore::iterator end() { return _systemsBySystemType.end(); }
 
@@ -258,17 +247,32 @@ namespace QtEntity
     template <typename T>
     bool EntityManager::createComponent(EntityId id, T*& component, const QVariantMap& properties)
     {
-        QObject* obj = this->createComponentByType(id, T::staticMetaObject, properties);
-        component = qobject_cast<T*>(obj);
-        return component != nullptr;
+        EntitySystem* s = this->systemByComponentType(T::staticMetaObject);
+
+        if(s == nullptr || s->component(id) != nullptr)
+        {
+            return false;
+        }
+        try
+        {
+            component = qobject_cast<T*>(s->createComponent(id, properties));
+            return component != nullptr;
+        }
+        catch(std::bad_alloc&)
+        {
+            qCritical() << "Could not create component, bad allocation!";
+            return false;
+        }
+
     }
 
 
     template <typename T>
     T* EntityManager::createComponent(EntityId id, const QVariantMap& properties)
     {
-        QObject* obj = this->createComponentByType(id, T::staticMetaObject, properties);
-        return qobject_cast<T*>(obj);
+        T* ret;
+        createComponent(id, ret, properties);
+        return ret;
     }
 
 
@@ -294,4 +298,5 @@ namespace QtEntity
         if(s == nullptr) return false;
         return s->destroyComponent(id);
     }
+
 }
