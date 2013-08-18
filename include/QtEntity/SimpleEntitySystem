@@ -31,7 +31,7 @@ namespace QtEntity
         /**
          * This is called by entity manager when system is added to entity manager
          */
-        virtual void setEntityManager(EntityManager* em)
+        virtual void setEntityManager(EntityManager* em) override
         {
             _entityManager = em;
         }
@@ -49,7 +49,7 @@ namespace QtEntity
          * @param id EntityId of component to fetch
          * @return component or nullptr if it does not exist
          */
-        virtual QObject* component(EntityId id) const;
+        virtual QObject* component(EntityId id) const override;
 
         template <typename T>
         bool component(EntityId id, T*& component) const;
@@ -73,7 +73,7 @@ namespace QtEntity
          *                   Format is: { name of QMetaProperty => value to set }
          * @return newly constructed component
          */
-        virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap());
+        virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) override;
 
         /**
          * @brief destroyComponent remove component from system and destruct it
@@ -88,7 +88,7 @@ namespace QtEntity
         /**
          * @return  meta object type of component class
          */
-        virtual const QMetaObject& componentMetaObject() const;
+        virtual const QMetaObject& componentMetaObject() const override;
 
         /**
          * Return begin iterator of component container
@@ -111,8 +111,8 @@ namespace QtEntity
         ComponentStore::const_iterator end() const { return _components.end(); }
 
 
-        virtual EntitySystem::Iterator pbegin();
-        virtual EntitySystem::Iterator pend();
+        virtual EntitySystem::Iterator pbegin() override;
+        virtual EntitySystem::Iterator pend() override;
 
         /**
          * @brief Returns all additional attributes for a property.
@@ -122,7 +122,7 @@ namespace QtEntity
          * @param name Name of the property
          * @return a map of QVariants
          */
-        virtual const QVariantMap attributesForProperty(const QString& name) const { return QVariantMap(); }
+        virtual const QVariantMap attributesForProperty(const QString& name) const override { return QVariantMap(); }
 
         /**
          * Return number of components
@@ -131,19 +131,16 @@ namespace QtEntity
 
     protected:
 
+        virtual QObject* createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals);
+
         /**
          * Loops through properties of QObject and assigns values from properties map
          * if they are set
-         * @param obj Write values to properties of this object
+         * @param id id of component to apply to
          * @param Read these properties
          */
-        static void applyParameters(QObject* obj, const QVariantMap& properties);
+        void applyParameters(EntityId id, const QVariantMap& properties);
 
-        /**
-         * @brief Override this if you want to call a custom constructor
-         *        on your component
-         */
-        virtual QObject* createObjectInstance(EntityId id, const QVariantMap& propertyVals);
 
         /**
          * The entity manager that this entity system is assigned to.

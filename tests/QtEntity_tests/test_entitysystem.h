@@ -14,9 +14,6 @@ public:
 
     Q_INVOKABLE Transform() {}
 
-    Q_PROPERTY(int myint READ myInt WRITE setMyInt USER true)
-    Q_PROPERTY(QVector2D myvec2 READ myVec2 WRITE setMyVec2 USER true)
-
     void setMyVec2(const QVector2D& v) { _myvec2 = v; }
     QVector2D myVec2() const  { return _myvec2; }
 
@@ -29,14 +26,37 @@ public:
 };
 
 
+class TransformSystem : public SimpleEntitySystem
+{
+public:
+    TransformSystem()
+     : SimpleEntitySystem(Transform::staticMetaObject)
+    {
+        QTE_ADD_PROPERTY("myint", &TransformSystem::myInt, &TransformSystem::setMyInt);
+        QTE_ADD_PROPERTY("myvec2", &TransformSystem::myVec2, &TransformSystem::setMyVec2);
+    }
+
+    QVariant myInt(QtEntity::EntityId id) const { return static_cast<Transform*>(component(id))->myInt(); }
+    void setMyInt(QtEntity::EntityId id, const QVariant& v) const { static_cast<Transform*>(component(id))->setMyInt(v.toInt()); }
+
+    QVariant myVec2(QtEntity::EntityId id) const { return static_cast<Transform*>(component(id))->myVec2(); }
+    void setMyVec2(QtEntity::EntityId id, const QVariant& v) const { static_cast<Transform*>(component(id))->setMyVec2(v.value<QVector2D>()); }
+};
+
+
 class EntitySystemTest: public QObject
 {
     Q_OBJECT
 private slots:
 
+    void propertyReadWrite()
+    {
+
+    }
+
     void createAndFetch()
     {
-        SimpleEntitySystem ts(Transform::staticMetaObject);
+        TransformSystem ts;
 
 		QVariantMap m;
 		m["myint"] = 666;
@@ -61,7 +81,7 @@ private slots:
 
     void destruct()
     {
-        SimpleEntitySystem ts(Transform::staticMetaObject);
+        TransformSystem ts;
         QObject* c = ts.createComponent(1);
         QObject* c2 = ts.component(1);
         QVERIFY(c == c2);
@@ -85,7 +105,7 @@ private slots:
 
     void iteratorTest2()
     {
-        SimpleEntitySystem ts(Transform::staticMetaObject);
+        TransformSystem ts;
         QVariantMap m;
         for(int i = 1; i <= 5; ++i)
         {

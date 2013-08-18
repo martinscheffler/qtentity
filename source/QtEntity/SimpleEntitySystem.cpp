@@ -47,9 +47,15 @@ namespace QtEntity
             throw std::runtime_error("Component already existss!");
         }
 
-        // use QMetaObject to construct new instance
-        QObject* obj = this->createObjectInstance(id, propertyVals);
 
+        return createObjectInstance(id, propertyVals);
+    }
+
+
+    QObject* SimpleEntitySystem::createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals)
+    {
+        // use QMetaObject to construct new instance
+        QObject* obj = _componentMetaObject->newInstance();
         // out of memory?
         if(obj == nullptr)
         {
@@ -59,7 +65,7 @@ namespace QtEntity
 
         // store
         _components[id] = obj;
-
+        applyParameters(id, propertyVals);
         return obj;
     }
 
@@ -80,37 +86,20 @@ namespace QtEntity
     }
 
 
-    QObject* SimpleEntitySystem::createObjectInstance(EntityId id, const QVariantMap& propertyVals)
+    void SimpleEntitySystem::applyParameters(EntityId id, const QVariantMap& vars)
     {
-        QObject* obj = _componentMetaObject->newInstance();
-        applyParameters(obj, propertyVals);
-        return obj;
-    }
+        if(vars.empty()) return;
 
-
-    void SimpleEntitySystem::applyParameters(QObject* obj, const QVariantMap& properties)
-    {
-        if(properties.empty()) return;
-
-        const QMetaObject* meta = obj->metaObject();
-        for(int i = 0; i < meta->propertyCount(); ++i)
+        for(int i = 0; i < propertyCount(); ++i)
         {
-            QMetaProperty prop = meta->property(i);
-
-            if(!prop.isWritable())
+            auto prop = property(i);
+            auto var = vars.find(prop.name());
+            if(var != vars.end())
             {
-                qWarning() << "Trying to initialize a non-writable property. Name is: " << prop.name();
-            }
-            else
-            {
-                auto var = properties.find(prop.name());
-                if(var != properties.end())
+                bool success = prop.write(id, var.value());
+                if(!success)
                 {
-                    bool success = prop.write(obj, var.value());
-                    if(!success)
-                    {
-                        qWarning() << "Could not set property. Name is: " << prop.name();
-                    }
+                    qWarning() << "Could not set property. Name is: " << prop.name();
                 }
             }
         }

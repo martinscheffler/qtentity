@@ -3,9 +3,42 @@
 #include <QtEntity/DataTypes>
 #include <QObject>
 #include <QVariantMap>
+#include <functional>
 
 namespace QtEntity
 {
+    #define QTE_ADD_PROPERTY(NAME, GETTER, SETTER) addProperty(QtEntity::PropertyAccessor(NAME, std::bind(GETTER, this, std::placeholders::_1), std::bind(SETTER, this, std::placeholders::_1, std::placeholders::_2)));
+
+    class PropertyAccessor
+    {
+    public:
+        typedef std::function<QVariant(EntityId)> Getter;
+        typedef std::function<void(EntityId, const QVariant&)> Setter;
+
+        PropertyAccessor()
+            : _name("")
+            , _getter(nullptr)
+            , _setter(nullptr)
+        {
+        }
+
+        PropertyAccessor(const QString& name, Getter getter, Setter setter)
+            : _name(name)
+            , _getter(getter)
+            , _setter(setter)
+        {
+        }
+
+        QString name() const { return _name; }
+        QVariant read(EntityId id) { Q_ASSERT(_getter); return _getter(id); }
+        bool write(EntityId id, const QVariant& val) { if(!_setter) return false; _setter(id, val); return true; }
+
+    private:
+        QString _name;
+        Getter _getter;
+        Setter _setter;
+    };
+
     // fwd declaration
     class EntityManager;
 
@@ -65,6 +98,17 @@ namespace QtEntity
          * @return number of components
          */
         virtual size_t count() const = 0;
+
+        //////////////////////////////////////
+        int propertyCount() const { return _properties.size(); }
+        PropertyAccessor property(int idx) { return _properties.at(idx); }
+        const PropertyAccessor property(int idx) const { return _properties.at(idx); }
+    protected:
+        void addProperty(const PropertyAccessor& a) { _properties.push_back(a); }
+    private:
+        QVector<PropertyAccessor> _properties;
+    public:
+        //////////////////////////////////////
 
         /**
          * This is called by entity manager when system is added to entity manager

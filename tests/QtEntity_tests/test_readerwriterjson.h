@@ -40,13 +40,13 @@ class DataHolder : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int myint READ myInt WRITE setMyInt USER true)
+    /*Q_PROPERTY(int myint READ myInt WRITE setMyInt USER true)
     Q_PROPERTY(QVector2D myvec2 READ myVec2 WRITE setMyVec2 USER true)
     Q_PROPERTY(QVector3D myvec3 READ myVec3 WRITE setMyVec3 USER true)
     Q_PROPERTY(QVector4D myvec4 READ myVec4 WRITE setMyVec4 USER true)
     Q_PROPERTY(QColor mycolor READ myColor WRITE setMyColor USER true)
     Q_PROPERTY(QtEntity::PropertyObjects myobjects READ myObjects WRITE setMyObjects USER true)
-
+    */
 public:
     Q_INVOKABLE DataHolder() {}
 
@@ -81,7 +81,32 @@ class DataHolderSystem : public SimpleEntitySystem
 {
     Q_OBJECT
 public:
-    DataHolderSystem() : SimpleEntitySystem(DataHolder::staticMetaObject) {}
+    DataHolderSystem() : SimpleEntitySystem(DataHolder::staticMetaObject)
+    {
+        QTE_ADD_PROPERTY("myvec2", &DataHolderSystem::myVec2, &DataHolderSystem::setMyVec2);
+        QTE_ADD_PROPERTY("myvec3", &DataHolderSystem::myVec3, &DataHolderSystem::setMyVec3);
+        QTE_ADD_PROPERTY("myvec4", &DataHolderSystem::myVec4, &DataHolderSystem::setMyVec4);
+        QTE_ADD_PROPERTY("mycolor", &DataHolderSystem::myColor, &DataHolderSystem::setMyColor);
+        QTE_ADD_PROPERTY("myobjects", &DataHolderSystem::myObjects, &DataHolderSystem::setMyObjects);
+    }
+
+    QVariant myVec2(QtEntity::EntityId id) const { return static_cast<DataHolder*>(component(id))->myVec2(); }
+    void setMyVec2(QtEntity::EntityId id, const QVariant& v) const { static_cast<DataHolder*>(component(id))->setMyVec2(v.value<QVector2D>()); }
+
+    QVariant myVec3(QtEntity::EntityId id) const { return static_cast<DataHolder*>(component(id))->myVec3(); }
+    void setMyVec3(QtEntity::EntityId id, const QVariant& v) const { static_cast<DataHolder*>(component(id))->setMyVec3(v.value<QVector3D>()); }
+
+    QVariant myVec4(QtEntity::EntityId id) const { return static_cast<DataHolder*>(component(id))->myVec4(); }
+    void setMyVec4(QtEntity::EntityId id, const QVariant& v) const { static_cast<DataHolder*>(component(id))->setMyVec4(v.value<QVector4D>()); }
+
+    QVariant myColor(QtEntity::EntityId id) const { return static_cast<DataHolder*>(component(id))->myColor(); }
+    void setMyColor(QtEntity::EntityId id, const QVariant& v) const { static_cast<DataHolder*>(component(id))->setMyColor(v.value<QColor>()); }
+
+    QVariant myInt(QtEntity::EntityId id) const { return static_cast<DataHolder*>(component(id))->myInt(); }
+    void setMyInt(QtEntity::EntityId id, const QVariant& v) const { static_cast<DataHolder*>(component(id))->setMyInt(v.toInt()); }
+
+    QVariant myObjects(QtEntity::EntityId id) const { return QVariant::fromValue(static_cast<DataHolder*>(component(id))->myObjects()); }
+    void setMyObjects(QtEntity::EntityId id, const QVariant& v) const { static_cast<DataHolder*>(component(id))->setMyObjects(v.value<PropertyObjects>()); }
 };
 
 class ReaderWriterJSONTest: public QObject

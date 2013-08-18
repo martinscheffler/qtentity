@@ -150,7 +150,7 @@ private slots:
     {
         PooledEntitySystem<XTransform> ts(0, 2);
 		for(int i = 0; i < 3; ++i) ts.createComponent(i + 1);
-        QCOMPARE(ts.size(), (size_t)3);
+        QCOMPARE(ts.count(), (size_t)3);
         QCOMPARE(ts.capacity(), (size_t)4);
     }
 
@@ -159,7 +159,7 @@ private slots:
         PooledEntitySystem<XTransform> ts(0, 2);
 		ts.createComponent(1);
         ts.destroyComponent(1);
-        QCOMPARE(ts.size(), (size_t)0);
+        QCOMPARE(ts.count(), (size_t)0);
         QCOMPARE(ts.capacity(), (size_t)2);
     }
 
@@ -175,9 +175,9 @@ private slots:
         m["myint"] = 3;
         ts.createComponent(3, m);
         
-        QCOMPARE(ts.size(), (size_t)3);
+        QCOMPARE(ts.count(), (size_t)3);
         ts.destroyComponent(2);
-        QCOMPARE(ts.size(), (size_t)2);
+        QCOMPARE(ts.count(), (size_t)2);
 
         QCOMPARE(static_cast<XTransform*>(ts.component(1))->myInt(), 1);
         QCOMPARE(static_cast<XTransform*>(ts.component(3))->myInt(), 3);
