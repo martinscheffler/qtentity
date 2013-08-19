@@ -83,11 +83,11 @@ class DataHolderSystem : public SimpleEntitySystem
 public:
     DataHolderSystem() : SimpleEntitySystem(DataHolder::staticMetaObject)
     {
-        QTE_ADD_PROPERTY("myvec2", &DataHolderSystem::myVec2, &DataHolderSystem::setMyVec2);
-        QTE_ADD_PROPERTY("myvec3", &DataHolderSystem::myVec3, &DataHolderSystem::setMyVec3);
-        QTE_ADD_PROPERTY("myvec4", &DataHolderSystem::myVec4, &DataHolderSystem::setMyVec4);
-        QTE_ADD_PROPERTY("mycolor", &DataHolderSystem::myColor, &DataHolderSystem::setMyColor);
-        QTE_ADD_PROPERTY("myobjects", &DataHolderSystem::myObjects, &DataHolderSystem::setMyObjects);
+        QTE_ADD_PROPERTY("myvec2", QVector2D, &DataHolderSystem::myVec2, &DataHolderSystem::setMyVec2);
+        QTE_ADD_PROPERTY("myvec3", QVector3D, &DataHolderSystem::myVec3, &DataHolderSystem::setMyVec3);
+        QTE_ADD_PROPERTY("myvec4", QVector4D, &DataHolderSystem::myVec4, &DataHolderSystem::setMyVec4);
+        QTE_ADD_PROPERTY("mycolor", QColor, &DataHolderSystem::myColor, &DataHolderSystem::setMyColor);
+        QTE_ADD_PROPERTY("myobjects", QtEntity::PropertyObjects, &DataHolderSystem::myObjects, &DataHolderSystem::setMyObjects);
     }
 
     QVariant myVec2(QtEntity::EntityId id) const { return static_cast<DataHolder*>(component(id))->myVec2(); }

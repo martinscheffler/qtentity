@@ -104,29 +104,13 @@ namespace QtEntityUtils
         for(auto i = em.begin(); i != em.end(); ++i)
         {
             QtEntity::EntitySystem* es = *i;
-            QObject* component = es->component(eid);
-            if(component == nullptr) continue;
-
-            const QMetaObject& meta = es->componentMetaObject();
-
-            // store property name-value pairs
-            QVariantMap componentvals = PropertyObjectEditor::componentToVariantMap(*component);
-
-            for(int j = 0; j < meta.propertyCount(); ++j)
+            QVariantMap vals = QtEntity::propertyValues(es, eid);
+            QVariantMap attribs = QtEntity::propertyAttributes(es);
+            for(auto j = attribs.begin(); j != attribs.end(); ++j)
             {
-                QMetaProperty prop = meta.property(j);
-				const char* name = prop.name();               
-
-                // store property constraints. Prepend a "#|" to identify
-                QVariantMap constraints = es->attributesForProperty(name);
-                if(!constraints.empty())
-                {
-                    componentvals[QString("#|%1").arg(name)] = constraints;
-                }
-
+                vals[QString("#|%1").arg(j.key())] = j.value();
             }
-            components[es->componentMetaObject().className()] = componentvals;
-
+            components[es->componentMetaObject().className()] = vals;
         }
         return components;
     }
@@ -134,15 +118,16 @@ namespace QtEntityUtils
 
     void EntityEditor::applyEntityData(QtEntity::EntityManager& em, QtEntity::EntityId eid, const QString& componenttype, const QString& propertyname, const QVariant& value)
     {
-        QtEntity::EntitySystem* es = em.system(componenttype);
+        /*
+         *QtEntity::EntitySystem* es = em.system(componenttype);
         if(es == nullptr)
         {
             qDebug() << "Could not apply entity data, no entity system of type " << componenttype;
             return;
         }
-        
+
         QObject* component = es->component(eid);
-        if(!component) 
+        if(!component)
         {
             qDebug() << "Could not apply entity data, no component of type " << componenttype << " on entity " << eid;
             return;
@@ -154,7 +139,7 @@ namespace QtEntityUtils
         QMetaProperty prop;
         for(int j = 0; j < meta.propertyCount(); ++j)
         {
-            if(meta.property(j).name() == propertyname) 
+            if(meta.property(j).name() == propertyname)
             {
                 foundprop = true;
                 prop = meta.property(j);
@@ -178,6 +163,40 @@ namespace QtEntityUtils
         else
         {
             prop.write(component, value);
+        }*/
+        QtEntity::EntitySystem* es = em.system(componenttype);
+        if(es == nullptr)
+        {
+            qDebug() << "Could not apply entity data, no entity system of type " << componenttype;
+            return;
+        }
+        QtEntity::PropertyAccessor prop;
+
+        for(int j = 0; j < es->propertyCount(); ++j)
+        {
+            if(es->property(j).name() == propertyname)
+            {
+                prop = es->property(j);
+                break;
+            }
+        }
+
+        if(!prop.valid())
+        {
+            qDebug() << "No property named " << propertyname << " on object of type " << es->metaObject()->className();
+            return;
+        }
+
+        if(prop.variantType() == VariantManager::propertyObjectsId())
+        {
+            QVariantList vars = value.value<QVariantList>();
+            QtEntity::PropertyObjects objs = prop.read(eid).value<QtEntity::PropertyObjects>();
+            QtEntity::PropertyObjects objsnew = PropertyObjectEditor::updatePropertyObjectsFromVariantList(objs, vars);
+            prop.write(eid, QVariant::fromValue(objsnew));
+        }
+        else
+        {
+            prop.write(eid, value);
         }
     }
 

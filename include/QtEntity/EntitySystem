@@ -7,7 +7,8 @@
 
 namespace QtEntity
 {
-    #define QTE_ADD_PROPERTY(NAME, GETTER, SETTER) addProperty(QtEntity::PropertyAccessor(NAME, std::bind(GETTER, this, std::placeholders::_1), std::bind(SETTER, this, std::placeholders::_1, std::placeholders::_2)));
+
+#define QTE_ADD_PROPERTY(NAME, VARIANTTYPE, GETTER, SETTER) addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), std::bind(GETTER, this, std::placeholders::_1), std::bind(SETTER, this, std::placeholders::_1, std::placeholders::_2)));
 
     class PropertyAccessor
     {
@@ -17,26 +18,35 @@ namespace QtEntity
 
         PropertyAccessor()
             : _name("")
+            , _variantType(0)
             , _getter(nullptr)
             , _setter(nullptr)
         {
         }
 
-        PropertyAccessor(const QString& name, Getter getter, Setter setter)
+        PropertyAccessor(const QString& name, int variantType, Getter getter, Setter setter, const QVariantMap& attributes = QVariantMap())
             : _name(name)
+            , _variantType(variantType)
             , _getter(getter)
             , _setter(setter)
+            , _attributes(attributes)
         {
         }
 
         QString name() const { return _name; }
         QVariant read(EntityId id) { Q_ASSERT(_getter); return _getter(id); }
         bool write(EntityId id, const QVariant& val) { if(!_setter) return false; _setter(id, val); return true; }
+        const QVariantMap& attributes() const { return _attributes; }
+        bool valid() const { return _getter != nullptr && _setter != nullptr; }
 
+        // return QVariant type
+        int variantType() const { return _variantType; }
     private:
         QString _name;
+        int _variantType;
         Getter _getter;
         Setter _setter;
+        QVariantMap _attributes;
     };
 
     // fwd declaration
@@ -84,25 +94,19 @@ namespace QtEntity
          */
         virtual const QMetaObject& componentMetaObject() const = 0;
 
-        /**
-         * @brief Returns meta attributes for a property.
-         * Implementations have to return a map of QVariants which can be empty.
-         * This is especially used for specifying constraints
-         * for the QtPropertyBrowser, but can be used for other means.
-         * @param name Name of the property
-         * @return a map of QVariants
-         */
-        virtual const QVariantMap attributesForProperty(const QString& name) const = 0;
 
         /**
          * @return number of components
          */
         virtual size_t count() const = 0;
 
+        // TODO remove
+        virtual const QVariantMap attributesForProperty(const QString& name) const = 0;
         //////////////////////////////////////
         int propertyCount() const { return _properties.size(); }
         PropertyAccessor property(int idx) { return _properties.at(idx); }
         const PropertyAccessor property(int idx) const { return _properties.at(idx); }
+
     protected:
         void addProperty(const PropertyAccessor& a) { _properties.push_back(a); }
     private:
@@ -194,5 +198,36 @@ namespace QtEntity
         };
         
     };
+
+    inline QVariantMap propertyValues(EntitySystem* es, EntityId eid)
+    {
+        QVariantMap m;
+        for(int i = 0; i < es->propertyCount(); ++i)
+        {
+            auto prop = es->property(i);
+            m[prop.name()] = prop.read(eid);
+        }
+        return m;
+    }
+
+    inline QVariantMap propertyAttributes(EntitySystem* es)
+    {
+        QVariantMap m;
+        for(int i = 0; i < es->propertyCount(); ++i)
+        {
+            auto prop = es->property(i);
+            m[prop.name()] = prop.attributes();
+        }
+        return m;
+    }
+
+    inline void applyPropertyValues(EntitySystem* es, EntityId eid, const QVariantMap& m)
+    {
+        for(int i = 0; i < es->propertyCount(); ++i)
+        {
+            auto prop = es->property(i);
+            if(m.contains(prop.name())) prop.write(eid, m[prop.name()]);
+        }
+    }
 
 }
