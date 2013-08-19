@@ -44,6 +44,10 @@ ShapeSystem::ShapeSystem(Renderer* renderer)
     , _renderer(renderer)
 {
 
+    auto getter = [this](QtEntity::EntityId id) {Shape* t; component(id, t); return t->position();};
+    auto setter = [this](QtEntity::EntityId id, const QVariant& v) {Shape* t; component(id, t); t->setPosition(v.value<QPoint>());};
+    addProperty(QtEntity::PropertyAccessor("position", qMetaTypeId<QPoint>(), getter, setter));
+
 }
 
 
@@ -54,8 +58,10 @@ QObject* ShapeSystem::createObjectInstance(QtEntity::EntityId id, const QVariant
     QtEntityUtils::FilePath path = propertyVals["path"].value<QtEntityUtils::FilePath>();
     int zindex = propertyVals["zIndex"].toInt();
     QRect rect = propertyVals["subtex"].value<QRect>();
-    return new Shape(_renderer, pos, path, zindex, rect);
-
+    auto obj = new Shape(_renderer, pos, path, zindex, rect);
+    _components[id] = obj;
+    applyParameters(id, propertyVals);
+    return obj;
 }
 
 const QVariantMap ShapeSystem::attributesForProperty(const QString& name) const

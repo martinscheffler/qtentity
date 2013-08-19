@@ -147,7 +147,7 @@ namespace QtEntity
          * Is NULL if entity system was never added
          */
         EntityManager* _entityManager;
-    private:
+    protected:
 
         const QMetaObject* _componentMetaObject;
         ComponentStore _components;

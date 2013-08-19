@@ -8,7 +8,17 @@
 namespace QtEntity
 {
 
-#define QTE_ADD_PROPERTY(NAME, VARIANTTYPE, GETTER, SETTER) addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), std::bind(GETTER, this, std::placeholders::_1), std::bind(SETTER, this, std::placeholders::_1, std::placeholders::_2)));
+
+#define QTE_ADD_PROPERTY(NAME, VARIANTTYPE, COMPONENTTYPE, GETTER, SETTER) \
+    {    auto getter = [this](QtEntity::EntityId id) {\
+            return QVariant::fromValue(static_cast<COMPONENTTYPE*>(component(id))->GETTER());\
+        };\
+        auto setter = [this](QtEntity::EntityId id, const QVariant& v) {\
+            static_cast<COMPONENTTYPE*>(component(id))->SETTER(v.value<VARIANTTYPE>());\
+        };\
+        addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), getter, setter));\
+    }
+
 
     class PropertyAccessor
     {

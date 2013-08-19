@@ -166,7 +166,11 @@ namespace QtEntity
         }
 
         createPrefabComponents(id, i.value().data());
-        return new PrefabInstance(i.value());
+        auto obj = new PrefabInstance(i.value());
+        _components[id] = obj;
+        applyParameters(id, propertyVals);
+
+        return obj;
     }
 
 }

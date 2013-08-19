@@ -32,15 +32,9 @@ public:
     TransformSystem()
      : SimpleEntitySystem(Transform::staticMetaObject)
     {
-        QTE_ADD_PROPERTY("myint", int, &TransformSystem::myInt, &TransformSystem::setMyInt);
-        QTE_ADD_PROPERTY("myvec2", QVector2D, &TransformSystem::myVec2, &TransformSystem::setMyVec2);
+        QTE_ADD_PROPERTY("myint", int, Transform, myInt, setMyInt);
+        QTE_ADD_PROPERTY("myvec2", QVector2D, Transform, myVec2, setMyVec2);
     }
-
-    QVariant myInt(QtEntity::EntityId id) const { return static_cast<Transform*>(component(id))->myInt(); }
-    void setMyInt(QtEntity::EntityId id, const QVariant& v) const { static_cast<Transform*>(component(id))->setMyInt(v.toInt()); }
-
-    QVariant myVec2(QtEntity::EntityId id) const { return static_cast<Transform*>(component(id))->myVec2(); }
-    void setMyVec2(QtEntity::EntityId id, const QVariant& v) const { static_cast<Transform*>(component(id))->setMyVec2(v.value<QVector2D>()); }
 };
 
 

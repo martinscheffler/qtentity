@@ -66,7 +66,10 @@ QObject* ActorSystem::createObjectInstance(QtEntity::EntityId id, const QVariant
 
     QVector3D pos = propertyVals["position"].value<QVector3D>();
     QString name = propertyVals["name"].toString();
-    return new Actor(id, _rootNode, name, pos, this);
+    auto obj = new Actor(id, _rootNode, name, pos, this);
+    _components[id] = obj;
+    applyParameters(id, propertyVals);
+    return obj;
 
 }
 
