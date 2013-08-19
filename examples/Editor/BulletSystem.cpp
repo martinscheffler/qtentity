@@ -6,7 +6,7 @@
 BulletSystem::BulletSystem()
     : QtEntity::SimpleEntitySystem(Bullet::staticMetaObject)
 {
-
+    QTE_ADD_PROPERTY("movement", QPoint, Bullet, movement, setMovement);
 }
 
 

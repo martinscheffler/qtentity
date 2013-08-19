@@ -7,8 +7,6 @@ class Bullet : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QPoint movement READ movement WRITE setMovement USER true)
-
 public:
 
     Q_INVOKABLE Bullet() { }

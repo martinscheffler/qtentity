@@ -43,11 +43,10 @@ ShapeSystem::ShapeSystem(Renderer* renderer)
     : SimpleEntitySystem(Shape::staticMetaObject)
     , _renderer(renderer)
 {
-
-    auto getter = [this](QtEntity::EntityId id) {Shape* t; component(id, t); return t->position();};
-    auto setter = [this](QtEntity::EntityId id, const QVariant& v) {Shape* t; component(id, t); t->setPosition(v.value<QPoint>());};
-    addProperty(QtEntity::PropertyAccessor("position", qMetaTypeId<QPoint>(), getter, setter));
-
+    QTE_ADD_PROPERTY("position", QPoint, Shape, position, setPosition);
+    QTE_ADD_PROPERTY("path", QtEntityUtils::FilePath, Shape, path, setPath);
+    QTE_ADD_PROPERTY("zIndex", int, Shape, zIndex, setZIndex);
+    QTE_ADD_PROPERTY("subTex", QRect, Shape, subTex, setSubtex);
 }
 
 

@@ -6,7 +6,7 @@
 DamageSystem::DamageSystem()
     :QtEntity::SimpleEntitySystem(Damage::staticMetaObject)
 {
-
+    QTE_ADD_PROPERTY("energy", int, Damage, energy, setEnergy);
 }
 
 

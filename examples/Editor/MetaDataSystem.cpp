@@ -32,7 +32,8 @@ void MetaData::setAdditionalInfo(const QString& info)
 MetaDataSystem::MetaDataSystem()
     : QtEntity::SimpleEntitySystem(MetaData::staticMetaObject)
 {
-
+    QTE_ADD_PROPERTY("name", QString, MetaData, name, setName);
+    QTE_ADD_PROPERTY("additionalInfo", QString, MetaData, additionalInfo, setAdditionalInfo);
 }
 
 

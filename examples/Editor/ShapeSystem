@@ -10,11 +10,6 @@ class Shape : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QPoint position READ position WRITE setPosition USER true)
-    Q_PROPERTY(QtEntityUtils::FilePath path READ path WRITE setPath USER true)
-    Q_PROPERTY(int zIndex READ zIndex WRITE setZIndex USER true)
-    Q_PROPERTY(QRect subTex READ subTex WRITE setSubtex USER true)
-
 public:
 
     Shape(Renderer* renderer, const QPoint& pos, const QtEntityUtils::FilePath& path, int zIndex, const QRect& subtex);

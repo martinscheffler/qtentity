@@ -6,8 +6,6 @@ class Damage : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int energy READ energy WRITE setEnergy USER true)
-
 public:
 
     Q_INVOKABLE Damage() : _energy(0) { }

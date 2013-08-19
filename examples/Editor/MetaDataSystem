@@ -10,8 +10,6 @@ class MetaDataSystem;
 class MetaData : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString name READ name WRITE setName USER true)
-    Q_PROPERTY(QString additionalInfo READ additionalInfo WRITE setAdditionalInfo USER true)
 
  public:
     MetaData(QtEntity::EntityId id, const QString& name, const QString& info, MetaDataSystem*);
