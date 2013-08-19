@@ -44,7 +44,7 @@ ShapeSystem::ShapeSystem(Renderer* renderer)
     , _renderer(renderer)
 {
     QTE_ADD_PROPERTY("position", QPoint, Shape, position, setPosition);
-    QTE_ADD_PROPERTY("path", QtEntityUtils::FilePath, Shape, path, setPath);
+    QTE_ADD_PROPERTY("path", QString, Shape, path, setPath);
     QTE_ADD_PROPERTY("zIndex", int, Shape, zIndex, setZIndex);
     QTE_ADD_PROPERTY("subTex", QRect, Shape, subTex, setSubtex);
 }

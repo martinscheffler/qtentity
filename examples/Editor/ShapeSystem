@@ -17,8 +17,14 @@ public:
     void setPosition(const QPoint& p);
     QPoint position() const { return _position; }
 
-    void setPath(const QtEntityUtils::FilePath& path) { _path = path; buildShape();}
-    QtEntityUtils::FilePath path() const { return _path; }
+    void setPath(const QtEntityUtils::FilePath& path)
+    {
+        _path = path;
+        buildShape();
+    }
+    QtEntityUtils::FilePath path() const {
+        return _path;
+    }
 
     void setZIndex(int i);
     int zIndex() const { return _zindex; }

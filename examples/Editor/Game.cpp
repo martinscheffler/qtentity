@@ -79,7 +79,7 @@ void Game::createPlayer()
         Shape* shape;
         QVariantMap m;
         m["position"] = QPoint(300, 380);
-        m["path"] = QtEntityUtils::FilePath(":/assets/spaceArt.svg");
+        m["path"] = ":/assets/spaceArt.svg";
         m["subtex"] = QRect(374,360,106,90);
         m["zIndex"] = 10;
         _entityManager.createComponent(_playerid, shape, m);

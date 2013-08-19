@@ -25,6 +25,7 @@ namespace QtEntityUtils
         VariantManager(QObject *parent = 0)
             : QtVariantPropertyManager(parent)                
         {
+            qRegisterMetaType<QtEntityUtils::FilePath>("QtEntityUtils::FilePath");
         }
 
         virtual QtVariantProperty *addProperty(int propertyType, const QString &name = QString());
