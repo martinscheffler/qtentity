@@ -9,6 +9,10 @@ EnemySystem::EnemySystem()
 {
     QtEntity::registerMetaObject(TestObj1::staticMetaObject);
     QtEntity::registerMetaObject(TestObj2::staticMetaObject);
+
+    QTE_ADD_PROPERTY("lifetime", int, Enemy, lifetime, setLifetime);
+    QTE_ADD_PROPERTY("myobjects", QtEntity::PropertyObjects, Enemy, myObjects, setMyObjects);
+
 }
 
 

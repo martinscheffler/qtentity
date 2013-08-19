@@ -37,8 +37,7 @@ class Enemy : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int lifetime READ lifetime WRITE setLifetime USER true)
-    Q_PROPERTY(QtEntity::PropertyObjects myobjects READ myObjects WRITE setMyObjects USER true)
+
 public:
 
     Q_INVOKABLE Enemy() : _lifetime(0) {

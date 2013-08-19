@@ -126,9 +126,6 @@ class Actor : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString name READ name WRITE setName USER true)
-    Q_PROPERTY(QVector3D position READ position WRITE setPosition USER true)
-    Q_PROPERTY(QtEntity::PropertyObjects shapes READ shapes WRITE setShapes USER true)
 
 public:
 

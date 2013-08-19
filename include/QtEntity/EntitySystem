@@ -3,7 +3,7 @@
 #include <QtEntity/DataTypes>
 #include <QObject>
 #include <QVariantMap>
-#include <functional>
+#include <QDebug>
 
 namespace QtEntity
 {
@@ -11,14 +11,23 @@ namespace QtEntity
 
 #define QTE_ADD_PROPERTY(NAME, VARIANTTYPE, COMPONENTTYPE, GETTER, SETTER) \
     {    auto getter = [this](QtEntity::EntityId id) {\
-            return QVariant::fromValue(static_cast<COMPONENTTYPE*>(component(id))->GETTER());\
+            auto c = static_cast<COMPONENTTYPE*>(component(id)); return(c) ? QVariant::fromValue(c->GETTER()) : QVariant();\
         };\
         auto setter = [this](QtEntity::EntityId id, const QVariant& v) {\
-            static_cast<COMPONENTTYPE*>(component(id))->SETTER(v.value<VARIANTTYPE>());\
+            auto c = static_cast<COMPONENTTYPE*>(component(id)); if(!c) qDebug() << "Cannot write property " << NAME << ", component not found with id " << id; else c->SETTER(v.value<VARIANTTYPE>());\
         };\
         addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), getter, setter));\
     }
 
+#define QTE_ADD_PROPERTY_WITH_ATTRIBS(NAME, VARIANTTYPE, COMPONENTTYPE, GETTER, SETTER, ATTRIBS) \
+    {    auto getter = [this](QtEntity::EntityId id) {\
+            auto c = static_cast<COMPONENTTYPE*>(component(id)); return(c) ? QVariant::fromValue(c->GETTER()) : QVariant();\
+        };\
+        auto setter = [this](QtEntity::EntityId id, const QVariant& v) {\
+            auto c = static_cast<COMPONENTTYPE*>(component(id)); if(!c) qDebug() << "Cannot write property " << NAME << ", component not found with id " << id; else c->SETTER(v.value<VARIANTTYPE>());\
+        };\
+        addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), getter, setter, ATTRIBS));\
+    }
 
     class PropertyAccessor
     {

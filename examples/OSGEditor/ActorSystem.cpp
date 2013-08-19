@@ -58,6 +58,16 @@ ActorSystem::ActorSystem(osg::Group* rootnode)
 {
     QtEntity::registerMetaObject(Box::staticMetaObject);
     QtEntity::registerMetaObject(Sphere::staticMetaObject);
+
+    QTE_ADD_PROPERTY("name", QString, Actor, name, setName);
+    QTE_ADD_PROPERTY("position", QVector3D, Actor, position, setPosition);
+    QStringList sl;
+    sl.push_back(Box::staticMetaObject.className());
+    sl.push_back(Sphere::staticMetaObject.className());
+    QVariantMap attribs;
+    attribs["classnames"] = sl;
+    QTE_ADD_PROPERTY_WITH_ATTRIBS("shapes", QtEntity::PropertyObjects, Actor, shapes, setShapes, attribs);
+
 }
 
 

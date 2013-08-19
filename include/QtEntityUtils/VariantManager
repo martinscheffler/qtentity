@@ -8,6 +8,9 @@ namespace QtEntityUtils
 {
     class FilePath : public QString
     {
+    public:
+        FilePath(const QString& v) : QString(v) {}
+        FilePath() {}
     };
 }
 
