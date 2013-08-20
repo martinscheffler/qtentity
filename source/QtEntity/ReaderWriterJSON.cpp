@@ -1,6 +1,7 @@
 #include <QtEntity/ReaderWriterJSON>
 
 #include <QtEntity/EntityManager>
+#include <QtEntity/EntitySystem>
 #include <QtEntity/MetaObjectRegistry>
 #include <QColor>
 #include <QDebug>
@@ -13,20 +14,18 @@
 
 namespace QtEntity
 {
-    QJsonObject ReaderWriterJSON::componentToJson(const QObject& component)
+    QJsonObject ReaderWriterJSON::componentToJson(const EntitySystem& es, QtEntity::EntityId id)
     {
         QJsonObject ret;
-        const QMetaObject* meta = component.metaObject();
-        int count = meta->propertyCount();
+        int count = es.propertyCount();
         for(int i = 0; i < count; ++i)
         {
-            QMetaProperty prop = meta->property(i);
-
+            auto prop = es.property(i);
             QString name = prop.name();
 
             if(name != "objectName")
             {
-                QVariant val = prop.read(&component);
+                QVariant val = prop.read(id);
                 ret.insert(name, variantToJson(val));
             }
         }
@@ -117,15 +116,15 @@ namespace QtEntity
         }
 
         QVariantMap params;
-        QMetaObject mo = es->componentMetaObject();
-        for(int i = 0; i < mo.propertyCount(); ++i)
+        
+        for(int i = 0; i < es->propertyCount(); ++i)
         {
-            QMetaProperty prop = mo.property(i);
-            const char* propname = prop.name();
+            auto prop = es->property(i);
+            QString propname = prop.name();
             auto j = json.find(propname);
             if(j != json.end())
             {
-                params[propname] = jsonToVariant(prop.userType(), j.value());
+                params[propname] = jsonToVariant(prop.variantType(), j.value());
             }
         }
 

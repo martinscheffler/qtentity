@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 
     { EntitySystemTest t; if(0 != QTest::qExec(&t, argc, argv)) return 1; }
     { EntityManagerTest t; if(0 != QTest::qExec(&t, argc, argv)) return 1; }
-   // { ReaderWriterJSONTest t; if(0 != QTest::qExec(&t, argc, argv)) return 1; }
+    { ReaderWriterJSONTest t; if(0 != QTest::qExec(&t, argc, argv)) return 1; }
     { PooledEntitySystemTest t; if(0 != QTest::qExec(&t, argc, argv)) return 1; }
     { PrefabSystemTest t; if(0 != QTest::qExec(&t, argc, argv)) return 1; }
 

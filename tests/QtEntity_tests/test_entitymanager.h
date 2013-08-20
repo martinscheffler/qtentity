@@ -2,22 +2,9 @@
 #include <QtCore/QObject>
 #include <QtEntity/EntityManager>
 #include <QtEntity/SimpleEntitySystem>
+#include "common.h"
 
 using namespace QtEntity;
-
-class MocComponent : public QObject
-{
-    Q_OBJECT
-public:
-    Q_INVOKABLE MocComponent() {}
-};
-
-class MocEntitySystem : public SimpleEntitySystem
-{
-    Q_OBJECT
-public:
-    MocEntitySystem() : SimpleEntitySystem(MocComponent::staticMetaObject) {}
-};
 
 
 class EntityManagerTest: public QObject
@@ -29,12 +16,12 @@ private slots:
     {
         EntityManager em;
 
-        EntitySystem* esnothing = em.systemByComponentType(MocComponent::staticMetaObject);
+        EntitySystem* esnothing = em.systemByComponentType(Testing::staticMetaObject);
         QVERIFY(esnothing == nullptr);
 
-        auto es = new MocEntitySystem();
+        auto es = new TestingSystem();
         em.addSystem(es);
-        EntitySystem* es2 = em.systemByComponentType(MocComponent::staticMetaObject);
+        EntitySystem* es2 = em.systemByComponentType(Testing::staticMetaObject);
         QVERIFY(es == es2);
     }
 
@@ -42,12 +29,12 @@ private slots:
     {
         EntityManager em;
 
-        EntitySystem* esnothing = em.systemBySystemType(MocEntitySystem::staticMetaObject);
+        EntitySystem* esnothing = em.systemBySystemType(TestingSystem::staticMetaObject);
         QVERIFY(esnothing == nullptr);
 
-        auto es = new MocEntitySystem();
+        auto es = new TestingSystem();
         em.addSystem(es);
-        EntitySystem* es2 = em.systemBySystemType(MocEntitySystem::staticMetaObject);
+        EntitySystem* es2 = em.systemBySystemType(TestingSystem::staticMetaObject);
         QVERIFY(es == es2);
     }
 
@@ -55,10 +42,10 @@ private slots:
     {
         EntityManager em;
 
-        auto es = new MocEntitySystem();
+        auto es = new TestingSystem();
         em.addSystem(es);
         em.removeSystem(es);
-        EntitySystem* es2 = em.systemByComponentType(MocComponent::staticMetaObject);
+        EntitySystem* es2 = em.systemByComponentType(Testing::staticMetaObject);
         QVERIFY(nullptr == es2);
         delete es;
     }
@@ -66,9 +53,9 @@ private slots:
     void getEntitySystem()
     {
         EntityManager em;
-        auto es = new MocEntitySystem();
+        auto es = new TestingSystem();
         em.addSystem(es);
-        MocEntitySystem* es2;
+        TestingSystem* es2;
         bool success = em.system(es2);
         QVERIFY(success);
         QVERIFY(em.hasSystem(es));
@@ -78,9 +65,9 @@ private slots:
     void getComponent()
     {
         EntityManager em;
-        auto es = new MocEntitySystem();
+        auto es = new TestingSystem();
         em.addSystem(es);
-        MocComponent *comp, *comp2;
+        Testing *comp, *comp2;
         em.createComponent(1, comp);
 
         bool success = em.component(1, comp2);
@@ -91,23 +78,23 @@ private slots:
     void getComponent2()
     {
         EntityManager em;
-        auto es = new MocEntitySystem();
+        auto es = new TestingSystem();
         em.addSystem(es);
-        MocComponent *comp, *comp2;
+        Testing *comp, *comp2;
         em.createComponent(1, comp);
 
-        comp2 = em.component<MocComponent>(1);
+        comp2 = em.component<Testing>(1);
         QVERIFY(comp == comp2);
     }
 
     void createComponent2()
     {
         EntityManager em;
-        auto es = new MocEntitySystem();
+        auto es = new TestingSystem();
         em.addSystem(es);
-        auto c1 = em.createComponent<MocComponent>(1);
+        auto c1 = em.createComponent<Testing>(1);
 
-        MocComponent* c2;
+        Testing* c2;
         bool success = em.component(1, c2);
         QVERIFY(success);
         QVERIFY(c1 == c2);
@@ -116,12 +103,12 @@ private slots:
     void destroyComponent()
     {
         EntityManager em;
-        auto es = new MocEntitySystem();
+        auto es = new TestingSystem();
         em.addSystem(es);
-        MocComponent *comp, *comp2;
+        Testing *comp, *comp2;
         em.createComponent(1, comp);
         em.createComponent(2, comp2);
-        em.destroyComponent<MocComponent>(1);
+        em.destroyComponent<Testing>(1);
 
         bool success = em.component(1, comp);
         QVERIFY(!success);
@@ -133,9 +120,9 @@ private slots:
     void destroyEntity()
     {
         EntityManager em;
-        auto es = new MocEntitySystem();
+        auto es = new TestingSystem();
         em.addSystem(es);
-        MocComponent *comp;
+        Testing *comp;
         em.createComponent(1, comp);
         em.destroyEntity(1);
         bool success = em.component(1, comp);
@@ -146,9 +133,9 @@ private slots:
     void getOrCreateComponent()
     {
         EntityManager em;
-        auto es = new MocEntitySystem();
+        auto es = new TestingSystem();
         em.addSystem(es);
-        MocComponent *comp, *comp2;
+        Testing *comp, *comp2;
         em.getOrCreateComponent(1, comp);
 
         bool success = em.getOrCreateComponent(1, comp2);

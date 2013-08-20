@@ -9,17 +9,18 @@
 namespace QtEntity
 {
     class EntityManager;
+    class EntitySystem;
 
     class QTENTITY_EXPORT ReaderWriterJSON
     {
     public:
 
         /**
-         * @brief componentToJson returns a Json object from QObject.
-         * Adds an entry 'classname' with type name of component.
+         * @brief componentToJson converts properties of a component to a Json object.
+         * Adds an entry 'classname' with name of entity system.
          * @return
          */
-        static QJsonObject componentToJson(const QObject&);
+        static QJsonObject componentToJson(const EntitySystem& es, QtEntity::EntityId);
 
         /**
          * @brief variantToJson converts a single variant to Json.

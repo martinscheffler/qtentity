@@ -19,7 +19,7 @@ private slots:
 
     void createAndFetch()
     {
-        TransformSystem ts;
+        TestingSystem ts;
 
 		QVariantMap m;
 		m["myint"] = 666;
@@ -33,7 +33,7 @@ private slots:
         QObject* c3 = ts.component(2);
         QVERIFY(c3 == nullptr);
 
-        Transform* tr = qobject_cast<Transform*>(c);
+        Testing* tr = qobject_cast<Testing*>(c);
         QVERIFY(tr != nullptr);
         QCOMPARE(tr->myInt(), 666);
         QCOMPARE(tr->myVec2().x(), 77.0);
@@ -44,7 +44,7 @@ private slots:
 
     void destruct()
     {
-        TransformSystem ts;
+        TestingSystem ts;
         QObject* c = ts.createComponent(1);
         QObject* c2 = ts.component(1);
         QVERIFY(c == c2);
@@ -57,7 +57,7 @@ private slots:
 
     void iteratorTest1()
     {
-        SimpleEntitySystem ts(Transform::staticMetaObject);
+        SimpleEntitySystem ts(Testing::staticMetaObject);
         ts.createComponent(1);
         auto i = ts.pbegin();
         QObject* o = *i;
@@ -68,7 +68,7 @@ private slots:
 
     void iteratorTest2()
     {
-        TransformSystem ts;
+        TestingSystem ts;
         QVariantMap m;
         for(int i = 1; i <= 5; ++i)
         {
@@ -80,7 +80,7 @@ private slots:
         for(auto i = ts.pbegin(); i != end; ++i)
         {
             QObject* o = *i;
-            Transform* t = static_cast<Transform*>(o);
+            Testing* t = static_cast<Testing*>(o);
             sum += t->myInt();
         }
 

@@ -19,14 +19,14 @@ private slots:
         PrefabSystem* ps = new PrefabSystem();
         em.addSystem(ps);
 
-        TransformSystem* ts = new TransformSystem();
+        TestingSystem* ts = new TestingSystem();
         em.addSystem(ts);
 
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
 
         QVariantMap components;
-        QString cn = Transform::staticMetaObject.className();
+        QString cn = Testing::staticMetaObject.className();
         components[cn] = mycomponent;
         ps->addPrefab("bla.prefab", components);
 
@@ -36,7 +36,7 @@ private slots:
         props["path"] = "bla.prefab";
         em.createComponent(1, instance, props);
 
-        auto test = em.component<Transform>(1);
+        auto test = em.component<Testing>(1);
         QVERIFY(test != nullptr);
         QCOMPARE(12345, test->myInt());
 
@@ -50,14 +50,14 @@ private slots:
         PrefabSystem* ps = new PrefabSystem();
         em.addSystem(ps);
 
-        TransformSystem* ts = new TransformSystem();
+        TestingSystem* ts = new TestingSystem();
         em.addSystem(ts);
 
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
 
         QVariantMap components;
-        QString cn = Transform::staticMetaObject.className();
+        QString cn = Testing::staticMetaObject.className();
         components[cn] = mycomponent;
         ps->addPrefab("bla.prefab", components);
 
@@ -67,7 +67,7 @@ private slots:
         props["path"] = "bla.prefab";
         em.createComponent(1, instance, props);
 
-        auto test = em.component<Transform>(1);
+        auto test = em.component<Testing>(1);
         QVERIFY(test != nullptr);
         QCOMPARE(12345, test->myInt());
 
@@ -83,14 +83,14 @@ private slots:
         PrefabSystem* ps = new PrefabSystem();
         em.addSystem(ps);
 
-        TransformSystem* ts = new TransformSystem();
+        TestingSystem* ts = new TestingSystem();
         em.addSystem(ts);
 
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
 
         QVariantMap components;
-        QString cn = Transform::staticMetaObject.className();
+        QString cn = Testing::staticMetaObject.className();
         components[cn] = mycomponent;
         ps->addPrefab("bla.prefab", components);
 
@@ -100,15 +100,15 @@ private slots:
         props["path"] = "bla.prefab";
         em.createComponent(1, instance, props);
 
-        auto test = em.component<Transform>(1);
+        auto test = em.component<Testing>(1);
         QVERIFY(test != nullptr);
         QCOMPARE(12345, test->myInt());
-        auto x = em.component<Transform>(1);
+        auto x = em.component<Testing>(1);
         QVERIFY(x);
         components.clear();
         ps->updatePrefab("bla.prefab", components, true);
 
-        auto y = em.component<Transform>(1);
+        auto y = em.component<Testing>(1);
         QVERIFY(y == nullptr);
     }
 
@@ -119,14 +119,14 @@ private slots:
         PrefabSystem* ps = new PrefabSystem();
         em.addSystem(ps);
 
-        TransformSystem* ts = new TransformSystem();
+        TestingSystem* ts = new TestingSystem();
         em.addSystem(ts);
 
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
 
         QVariantMap components;
-        QString cn = Transform::staticMetaObject.className();
+        QString cn = Testing::staticMetaObject.className();
 
         ps->addPrefab("bla.prefab", components);
 
@@ -136,14 +136,14 @@ private slots:
         props["path"] = "bla.prefab";
         em.createComponent(1, instance, props);
 
-        auto test = em.component<Transform>(1);
+        auto test = em.component<Testing>(1);
         QVERIFY(test == nullptr);
 
         mycomponent["myint"] = 6789;
         components[cn] = mycomponent;
         components[cn] = mycomponent;
         ps->updatePrefab("bla.prefab", components, true);
-        test = em.component<Transform>(1);
+        test = em.component<Testing>(1);
         QVERIFY(test != nullptr);
         QCOMPARE(6789, test->myInt());
     }

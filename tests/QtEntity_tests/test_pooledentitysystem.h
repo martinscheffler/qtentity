@@ -9,14 +9,14 @@
 
 using namespace QtEntity;
 
-class TransformSystemPooled : public PooledEntitySystem<Transform>
+class TestingSystemPooled : public PooledEntitySystem<Testing>
 {
 public:
-    TransformSystemPooled(size_t capacity = 0, size_t chunkSize = 4)
-        : PooledEntitySystem<Transform>(capacity, chunkSize)
+    TestingSystemPooled(size_t capacity = 0, size_t chunkSize = 4)
+        : PooledEntitySystem<Testing>(capacity, chunkSize)
     {
-        QTE_ADD_PROPERTY("myint", int, Transform, myInt, setMyInt);
-        QTE_ADD_PROPERTY("myvec2", QVector2D, Transform, myVec2, setMyVec2);
+        QTE_ADD_PROPERTY("myint", int, Testing, myInt, setMyInt);
+        QTE_ADD_PROPERTY("myvec2", QVector2D, Testing, myVec2, setMyVec2);
     }
 };
 
@@ -57,7 +57,7 @@ private:
             for(auto j = es.begin(); j != end; ++j)
             {
                 QObject* c = *j;
-                Transform* t = qobject_cast<Transform*>(c);
+                Testing* t = qobject_cast<Testing*>(c);
                 t->setMyInt(t->myInt() + 1);
             }
         }
@@ -93,7 +93,7 @@ private:
             for(auto j = es.pbegin(); j != end; ++j)
             {
                 QObject* c = *j;
-                Transform* t = qobject_cast<Transform*>(c);
+                Testing* t = qobject_cast<Testing*>(c);
                 t->setMyInt(t->myInt() + 1);
             }
         }
@@ -105,7 +105,7 @@ private slots:
 
     void createAndFetch()
     {
-        TransformSystemPooled ts;
+        TestingSystemPooled ts;
 
 		QVariantMap m;
 		m["myint"] = 666;
@@ -119,7 +119,7 @@ private slots:
         QObject* c3 = ts.component(2);
         QVERIFY(c3 == nullptr);
 
-        Transform* tr = qobject_cast<Transform*>(c);
+        Testing* tr = qobject_cast<Testing*>(c);
         QVERIFY(tr != nullptr);
         QCOMPARE(tr->myInt(), 666);
         QCOMPARE(tr->myVec2().x(), 77.0);
@@ -130,7 +130,7 @@ private slots:
 
     void reserve()
     {
-        TransformSystemPooled ts(0, 2);
+        TestingSystemPooled ts(0, 2);
 		for(int i = 0; i < 3; ++i) ts.createComponent(i + 1);
         QCOMPARE(ts.count(), (size_t)3);
         QCOMPARE(ts.capacity(), (size_t)4);
@@ -138,7 +138,7 @@ private slots:
 
     void destroyOne()
     {
-        TransformSystemPooled ts(0, 2);
+        TestingSystemPooled ts(0, 2);
 		ts.createComponent(1);
         ts.destroyComponent(1);
         QCOMPARE(ts.count(), (size_t)0);
@@ -148,7 +148,7 @@ private slots:
 
      void destroyMore()
     {
-        TransformSystemPooled ts(0, 2);
+        TestingSystemPooled ts(0, 2);
         QVariantMap m;
 		m["myint"] = 1;		
         ts.createComponent(1, m);
@@ -161,8 +161,8 @@ private slots:
         ts.destroyComponent(2);
         QCOMPARE(ts.count(), (size_t)2);
 
-        QCOMPARE(static_cast<Transform*>(ts.component(1))->myInt(), 1);
-        QCOMPARE(static_cast<Transform*>(ts.component(3))->myInt(), 3);
+        QCOMPARE(static_cast<Testing*>(ts.component(1))->myInt(), 1);
+        QCOMPARE(static_cast<Testing*>(ts.component(3))->myInt(), 3);
         
     }
 
@@ -170,8 +170,8 @@ private slots:
     void speedTest()
     {
         {
-            TransformSystemPooled pooled(0, 8);
-            SimpleEntitySystem simple(Transform::staticMetaObject);
+            TestingSystemPooled pooled(0, 8);
+            SimpleEntitySystem simple(Testing::staticMetaObject);
 
             float timepooled = float(speed1(pooled)) / 1000.0f;
             float timesimple = float(speed1(simple)) / 1000.0f;
@@ -180,8 +180,8 @@ private slots:
         }
 
         {
-            TransformSystemPooled pooled(0, 8);
-            SimpleEntitySystem simple(Transform::staticMetaObject);
+            TestingSystemPooled pooled(0, 8);
+            SimpleEntitySystem simple(Testing::staticMetaObject);
 
             float timepooled = float(speed2(pooled)) / 1000.0f;
             float timesimple = float(speed2(simple)) / 1000.0f;
@@ -192,26 +192,26 @@ private slots:
 
     void iteratorTest1()
     {
-        TransformSystemPooled pooled(0, 8);
+        TestingSystemPooled pooled(0, 8);
         QVERIFY(pooled.begin() == pooled.end());
 
         QVariantMap m;
 		m["myint"] = 1; pooled.createComponent(1, m);
         m["myint"] = 2; pooled.createComponent(2, m);
         m["myint"] = 3; pooled.createComponent(3, m);
-        TransformSystemPooled::Iterator i = pooled.begin();
-        Transform* t = *i;
-        QCOMPARE(t, static_cast<Transform*>(pooled.component(1)));
-        QCOMPARE(*++i, static_cast<Transform*>(pooled.component(2)));
-        QCOMPARE(*++i, static_cast<Transform*>(pooled.component(3)));
-        TransformSystemPooled::Iterator j = ++i;
-        TransformSystemPooled::Iterator end = pooled.end();
+        TestingSystemPooled::Iterator i = pooled.begin();
+        Testing* t = *i;
+        QCOMPARE(t, static_cast<Testing*>(pooled.component(1)));
+        QCOMPARE(*++i, static_cast<Testing*>(pooled.component(2)));
+        QCOMPARE(*++i, static_cast<Testing*>(pooled.component(3)));
+        TestingSystemPooled::Iterator j = ++i;
+        TestingSystemPooled::Iterator end = pooled.end();
         QCOMPARE(j, end);
     }
 
     void iteratorTest2()
     {
-        TransformSystemPooled pooled(0, 8);
+        TestingSystemPooled pooled(0, 8);
         QVariantMap m;
         for(int i = 1; i <= 10; ++i)
         {
@@ -219,16 +219,16 @@ private slots:
             pooled.createComponent(i, m);
         }
         int count = 1;
-        for(TransformSystemPooled::Iterator i = pooled.begin(); i != pooled.end(); ++i)
+        for(TestingSystemPooled::Iterator i = pooled.begin(); i != pooled.end(); ++i)
         {
-            Transform* o = *i;
-            QCOMPARE(o, static_cast<Transform*>(pooled.component(count++)));
+            Testing* o = *i;
+            QCOMPARE(o, static_cast<Testing*>(pooled.component(count++)));
         }
     }
 
     void iteratorTest3()
     {
-        TransformSystemPooled pooled(0, 8);
+        TestingSystemPooled pooled(0, 8);
         QVariantMap m;
         for(int i = 1; i <= 10; ++i)
         {
@@ -238,8 +238,8 @@ private slots:
         int count = 1;
         for(EntitySystem::Iterator i = pooled.pbegin(); i != pooled.pend(); ++i)
         {
-            Transform* o = static_cast<Transform*>(*i);
-            QCOMPARE(o, static_cast<Transform*>(pooled.component(count++)));
+            Testing* o = static_cast<Testing*>(*i);
+            QCOMPARE(o, static_cast<Testing*>(pooled.component(count++)));
         }
     }
 };
