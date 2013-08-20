@@ -121,27 +121,7 @@ namespace QtEntity
             
             if(!properties.empty())
             {
-                for(int i = 0; i < componentMetaObject().propertyCount(); ++i)
-                {
-                    QMetaProperty prop = componentMetaObject().property(i);
-
-                    if(!prop.isWritable())
-                    {
-                        qWarning() << "Trying to initialize a non-writable property. Name is: " << prop.name();
-                    }
-                    else
-                    {
-                        auto var = properties.find(prop.name());
-                        if(var != properties.end())
-                        {
-                            bool success = prop.write(obj, var.value());
-                            if(!success)
-                            {
-                                qWarning() << "Could not set property. Name is: " << prop.name();
-                            }
-                        }
-                    }
-                }
+                applyPropertyValues(this, id, properties);
             }
 
             return obj;

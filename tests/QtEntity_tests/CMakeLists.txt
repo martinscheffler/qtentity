@@ -5,6 +5,7 @@ include_directories(
 )
 
 set(QTENTITY_TESTS_HDR
+    common.h
     test_entitysystem.h
     test_entitymanager.h
     test_pooledentitysystem.h

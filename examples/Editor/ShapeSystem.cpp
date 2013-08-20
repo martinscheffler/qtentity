@@ -59,7 +59,7 @@ QObject* ShapeSystem::createObjectInstance(QtEntity::EntityId id, const QVariant
     QRect rect = propertyVals["subtex"].value<QRect>();
     auto obj = new Shape(_renderer, pos, path, zindex, rect);
     _components[id] = obj;
-    applyParameters(id, propertyVals);
+    QtEntity::applyPropertyValues(this, id, propertyVals);
     return obj;
 }
 

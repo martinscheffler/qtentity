@@ -65,7 +65,7 @@ namespace QtEntity
 
         // store
         _components[id] = obj;
-        applyParameters(id, propertyVals);
+        applyPropertyValues(this, id, propertyVals);
         return obj;
     }
 
@@ -86,24 +86,7 @@ namespace QtEntity
     }
 
 
-    void SimpleEntitySystem::applyParameters(EntityId id, const QVariantMap& vars)
-    {
-        if(vars.empty()) return;
-
-        for(int i = 0; i < propertyCount(); ++i)
-        {
-            auto prop = property(i);
-            auto var = vars.find(prop.name());
-            if(var != vars.end())
-            {
-                bool success = prop.write(id, var.value());
-                if(!success)
-                {
-                    qWarning() << "Could not set property. Name is: " << prop.name();
-                }
-            }
-        }
-    }
+    
 
     
     size_t SimpleEntitySystem::count() const

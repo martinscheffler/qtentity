@@ -58,7 +58,7 @@ QObject* MetaDataSystem::createObjectInstance(QtEntity::EntityId id, const QVari
     QString info = propertyVals["additionalInfo"].toString();
     auto obj = new MetaData(id, name, info, this);
     _components[id] = obj;
-    applyParameters(id, propertyVals);
+    QtEntity::applyPropertyValues(this, id, propertyVals);
     return obj;
 }
 

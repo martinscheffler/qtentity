@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVariantMap>
 #include <QDebug>
+#include <functional>
 
 namespace QtEntity
 {
@@ -245,8 +246,14 @@ namespace QtEntity
         for(int i = 0; i < es->propertyCount(); ++i)
         {
             auto prop = es->property(i);
-            if(m.contains(prop.name())) prop.write(eid, m[prop.name()]);
+            if(m.contains(prop.name())) 
+            {
+                bool success = prop.write(eid, m[prop.name()]);
+                if(!success)
+                {
+                    qWarning() << "Could not set property. Name is: " << prop.name();
+                }
+            }
         }
     }
-
 }

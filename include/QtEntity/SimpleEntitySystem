@@ -134,15 +134,6 @@ namespace QtEntity
         virtual QObject* createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals);
 
         /**
-         * Loops through properties of QObject and assigns values from properties map
-         * if they are set
-         * @param id id of component to apply to
-         * @param Read these properties
-         */
-        void applyParameters(EntityId id, const QVariantMap& properties);
-
-
-        /**
          * The entity manager that this entity system is assigned to.
          * Is NULL if entity system was never added
          */

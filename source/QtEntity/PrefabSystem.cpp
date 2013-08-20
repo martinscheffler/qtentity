@@ -90,21 +90,21 @@ namespace QtEntity
                             Q_ASSERT(component);
                             if(!component) continue;
 
-                            for(int i = 0; i < component->metaObject()->propertyCount(); ++i)
+                            for(int i = 0; i < es->propertyCount(); ++i)
                             {
-                                QMetaProperty prop = component->metaObject()->property(i);
+                                auto prop = es->property(i);
 
                                 QString n = prop.name();
                                 // don't update parameters in prefab parameter list
-                                if(prefab->parameters().contains(prop.name()) || strcmp("objectName", prop.name()) == 0)
+                                if(prefab->parameters().contains(prop.name()) || prop.name() == "objectName")
                                 {
                                     continue;
                                 }
-                                QVariant current = prop.read(component);
+                                QVariant current = prop.read(k.key());
                                 QVariantMap::iterator newval = newvals.find(prop.name());
                                 if(newval != newvals.end() && newval.value() != current)
                                 {
-                                    prop.write(component, newval.value());
+                                    prop.write(k.key(), newval.value());
                                 }
                             }
                         }
@@ -168,7 +168,7 @@ namespace QtEntity
         createPrefabComponents(id, i.value().data());
         auto obj = new PrefabInstance(i.value());
         _components[id] = obj;
-        applyParameters(id, propertyVals);
+        applyPropertyValues(this, id, propertyVals);
 
         return obj;
     }
