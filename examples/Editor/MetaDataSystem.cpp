@@ -1,10 +1,8 @@
 #include "MetaDataSystem"
 
-MetaData::MetaData(QtEntity::EntityId id, const QString& name, const QString& info, MetaDataSystem* ls)
-    : _entityId(id)
-    , _name(name)
-    , _info(info)
-    , _system(ls)
+MetaData::MetaData()
+    : _entityId(0)
+    , _system(nullptr)
 {
 }
 
@@ -14,7 +12,7 @@ void MetaData::setName(const QString& name)
     if(_name != name)
     {
         _name = name;
-        _system->entityChanged(_entityId, _name, _info);
+        if(_system) _system->entityChanged(_entityId, _name, _info);
     }
 }
 
@@ -24,7 +22,7 @@ void MetaData::setAdditionalInfo(const QString& info)
     if(_info != info)
     {
         _info = info;
-        _system->entityChanged(_entityId, _name, _info);
+        if(_system) _system->entityChanged(_entityId, _name, _info);
     }
 }
 
@@ -37,28 +35,17 @@ MetaDataSystem::MetaDataSystem()
 }
 
 
-QObject* MetaDataSystem::createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals)
+QObject* MetaDataSystem::createComponent(QtEntity::EntityId id, const QVariantMap& properties)
 {
-    QObject* obj = SimpleEntitySystem::createComponent(id, propertyVals);
+    QObject* obj = SimpleEntitySystem::createComponent(id, properties);
     if(obj != NULL)
     {
-        MetaData* entry;
-        if(this->component(id, entry))
-        {
-            emit entityAdded(id, entry->name(), entry->additionalInfo());
-        }
+        auto md = qobject_cast<MetaData*>(obj);
+        md->_entityId = id;
+        md->_system = this;        
+        emit entityAdded(id, md->name(), md->additionalInfo());
+        
     }
-    return obj;
-}
-
-
-QObject* MetaDataSystem::createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals)
-{
-    QString name = propertyVals["name"].toString();
-    QString info = propertyVals["additionalInfo"].toString();
-    auto obj = new MetaData(id, name, info, this);
-    _components[id] = obj;
-    QtEntity::applyPropertyValues(this, id, propertyVals);
     return obj;
 }
 

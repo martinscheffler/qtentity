@@ -117,7 +117,7 @@ namespace QtEntity
             _indices[id] = index;
             T* ptr = static_cast<T*>(_components);
             T* obj = &ptr[index];
-            createObjectInstance(obj, properties);
+            new (obj) T();
             
             if(!properties.empty())
             {
@@ -185,11 +185,6 @@ namespace QtEntity
             }            
             _components = components;
             _capacity += chunk;
-        }
-
-        virtual void createObjectInstance(T* component, const QVariantMap& propertyVals)
-        {
-            new (component) T();
         }
 
         EntityManager* _entityManager;

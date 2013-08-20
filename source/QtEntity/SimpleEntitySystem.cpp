@@ -47,13 +47,6 @@ namespace QtEntity
             throw std::runtime_error("Component already existss!");
         }
 
-
-        return createObjectInstance(id, propertyVals);
-    }
-
-
-    QObject* SimpleEntitySystem::createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals)
-    {
         // use QMetaObject to construct new instance
         QObject* obj = _componentMetaObject->newInstance();
         // out of memory?
@@ -66,7 +59,7 @@ namespace QtEntity
         // store
         _components[id] = obj;
         applyPropertyValues(this, id, propertyVals);
-        return obj;
+        return obj;       
     }
 
 

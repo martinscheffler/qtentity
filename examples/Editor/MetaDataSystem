@@ -11,8 +11,10 @@ class MetaData : public QObject
 {
     Q_OBJECT
 
+    friend class MetaDataSystem;
+
  public:
-    MetaData(QtEntity::EntityId id, const QString& name, const QString& info, MetaDataSystem*);
+    Q_INVOKABLE MetaData();
 
     /**
      * Set entity name (human readable identifier)
@@ -59,10 +61,6 @@ public:
 
     // override to emit signal for removing entity list entry
     virtual bool destroyComponent(QtEntity::EntityId id) override;
-
-protected:
-    // override to call ListEntry constructor passing it pointer to this
-    virtual QObject* createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals) override;
 
 signals:
 

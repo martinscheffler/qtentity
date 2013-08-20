@@ -130,9 +130,7 @@ namespace QtEntity
         virtual size_t count() const;
 
     protected:
-
-        virtual QObject* createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals);
-
+       
         /**
          * The entity manager that this entity system is assigned to.
          * Is NULL if entity system was never added

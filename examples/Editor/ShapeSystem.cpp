@@ -1,20 +1,16 @@
 #include "ShapeSystem"
 
 
-Shape::Shape(Renderer* renderer, const QPoint& pos, const QtEntityUtils::FilePath& path, int zIndex, const QRect& subtex)
-    : _renderer(renderer)
-    , _path(path)
-    , _position(pos)
-    , _subtex(subtex)
-    , _zindex(zIndex)
+Shape::Shape()
+    : _renderer(nullptr)
     , _handle(0)    
 {
-    buildShape();
 }
 
 
 void Shape::buildShape()
 {
+    if(!_renderer) return;
     if(_handle != 0)
     {
         _renderer->destroyShape(_handle);
@@ -28,14 +24,14 @@ void Shape::buildShape()
 void Shape::setPosition(const QPoint& p)
 {
     _position = p;
-    _renderer->updateShape(_handle, _position, _zindex);
+    if(_renderer) _renderer->updateShape(_handle, _position, _zindex);
 }
 
 
 void Shape::setZIndex(int i)
 {
     _zindex = i;
-    _renderer->updateShape(_handle, _position, _zindex);
+    if(_renderer) _renderer->updateShape(_handle, _position, _zindex);
 }
 
 
@@ -50,17 +46,12 @@ ShapeSystem::ShapeSystem(Renderer* renderer)
 }
 
 
-QObject* ShapeSystem::createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals)
+QObject* ShapeSystem::createComponent(QtEntity::EntityId id, const QVariantMap& properties)
 {
-
-    QPoint pos = propertyVals["position"].value<QPoint>();
-    QtEntityUtils::FilePath path = propertyVals["path"].value<QtEntityUtils::FilePath>();
-    int zindex = propertyVals["zIndex"].toInt();
-    QRect rect = propertyVals["subtex"].value<QRect>();
-    auto obj = new Shape(_renderer, pos, path, zindex, rect);
-    _components[id] = obj;
-    QtEntity::applyPropertyValues(this, id, propertyVals);
-    return obj;
+    QObject* o = SimpleEntitySystem::createComponent(id, properties);
+    qobject_cast<Shape*>(o)->_renderer = _renderer;
+    qobject_cast<Shape*>(o)->buildShape();
+    return o;
 }
 
 const QVariantMap ShapeSystem::attributesForProperty(const QString& name) const

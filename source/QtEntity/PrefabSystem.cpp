@@ -24,7 +24,6 @@ namespace QtEntity
     PrefabSystem::PrefabSystem()
         :QtEntity::SimpleEntitySystem(PrefabInstance::staticMetaObject)
     {
-
     }
 
 
@@ -156,21 +155,18 @@ namespace QtEntity
     }
 
 
-    QObject* PrefabSystem::createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals)
+    QObject* PrefabSystem::createComponent(EntityId id, const QVariantMap& properties)
     {
-        QString path = propertyVals["path"].toString();
+        QString path = properties["path"].toString();
         Prefabs::const_iterator i = _prefabs.find(path);
         if(i == _prefabs.end())
         {
             return nullptr;
         }
-
-        createPrefabComponents(id, i.value().data());
-        auto obj = new PrefabInstance(i.value());
-        _components[id] = obj;
-        applyPropertyValues(this, id, propertyVals);
-
-        return obj;
+        
+        QObject* o = SimpleEntitySystem::createComponent(id, properties);
+        createPrefabComponents(id, i.value().data());        
+        return o;
     }
 
 }

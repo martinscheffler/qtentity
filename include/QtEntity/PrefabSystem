@@ -77,9 +77,7 @@ namespace QtEntity
          */
         void updatePrefab(const QString& path, const QVariantMap& components, bool updateInstances);
 
-    protected:
-
-        QObject* createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals);
+        virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) override;
 
     private:
 

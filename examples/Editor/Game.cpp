@@ -80,7 +80,7 @@ void Game::createPlayer()
         QVariantMap m;
         m["position"] = QPoint(300, 380);
         m["path"] = ":/assets/spaceArt.svg";
-        m["subtex"] = QRect(374,360,106,90);
+        m["subTex"] = QRect(374,360,106,90);
         m["zIndex"] = 10;
         _entityManager.createComponent(_playerid, shape, m);
     }
@@ -109,7 +109,7 @@ void Game::createEnemy()
         QVariantMap m;
         m["position"] = QPoint(0, 0);
         m["path"] = ":/assets/spaceArt.svg";
-        m["subtex"] = QRect(590,148,100,55);
+        m["subTex"] = QRect(590,148,100,55);
         m["zIndex"] = 10;
         _entityManager.createComponent(id, shape, m);
     }

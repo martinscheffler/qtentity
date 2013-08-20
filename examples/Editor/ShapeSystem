@@ -6,13 +6,17 @@
 #include <QRect>
 #include "Renderer"
 
+class ShapeSystem;
+
 class Shape : public QObject
 {
     Q_OBJECT
+    
+    friend class ShapeSystem;
 
 public:
 
-    Shape(Renderer* renderer, const QPoint& pos, const QtEntityUtils::FilePath& path, int zIndex, const QRect& subtex);
+    Q_INVOKABLE Shape();
 
     void setPosition(const QPoint& p);
     QPoint position() const { return _position; }
@@ -52,9 +56,8 @@ public:
     ShapeSystem(Renderer* renderer);
 
     virtual const QVariantMap attributesForProperty(const QString& name) const;
-protected:
-    // override to call ListEntry constructor passing it pointer to this
-    virtual QObject* createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals) override;
+    virtual QObject* createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;
+
 private:
     Renderer* _renderer;
 };
