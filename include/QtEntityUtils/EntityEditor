@@ -43,6 +43,7 @@ namespace QtEntityUtils
         QtEntity::EntityId _entityId;
         QtVariantPropertyManager* _propertyManager;
         QtTreePropertyBrowser* _editor;
+        bool _ignorePropertyChanges;
 
     };
 }

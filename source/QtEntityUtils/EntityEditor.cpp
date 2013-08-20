@@ -17,6 +17,7 @@ namespace QtEntityUtils
         : _entityId(0)
         , _propertyManager(new VariantManager(this))
         , _editor(new QtTreePropertyBrowser())
+        , _ignorePropertyChanges(false)
     {
 
         QtVariantEditorFactory* variantFactory = new VariantFactory();
@@ -33,6 +34,9 @@ namespace QtEntityUtils
 
     void EntityEditor::displayEntity(QtEntity::EntityId id, const QVariant& data)
     {
+        // changing property editors triggers signals which cause the component to be updated in the game.
+        // ignore these signals while initially creating the property editors
+        _ignorePropertyChanges = true;
         _entityId = id;
         clear();
 
@@ -88,6 +92,7 @@ namespace QtEntityUtils
 				}                
             }
         }
+        _ignorePropertyChanges = false;
     }
 
 
@@ -190,20 +195,20 @@ namespace QtEntityUtils
     }
 
 
-    QString componentNameForProperty(QtAbstractPropertyManager* manager, QtProperty *property)
+    QString componentNameForProperty(QtTreePropertyBrowser* editor, QtProperty *property)
     {
-        QSet<QtProperty*> comps = manager->properties();
-        foreach(auto comp, comps)
+        QList<QtBrowserItem *> items = editor-> topLevelItems();
+        foreach(auto item, items)
         {
             
-			QString tmpname= comp->propertyName();
-            foreach(auto prop, comp->subProperties())
+            QString tmpname= item->property()->propertyName();
+            foreach(auto prop, item->property()->subProperties())
             {
 				Q_ASSERT(prop != NULL);
 				QString tmpname2 = prop->propertyName();
                 if(prop == property)
                 {
-                     return comp->propertyName();
+                     return item->property()->propertyName();
                 }
             }
         }
@@ -213,10 +218,20 @@ namespace QtEntityUtils
 
     void EntityEditor::propertyValueChanged(QtProperty *property, const QVariant &val)
     {
-        QString componentName = componentNameForProperty(_propertyManager, property);
+        // changing property editors triggers signals which cause the component to be updated in the game.
+        // ignore these signals while initially creating the property editors
+        if(_ignorePropertyChanges) return;
+
+        QString componentName = componentNameForProperty(_editor, property);
+
+        // only send changes for full components
+        //QtVariantProperty* var = dynamic_cast<QtVariantProperty*>(property);
+        //if(var->propertyType() != QtVariantPropertyManager::groupTypeId()) return;
+
+        
         if(!componentName.isEmpty())
-        {
-            emit entityDataChanged(_entityId, componentName, property->propertyName(), val);
+        {              
+            emit entityDataChanged(_entityId, componentName, property->propertyName(), val);                
         }
     }
 }
