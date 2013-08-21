@@ -57,7 +57,7 @@ private slots:
 
     void iteratorTest1()
     {
-        SimpleEntitySystem ts(Testing::staticMetaObject);
+        TestingSystem ts;
         ts.createComponent(1);
         auto i = ts.pbegin();
         QObject* o = *i;

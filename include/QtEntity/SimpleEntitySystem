@@ -24,7 +24,7 @@ namespace QtEntity
          * @param componentMeta the QMetaObject of the QObject subclass that
          *                      this entity system uses as components
          */
-        SimpleEntitySystem(const QMetaObject& componentMeta);
+        SimpleEntitySystem(ClassTypeId componentType);
 
         virtual ~SimpleEntitySystem();
 
@@ -86,9 +86,9 @@ namespace QtEntity
         virtual bool destroyComponent(EntityId id);
 
         /**
-         * @return  meta object type of component class
+         * @return type id of component class
          */
-        virtual const QMetaObject& componentMetaObject() const override;
+        virtual ClassTypeId componentType() const { return _componentType; }
 
         /**
          * Return begin iterator of component container
@@ -138,7 +138,7 @@ namespace QtEntity
         EntityManager* _entityManager;
     protected:
 
-        const QMetaObject* _componentMetaObject;
+        ClassTypeId _componentType;
         ComponentStore _components;
     };
 

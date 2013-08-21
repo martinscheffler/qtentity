@@ -1,5 +1,7 @@
 #include "ShapeSystem"
 
+IMPLEMENT_COMPONENT_TYPE(Shape)
+
 
 Shape::Shape()
     : _renderer(nullptr)
@@ -36,7 +38,7 @@ void Shape::setZIndex(int i)
 
 
 ShapeSystem::ShapeSystem(Renderer* renderer)
-    : SimpleEntitySystem(Shape::staticMetaObject)
+    : SimpleEntitySystem(Shape::classTypeId())
     , _renderer(renderer)
 {
     QTE_ADD_PROPERTY("position", QPoint, Shape, position, setPosition);

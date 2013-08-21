@@ -171,7 +171,7 @@ private slots:
     {
         {
             TestingSystemPooled pooled(0, 8);
-            SimpleEntitySystem simple(Testing::staticMetaObject);
+            TestingSystem simple;
 
             float timepooled = float(speed1(pooled)) / 1000.0f;
             float timesimple = float(speed1(simple)) / 1000.0f;
@@ -181,7 +181,7 @@ private slots:
 
         {
             TestingSystemPooled pooled(0, 8);
-            SimpleEntitySystem simple(Testing::staticMetaObject);
+            TestingSystem simple;
 
             float timepooled = float(speed2(pooled)) / 1000.0f;
             float timesimple = float(speed2(simple)) / 1000.0f;

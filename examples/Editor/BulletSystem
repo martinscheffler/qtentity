@@ -3,8 +3,9 @@
 #include <QtEntity/SimpleEntitySystem>
 #include <QRect>
 
-class Bullet : public QObject
+class Bullet : public QtEntity::Component
 {
+    DECLARE_COMPONENT_TYPE(NOEXP)
     Q_OBJECT
 
 public:

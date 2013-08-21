@@ -5,9 +5,32 @@
 #include <QVariantMap>
 #include <QDebug>
 #include <functional>
+#include <QtEntity/MetaObjectRegistry>
 
 namespace QtEntity
 {
+    class Component : public QObject
+    {
+    public:
+        virtual ~Component() {}
+        virtual QtEntity::ClassTypeId typeId() const = 0;
+    };
+
+#define NOEXP
+#define DECLARE_COMPONENT_TYPE(EXPMACRO)\
+    public:\
+        EXPMACRO static QtEntity::ClassTypeId classTypeId();\
+        EXPMACRO virtual QtEntity::ClassTypeId typeId() const override;\
+    private:\
+        EXPMACRO static QtEntity::Component* createComponent();\
+        static QtEntity::ClassTypeId _typeId;
+
+
+#define IMPLEMENT_COMPONENT_TYPE(TYPE)\
+    QtEntity::ClassTypeId TYPE::_typeId = QtEntity::ComponentRegistry::registerComponent(#TYPE, &TYPE::createComponent);\
+    QtEntity::Component* TYPE::createComponent(void) { return new TYPE(); }\
+    QtEntity::ClassTypeId TYPE::classTypeId(void) { return TYPE::_typeId; }\
+    QtEntity::ClassTypeId TYPE::typeId(void) const { return _typeId; }
 
 
 #define QTE_ADD_PROPERTY(NAME, VARIANTTYPE, COMPONENTTYPE, GETTER, SETTER) \
@@ -110,10 +133,11 @@ namespace QtEntity
         virtual bool destroyComponent(EntityId id) = 0;
 
         /**
-         * @return meta object type of component class
+         * @return type of component class
          */
-        virtual const QMetaObject& componentMetaObject() const = 0;
+        virtual ClassTypeId componentType() const = 0;
 
+        QString componentName() const { return ComponentRegistry::className(componentType()); }
 
         /**
          * @return number of components

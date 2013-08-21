@@ -59,7 +59,7 @@ private slots:
         TestingSystem* ts = new TestingSystem();
         em.addSystem(ts);
 
-        QString jsonstr = "{\"classname\": \"Transform\", \"mycolor\": \"0,0,0,255\",\"myint\": 666,\"myobjects\": [{\"classname\": \"TestObj1\",\"propint\": 12345},{\"classname\": \"TestObj2\"}],\"myvec2\": \"0,0\",\"myvec3\": \"-1,0,354\",\"myvec4\": \"0,0,0,0\"}";
+        QString jsonstr = "{\"classname\": \"Testing\", \"mycolor\": \"0,0,0,255\",\"myint\": 666,\"myobjects\": [{\"classname\": \"TestObj1\",\"propint\": 12345},{\"classname\": \"TestObj2\"}],\"myvec2\": \"0,0\",\"myvec3\": \"-1,0,354\",\"myvec4\": \"0,0,0,0\"}";
         QJsonDocument doc = QJsonDocument::fromJson(jsonstr.toUtf8());
         QVERIFY(doc.isObject());
 

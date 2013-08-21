@@ -150,7 +150,7 @@ namespace QtEntityUtils
             {
                 vals[QString("#|%1").arg(j.key())] = j.value();
             }
-            components[es->componentMetaObject().className()] = vals;
+            components[es->componentName()] = vals;
         }
         return components;
     }

@@ -7,8 +7,9 @@
 
 class MetaDataSystem;
 
-class MetaData : public QObject
+class MetaData : public QtEntity::Component
 {
+    DECLARE_COMPONENT_TYPE(NOEXP)
     Q_OBJECT
 
     friend class MetaDataSystem;

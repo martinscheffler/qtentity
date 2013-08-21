@@ -2,8 +2,10 @@
 
 #include <QtEntity/SimpleEntitySystem>
 
-class Damage : public QObject
+#define EXP
+class Damage : public QtEntity::Component
 {
+    DECLARE_COMPONENT_TYPE(NOEXP)
     Q_OBJECT
 
 public:

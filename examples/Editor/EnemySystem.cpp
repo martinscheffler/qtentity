@@ -4,8 +4,10 @@
 #include <QtEntity/EntityManager>
 #include <QtEntity/MetaObjectRegistry>
 
+IMPLEMENT_COMPONENT_TYPE(Enemy)
+
 EnemySystem::EnemySystem()
-    :QtEntity::SimpleEntitySystem(Enemy::staticMetaObject)
+    :QtEntity::SimpleEntitySystem(Enemy::classTypeId())
 {
     QtEntity::registerMetaObject(TestObj1::staticMetaObject);
     QtEntity::registerMetaObject(TestObj2::staticMetaObject);

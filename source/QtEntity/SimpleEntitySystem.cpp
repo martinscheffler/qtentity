@@ -6,9 +6,9 @@
 namespace QtEntity
 {
 
-    SimpleEntitySystem::SimpleEntitySystem(const QMetaObject& componentMeta)
+    SimpleEntitySystem::SimpleEntitySystem(ClassTypeId componentType)
         : _entityManager(NULL)
-        , _componentMetaObject(&componentMeta)
+        , _componentType(componentType)
     {
     }
 
@@ -48,11 +48,11 @@ namespace QtEntity
         }
 
         // use QMetaObject to construct new instance
-        QObject* obj = _componentMetaObject->newInstance();
+        Component* obj = ComponentRegistry::createComponent(_componentType);
         // out of memory?
         if(obj == nullptr)
         {
-            qCritical() << "Could not construct component. Have you declared a default constructor with Q_INVOKABLE?";
+            qCritical() << "Could not construct component. Have you registered the component type?";
             throw std::runtime_error("Component could not be constructed.");
         }
 
@@ -73,15 +73,6 @@ namespace QtEntity
     }
 
 
-    const QMetaObject& SimpleEntitySystem::componentMetaObject() const
-    {
-        return *_componentMetaObject;
-    }
-
-
-    
-
-    
     size_t SimpleEntitySystem::count() const
     {
         return _components.size();

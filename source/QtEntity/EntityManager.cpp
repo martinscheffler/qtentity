@@ -37,13 +37,13 @@ namespace QtEntity
 
     void EntityManager::addSystem(EntitySystem* es)
     {
-        const QMetaObject* mo = &es->componentMetaObject();
-        if(_systemsBySystemType.contains(es->metaObject()))
+        ClassTypeId t = es->componentType();
+        if(_systemsByComponentType.contains(t))
         {
             throw std::runtime_error("Entity system already added!");
         }
         _systemsBySystemType.insert(es->metaObject(), es);
-        _systemsByComponentType.insert(mo, es);
+        _systemsByComponentType.insert(t, es);
         es->setEntityManager(this);
     }
 
@@ -61,7 +61,7 @@ namespace QtEntity
         _systemsBySystemType.erase(i);
 
         // assert that system is in both maps
-        EntitySystemStore::iterator j = _systemsByComponentType.find(&es->componentMetaObject());
+        auto j = _systemsByComponentType.find(es->componentType());
         Q_ASSERT(j != _systemsByComponentType.end());
         _systemsByComponentType.erase(j);
         return true;
@@ -70,21 +70,16 @@ namespace QtEntity
 
     EntitySystem* EntityManager::system(const QString& classname) const
     {
-        for(auto i = _systemsByComponentType.begin(); i != _systemsByComponentType.end(); ++i)
-        {
-            if(i.key()->className() == classname)
-            {
-                return i.value();
-            }
-        }
-        return nullptr;
+        ClassTypeId classtype = ComponentRegistry::classTypeId(classname);
+        return system(classtype);
     }
 
 
-    EntitySystem* EntityManager::systemByComponentType(const QMetaObject& componentMetaObject) const
-    {
-        EntitySystemStore::const_iterator it = _systemsByComponentType.find(&componentMetaObject);
-        return (it == _systemsByComponentType.end()) ? nullptr : it.value();
+    EntitySystem* EntityManager::system(ClassTypeId componentType) const
+    {        
+        auto i = _systemsByComponentType.find(componentType);
+        if(i == _systemsByComponentType.end()) return nullptr;
+        return i.value();
     }
 
 

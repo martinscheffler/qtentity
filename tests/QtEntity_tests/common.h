@@ -36,14 +36,15 @@ public:
     Q_INVOKABLE TestObj2() {}
 };
 
-
-class Testing : public QObject
+#define EXP 
+class Testing : public QtEntity::Component
 {
-    Q_OBJECT
+    DECLARE_COMPONENT_TYPE(EXP)
+    Q_OBJECT    
 
 public:
 
-    Q_INVOKABLE Testing() {}
+    Testing() {}
 
     void setMyVec2(const QVector2D& v) { _myvec2 = v; }
     QVector2D myVec2() const  { return _myvec2; }
@@ -73,11 +74,12 @@ public:
 };
 
 
+
 class TestingSystem : public SimpleEntitySystem
 {
     Q_OBJECT 
 public:
-    TestingSystem() : SimpleEntitySystem(Testing::staticMetaObject)
+    TestingSystem() : SimpleEntitySystem(Testing::classTypeId())
     {
         QTE_ADD_PROPERTY("myint", int, Testing, myInt, setMyInt);        
         QTE_ADD_PROPERTY("myvec2", QVector2D, Testing, myVec2, setMyVec2);

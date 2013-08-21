@@ -16,12 +16,12 @@ private slots:
     {
         EntityManager em;
 
-        EntitySystem* esnothing = em.systemByComponentType(Testing::staticMetaObject);
+        EntitySystem* esnothing = em.system(Testing::classTypeId());
         QVERIFY(esnothing == nullptr);
 
         auto es = new TestingSystem();
         em.addSystem(es);
-        EntitySystem* es2 = em.systemByComponentType(Testing::staticMetaObject);
+        EntitySystem* es2 = em.system(Testing::classTypeId());
         QVERIFY(es == es2);
     }
 
@@ -45,7 +45,7 @@ private slots:
         auto es = new TestingSystem();
         em.addSystem(es);
         em.removeSystem(es);
-        EntitySystem* es2 = em.systemByComponentType(Testing::staticMetaObject);
+        EntitySystem* es2 = em.system(Testing::classTypeId());
         QVERIFY(nullptr == es2);
         delete es;
     }

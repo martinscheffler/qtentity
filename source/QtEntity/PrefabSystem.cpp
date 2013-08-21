@@ -5,6 +5,7 @@
 namespace QtEntity
 {
 
+    
     Prefab::Prefab(const QString& path, const QVariantMap& components, const QStringList& parameters)
         : _path(path)
         , _components(components)
@@ -14,15 +15,21 @@ namespace QtEntity
     }
 
 
-    PrefabInstance::PrefabInstance(QSharedPointer<Prefab> prefab)
-        : _prefab(prefab)
+    IMPLEMENT_COMPONENT_TYPE(PrefabInstance)
+
+
+    PrefabInstance::PrefabInstance()
     {
 
     }
 
+    PrefabInstance::~PrefabInstance()
+    {
+    }
 
+    
     PrefabSystem::PrefabSystem()
-        :QtEntity::SimpleEntitySystem(PrefabInstance::staticMetaObject)
+        :QtEntity::SimpleEntitySystem(PrefabInstance::classTypeId())
     {
     }
 
@@ -165,6 +172,7 @@ namespace QtEntity
         }
         
         QObject* o = SimpleEntitySystem::createComponent(id, properties);
+        static_cast<PrefabInstance*>(o)->_prefab = *i;
         createPrefabComponents(id, i.value().data());        
         return o;
     }

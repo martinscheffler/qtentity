@@ -14,6 +14,7 @@ set(QTENTITY_TESTS_HDR
 )
 
 set(QTENTITY_TESTS_SRC
+    common.cpp
     main.cpp
 )
 

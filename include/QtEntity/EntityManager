@@ -38,19 +38,20 @@ namespace QtEntity
          */
         EntitySystem* system(const QString& classname) const;
 
+        
+        /**
+         * @brief system returns an entity system that holds components
+         *        that are of the type identified in ctype
+         * @return nullptr if not found, else the system
+         */
+        EntitySystem* system(ClassTypeId ctype) const;
+
         /**
          * @brief systemBySystemType returns an entity system of type described
          * by the passed QMetaObject.
          * @return nullptr if not found, else the system
          */
         EntitySystem* systemBySystemType(const QMetaObject& systemMetaObject) const;
-
-        /**
-         * @brief systemByComponentType returns an entity system that holds components
-         *        that are of the type described in the passed QMetaObject.
-         * @return nullptr if not found, else the system
-         */
-        EntitySystem* systemByComponentType(const QMetaObject& componentMetaObject) const;
 
         /**
          * Templated method to get an entity system.
@@ -194,7 +195,7 @@ namespace QtEntity
 
     private:
 
-        EntitySystemStore _systemsByComponentType;
+        QHash<ClassTypeId,EntitySystem*> _systemsByComponentType;
         EntitySystemStore _systemsBySystemType;
         QAtomicInt _entityCounter;
     };
@@ -219,7 +220,7 @@ namespace QtEntity
     template <typename T>
     bool EntityManager::component(EntityId id, T*& component) const
     {
-        EntitySystem* s = this->systemByComponentType(T::staticMetaObject);
+        EntitySystem* s = this->system(T::classTypeId());
         QObject* c;
         if(s == nullptr || nullptr == (c = s->component(id)))
         {
@@ -234,7 +235,7 @@ namespace QtEntity
     template <typename T>
     T* EntityManager::component(EntityId id) const
     {
-        EntitySystem* s = this->systemByComponentType(T::staticMetaObject);
+        EntitySystem* s = this->system(T::classTypeId());
         QObject* c;
         if(s == nullptr || nullptr == (c = s->component(id)))
         {
@@ -247,7 +248,7 @@ namespace QtEntity
     template <typename T>
     bool EntityManager::createComponent(EntityId id, T*& component, const QVariantMap& properties)
     {
-        EntitySystem* s = this->systemByComponentType(T::staticMetaObject);
+        EntitySystem* s = this->system(T::classTypeId());
 
         if(s == nullptr || s->component(id) != nullptr)
         {
@@ -279,7 +280,7 @@ namespace QtEntity
     template <typename T>
     bool EntityManager::getOrCreateComponent(EntityId id, T*& component, const QVariantMap& properties)
     {
-        EntitySystem* s = this->systemByComponentType(T::staticMetaObject);
+        EntitySystem* s = this->system(T::classTypeId());
 
         if(s == nullptr) return false;
         component = qobject_cast<T*>(s->component(id));
@@ -294,7 +295,7 @@ namespace QtEntity
     template <typename T>
     bool EntityManager::destroyComponent(EntityId id)
     {
-        EntitySystem* s = this->systemByComponentType(T::staticMetaObject);
+        EntitySystem* s = this->system(T::classTypeId());
         if(s == nullptr) return false;
         return s->destroyComponent(id);
     }

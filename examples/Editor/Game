@@ -16,6 +16,7 @@ class ShapeSystem;
 
 class Game : public QObject
 {
+
     Q_OBJECT
 
 public:

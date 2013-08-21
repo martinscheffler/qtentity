@@ -9,8 +9,7 @@ namespace QtEntity
 {    
 
     class Prefab
-    {
-
+    {        
     public:
 
         Prefab(const QString& path, const QVariantMap& components, const QStringList& parameters);
@@ -31,15 +30,20 @@ namespace QtEntity
 
     };
 
+    class PrefabSystem;
 
-    class QTENTITY_EXPORT PrefabInstance : public QObject
+    class QTENTITY_EXPORT PrefabInstance : public Component
     {
+        friend class PrefabSystem;
+
+        DECLARE_COMPONENT_TYPE(NOEXP)
+
         Q_OBJECT
 
     public:
 
-        PrefabInstance(QSharedPointer<Prefab> prefab);
-
+        PrefabInstance();
+        ~PrefabInstance();
         const Prefab* prefab() const { return _prefab.data(); }
 
     private:

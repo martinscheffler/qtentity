@@ -33,10 +33,10 @@ public:
     Q_INVOKABLE TestObj2() {}
 };
 
-class Enemy : public QObject
+class Enemy : public QtEntity::Component
 {
+    DECLARE_COMPONENT_TYPE(NOEXP)
     Q_OBJECT
-
 
 public:
 

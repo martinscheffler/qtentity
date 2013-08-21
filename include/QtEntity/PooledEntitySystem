@@ -93,7 +93,7 @@ namespace QtEntity
         virtual size_t count() const { return _size; }
 
         virtual const QVariantMap attributesForProperty(const QString& name) const { return QVariantMap(); }
-        virtual const QMetaObject& componentMetaObject() const { return T::staticMetaObject; }
+        virtual ClassTypeId componentType() const { return T::classTypeId(); }
 
         size_t capacity() const { return _capacity; }
 
