@@ -3,16 +3,17 @@
 #include <QStringList>
 #include <QtEntity/MetaObjectRegistry>
 
-Actor::Actor(QtEntity::EntityId id, osg::Group* parent, const QString& name, const QVector3D& pos, ActorSystem* as)
-    : _id(id)
-    , _name(name)
+
+IMPLEMENT_COMPONENT_TYPE(Actor);
+
+Actor::Actor()
+    : _id(0)
     , _geode(new osg::Geode())
     , _transform(new osg::PositionAttitudeTransform())
-    , _system(as)
+    , _system(nullptr)
 {
-    parent->addChild(_transform);
     _transform->addChild(_geode);
-    setPosition(pos);
+    
 }
 
 
@@ -21,7 +22,7 @@ void Actor::setName(const QString& name)
     if(_name != name)
     {
         _name = name;
-        _system->entityChanged(_id, _name);
+        if(_system) _system->entityChanged(_id, _name);
     }
 }
 
@@ -53,7 +54,7 @@ void Actor::setShapes(const QtEntity::PropertyObjects& v)
 
 
 ActorSystem::ActorSystem(osg::Group* rootnode)
-    : SimpleEntitySystem(Actor::staticMetaObject)
+    : SimpleEntitySystem(Actor::classTypeId())
     , _rootNode(rootnode)
 {
     QtEntity::registerMetaObject(Box::staticMetaObject);
@@ -67,20 +68,6 @@ ActorSystem::ActorSystem(osg::Group* rootnode)
     QVariantMap attribs;
     attribs["classnames"] = sl;
     QTE_ADD_PROPERTY_WITH_ATTRIBS("shapes", QtEntity::PropertyObjects, Actor, shapes, setShapes, attribs);
-
-}
-
-
-QObject* ActorSystem::createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals)
-{
-
-    QVector3D pos = propertyVals["position"].value<QVector3D>();
-    QString name = propertyVals["name"].toString();
-    auto obj = new Actor(id, _rootNode, name, pos, this);
-    _components[id] = obj;
-    applyParameters(id, propertyVals);
-    return obj;
-
 }
 
 
@@ -89,7 +76,10 @@ QObject* ActorSystem::createComponent(QtEntity::EntityId id, const QVariantMap& 
     QObject* obj = SimpleEntitySystem::createComponent(id, propertyVals);
     if(obj != NULL)
     {
-        Actor* entry;
+        Actor* entry = static_cast<Actor*>(obj);
+        entry->_id = id;
+        entry->_system = this;
+        _rootNode->addChild(entry->_transform);
         if(this->component(id, entry))
         {
             emit entityAdded(id, entry->name());

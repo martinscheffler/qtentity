@@ -122,14 +122,17 @@ public:
 
 };
 
-class Actor : public QObject
-{
-    Q_OBJECT
+class ActorSystem;
 
+class Actor : public QtEntity::Component
+{
+    friend class ActorSystem;
+    Q_OBJECT
+    DECLARE_COMPONENT_TYPE(NOEXP)
 
 public:
 
-    Actor(QtEntity::EntityId id, osg::Group* parent, const QString& name, const QVector3D& pos, ActorSystem* as);
+    Actor();
 
 
     /**
@@ -184,9 +187,7 @@ signals:
 
 protected:
 
-    // override to call ListEntry constructor passing it pointer to this
-    virtual QObject* createObjectInstance(QtEntity::EntityId id, const QVariantMap& propertyVals) override;
-
+    
 private:
     osg::ref_ptr<osg::Group> _rootNode;
 };
