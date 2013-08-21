@@ -205,7 +205,7 @@ namespace QtEntity
     bool EntityManager::system(T*& out) const
     {
         EntitySystem* es = this->systemBySystemType(T::staticMetaObject);
-        out = qobject_cast<T*>(es);
+        out = dynamic_cast<T*>(es);
         return (out != nullptr);
     }
 
@@ -213,7 +213,7 @@ namespace QtEntity
     template <typename T>
     T* EntityManager::system() const
     {
-        return qobject_cast<T*>(this->systemBySystemType(T::staticMetaObject));
+        return dynamic_cast<T*>(this->systemBySystemType(T::staticMetaObject));
     }
 
 
@@ -221,13 +221,13 @@ namespace QtEntity
     bool EntityManager::component(EntityId id, T*& component) const
     {
         EntitySystem* s = this->system(T::classTypeId());
-        QObject* c;
+        Component* c;
         if(s == nullptr || nullptr == (c = s->component(id)))
         {
             component = nullptr;
             return false;
         }
-        component = qobject_cast<T*>(c);
+        component = static_cast<T*>(c);
         return true;
     }
 
@@ -236,12 +236,12 @@ namespace QtEntity
     T* EntityManager::component(EntityId id) const
     {
         EntitySystem* s = this->system(T::classTypeId());
-        QObject* c;
+        Component* c;
         if(s == nullptr || nullptr == (c = s->component(id)))
         {
             return nullptr;
         }
-        return qobject_cast<T*>(c);
+        return static_cast<T*>(c);
     }
 
 
@@ -256,7 +256,7 @@ namespace QtEntity
         }
         try
         {
-            component = qobject_cast<T*>(s->createComponent(id, properties));
+            component = static_cast<T*>(s->createComponent(id, properties));
             return component != nullptr;
         }
         catch(std::bad_alloc&)
@@ -283,11 +283,11 @@ namespace QtEntity
         EntitySystem* s = this->system(T::classTypeId());
 
         if(s == nullptr) return false;
-        component = qobject_cast<T*>(s->component(id));
+        component = static_cast<T*>(s->component(id));
 
         if(component != nullptr) return true;
 
-        component = qobject_cast<T*>(s->createComponent(id, properties));
+        component = static_cast<T*>(s->createComponent(id, properties));
         return (component != nullptr);
     }
 

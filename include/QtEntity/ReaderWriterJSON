@@ -3,7 +3,6 @@
 #include <QtEntity/DataTypes>
 #include <QtEntity/Export>
 #include <QJsonObject>
-#include <QObject>
 #include <QVariant>
 
 namespace QtEntity

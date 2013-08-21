@@ -39,9 +39,9 @@ MetaDataSystem::MetaDataSystem()
 }
 
 
-QObject* MetaDataSystem::createComponent(QtEntity::EntityId id, const QVariantMap& properties)
+QtEntity::Component* MetaDataSystem::createComponent(QtEntity::EntityId id, const QVariantMap& properties)
 {
-    QObject* obj = SimpleEntitySystem::createComponent(id, properties);
+    QtEntity::Component* obj = SimpleEntitySystem::createComponent(id, properties);
     if(obj != NULL)
     {
         auto md = qobject_cast<MetaData*>(obj);

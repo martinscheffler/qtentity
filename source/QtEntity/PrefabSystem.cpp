@@ -74,7 +74,7 @@ namespace QtEntity
                     // find all prefab instances and destroy the component
                     for(auto k = this->begin(); k != this->end(); ++k)
                     {
-                        PrefabInstance* pi = qobject_cast<PrefabInstance*>(k.value());
+                        PrefabInstance* pi = static_cast<PrefabInstance*>(k.value());
                         if(pi->prefab() == prefab)
                         {
                             es->destroyComponent(k.key());
@@ -89,10 +89,10 @@ namespace QtEntity
                     // find all prefab instances and update the components
                     for(auto k = this->begin(); k != this->end(); ++k)
                     {
-                        PrefabInstance* pi = qobject_cast<PrefabInstance*>(k.value());
+                        PrefabInstance* pi = static_cast<PrefabInstance*>(k.value());
                         if(pi->prefab() == prefab)
                         {
-                            QObject* component = es->component(k.key());
+                            Component* component = es->component(k.key());
                             Q_ASSERT(component);
                             if(!component) continue;
 
@@ -130,7 +130,7 @@ namespace QtEntity
                     if(!es) continue;
                     for(auto k = this->begin(); k != this->end(); ++k)
                     {
-                        PrefabInstance* pi = qobject_cast<PrefabInstance*>(k.value());
+                        PrefabInstance* pi = static_cast<PrefabInstance*>(k.value());
                         if(pi->prefab() == prefab)
                         {
                             es->createComponent(k.key(), i.value().value<QVariantMap>());
@@ -162,7 +162,7 @@ namespace QtEntity
     }
 
 
-    QObject* PrefabSystem::createComponent(EntityId id, const QVariantMap& properties)
+    Component* PrefabSystem::createComponent(EntityId id, const QVariantMap& properties)
     {
         QString path = properties["path"].toString();
         Prefabs::const_iterator i = _prefabs.find(path);
@@ -171,7 +171,7 @@ namespace QtEntity
             return nullptr;
         }
         
-        QObject* o = SimpleEntitySystem::createComponent(id, properties);
+        Component* o = SimpleEntitySystem::createComponent(id, properties);
         static_cast<PrefabInstance*>(o)->_prefab = *i;
         createPrefabComponents(id, i.value().data());        
         return o;

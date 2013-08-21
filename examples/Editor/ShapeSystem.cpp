@@ -48,9 +48,9 @@ ShapeSystem::ShapeSystem(Renderer* renderer)
 }
 
 
-QObject* ShapeSystem::createComponent(QtEntity::EntityId id, const QVariantMap& properties)
+QtEntity::Component* ShapeSystem::createComponent(QtEntity::EntityId id, const QVariantMap& properties)
 {
-    QObject* o = SimpleEntitySystem::createComponent(id, properties);
+    QtEntity::Component* o = SimpleEntitySystem::createComponent(id, properties);
     qobject_cast<Shape*>(o)->_renderer = _renderer;
     qobject_cast<Shape*>(o)->buildShape();
     return o;

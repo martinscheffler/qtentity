@@ -128,7 +128,7 @@ namespace QtEntity
             }
         }
 
-        QObject* o = es->createComponent(id, params);
+        Component* o = es->createComponent(id, params);
         return (o != nullptr);
     }
 

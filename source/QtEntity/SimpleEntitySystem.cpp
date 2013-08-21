@@ -15,14 +15,14 @@ namespace QtEntity
 
     SimpleEntitySystem::~SimpleEntitySystem()
 	{
-        foreach(QObject* c, _components)
+        foreach(Component* c, _components)
         {
             delete c;
         }
 	}
 
 
-    QObject* SimpleEntitySystem::component(EntityId id) const
+    Component* SimpleEntitySystem::component(EntityId id) const
     {
         auto i = _components.find(id);
         if(i == _components.end())
@@ -39,7 +39,7 @@ namespace QtEntity
     }
 
 
-    QObject* SimpleEntitySystem::createComponent(EntityId id, const QVariantMap& propertyVals)
+    Component* SimpleEntitySystem::createComponent(EntityId id, const QVariantMap& propertyVals)
     {
         // check if component already exists
         if(component(id) != nullptr)

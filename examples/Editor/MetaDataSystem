@@ -58,7 +58,7 @@ public:
     MetaDataSystem();
 
     // override to emit signal for creating entity list entry
-    virtual QObject* createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;
+    virtual QtEntity::Component* createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;
 
     // override to emit signal for removing entity list entry
     virtual bool destroyComponent(QtEntity::EntityId id) override;

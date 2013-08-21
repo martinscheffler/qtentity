@@ -81,7 +81,7 @@ namespace QtEntity
          */
         void updatePrefab(const QString& path, const QVariantMap& components, bool updateInstances);
 
-        virtual QObject* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) override;
+        virtual Component* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) override;
 
     private:
 

@@ -71,9 +71,9 @@ ActorSystem::ActorSystem(osg::Group* rootnode)
 }
 
 
-QObject* ActorSystem::createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals)
+QtEntity::Component* ActorSystem::createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals)
 {
-    QObject* obj = SimpleEntitySystem::createComponent(id, propertyVals);
+    QtEntity::Component* obj = SimpleEntitySystem::createComponent(id, propertyVals);
     if(obj != NULL)
     {
         Actor* entry = static_cast<Actor*>(obj);
