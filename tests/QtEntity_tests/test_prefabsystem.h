@@ -26,7 +26,7 @@ private slots:
         mycomponent["myint"] = 12345;
 
         QVariantMap components;
-        QString cn = Testing::staticMetaObject.className();
+        QString cn = "Testing";
         components[cn] = mycomponent;
         ps->addPrefab("bla.prefab", components);
 
@@ -57,7 +57,7 @@ private slots:
         mycomponent["myint"] = 12345;
 
         QVariantMap components;
-        QString cn = Testing::staticMetaObject.className();
+        QString cn = "Testing";
         components[cn] = mycomponent;
         ps->addPrefab("bla.prefab", components);
 
@@ -90,7 +90,7 @@ private slots:
         mycomponent["myint"] = 12345;
 
         QVariantMap components;
-        QString cn = Testing::staticMetaObject.className();
+        QString cn = "Testing";
         components[cn] = mycomponent;
         ps->addPrefab("bla.prefab", components);
 
@@ -126,7 +126,7 @@ private slots:
         mycomponent["myint"] = 12345;
 
         QVariantMap components;
-        QString cn = Testing::staticMetaObject.className();
+        QString cn = "Testing";
 
         ps->addPrefab("bla.prefab", components);
 

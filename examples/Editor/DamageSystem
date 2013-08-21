@@ -5,12 +5,11 @@
 #define EXP
 class Damage : public QtEntity::Component
 {
-    DECLARE_COMPONENT_TYPE(NOEXP)
-    Q_OBJECT
+    DECLARE_COMPONENT_TYPE(NOEXP)    
 
 public:
 
-    Q_INVOKABLE Damage() : _energy(0) { }
+    Damage() : _energy(0) { }
 
     void setEnergy(int v) { _energy = v; }
     int energy() const { return _energy; }

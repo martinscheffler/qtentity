@@ -56,8 +56,8 @@ private:
             auto end = es.end();
             for(auto j = es.begin(); j != end; ++j)
             {
-                QObject* c = *j;
-                Testing* t = qobject_cast<Testing*>(c);
+                Component* c = *j;
+                Testing* t = static_cast<Testing*>(c);
                 t->setMyInt(t->myInt() + 1);
             }
         }
@@ -92,8 +92,8 @@ private:
             auto end = es.pend();
             for(auto j = es.pbegin(); j != end; ++j)
             {
-                QObject* c = *j;
-                Testing* t = qobject_cast<Testing*>(c);
+                Component* c = *j;
+                Testing* t = static_cast<Testing*>(c);
                 t->setMyInt(t->myInt() + 1);
             }
         }
@@ -110,16 +110,16 @@ private slots:
 		QVariantMap m;
 		m["myint"] = 666;
 		m["myvec2"] =  QVector2D(77.0,88.0);
-        QObject* c = ts.createComponent(1, m);
+        Component* c = ts.createComponent(1, m);
 
-        QObject* c2 = ts.component(1);
+        Component* c2 = ts.component(1);
         QVERIFY(c == c2);
         QVERIFY(ts.component(1) != nullptr);
 
-        QObject* c3 = ts.component(2);
+        Component* c3 = ts.component(2);
         QVERIFY(c3 == nullptr);
 
-        Testing* tr = qobject_cast<Testing*>(c);
+        Testing* tr = static_cast<Testing*>(c);
         QVERIFY(tr != nullptr);
         QCOMPARE(tr->myInt(), 666);
         QCOMPARE(tr->myVec2().x(), 77.0);

@@ -35,12 +35,11 @@ public:
 
 class Enemy : public QtEntity::Component
 {
-    DECLARE_COMPONENT_TYPE(NOEXP)
-    Q_OBJECT
+    DECLARE_COMPONENT_TYPE(NOEXP)    
 
 public:
 
-    Q_INVOKABLE Enemy() : _lifetime(0) {
+    Enemy() : _lifetime(0) {
 
         QtEntity::PropertyObjects o;
         auto to = new TestObj1();

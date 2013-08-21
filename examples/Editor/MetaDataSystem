@@ -9,13 +9,12 @@ class MetaDataSystem;
 
 class MetaData : public QtEntity::Component
 {
-    DECLARE_COMPONENT_TYPE(NOEXP)
-    Q_OBJECT
+    DECLARE_COMPONENT_TYPE(NOEXP)    
 
     friend class MetaDataSystem;
 
  public:
-    Q_INVOKABLE MetaData();
+    MetaData();
 
     /**
      * Set entity name (human readable identifier)

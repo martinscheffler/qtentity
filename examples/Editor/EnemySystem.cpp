@@ -24,7 +24,7 @@ void EnemySystem::step(int frameNumber, int totalTime, int delta)
 
     for(auto i = begin(); i != end(); ++i)
     {
-        Enemy* enemy = qobject_cast<Enemy*>(i.value());
+        Enemy* enemy = static_cast<Enemy*>(i.value());
         float lifetime = float(enemy->lifetime()) / 1000.0f;
         enemy->setLifetime(enemy->lifetime() + delta);
         Shape* shape;

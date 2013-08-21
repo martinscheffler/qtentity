@@ -44,7 +44,7 @@ QtEntity::Component* MetaDataSystem::createComponent(QtEntity::EntityId id, cons
     QtEntity::Component* obj = SimpleEntitySystem::createComponent(id, properties);
     if(obj != NULL)
     {
-        auto md = qobject_cast<MetaData*>(obj);
+        auto md = static_cast<MetaData*>(obj);
         md->_entityId = id;
         md->_system = this;        
         emit entityAdded(id, md->name(), md->additionalInfo());

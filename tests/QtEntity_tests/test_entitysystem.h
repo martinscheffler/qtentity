@@ -24,16 +24,16 @@ private slots:
 		QVariantMap m;
 		m["myint"] = 666;
 		m["myvec2"] =  QVector2D(77.0,88.0);
-        QObject* c = ts.createComponent(1, m);
+        Component* c = ts.createComponent(1, m);
 
-        QObject* c2 = ts.component(1);
+        Component* c2 = ts.component(1);
         QVERIFY(c == c2);
         QVERIFY(ts.hasComponent(1));
 
-        QObject* c3 = ts.component(2);
+        Component* c3 = ts.component(2);
         QVERIFY(c3 == nullptr);
 
-        Testing* tr = qobject_cast<Testing*>(c);
+        Testing* tr = dynamic_cast<Testing*>(c);
         QVERIFY(tr != nullptr);
         QCOMPARE(tr->myInt(), 666);
         QCOMPARE(tr->myVec2().x(), 77.0);
@@ -45,13 +45,13 @@ private slots:
     void destruct()
     {
         TestingSystem ts;
-        QObject* c = ts.createComponent(1);
-        QObject* c2 = ts.component(1);
+        Component* c = ts.createComponent(1);
+        Component* c2 = ts.component(1);
         QVERIFY(c == c2);
         QVERIFY(ts.hasComponent(1));
         ts.destroyComponent(1);
         QVERIFY(!ts.hasComponent(1));
-        QObject* c3 = ts.component(1);
+        Component* c3 = ts.component(1);
         QVERIFY(c3 == nullptr);
     }
 
@@ -60,8 +60,8 @@ private slots:
         TestingSystem ts;
         ts.createComponent(1);
         auto i = ts.pbegin();
-        QObject* o = *i;
-        QObject* o2 = ts.component(1);
+        Component* o = *i;
+        Component* o2 = ts.component(1);
         QCOMPARE(o, o2);
 
     }
@@ -79,7 +79,7 @@ private slots:
         auto end = ts.pend();
         for(auto i = ts.pbegin(); i != end; ++i)
         {
-            QObject* o = *i;
+            Component* o = *i;
             Testing* t = static_cast<Testing*>(o);
             sum += t->myInt();
         }

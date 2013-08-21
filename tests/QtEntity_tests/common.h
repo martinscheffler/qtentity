@@ -36,11 +36,9 @@ public:
     Q_INVOKABLE TestObj2() {}
 };
 
-#define EXP 
 class Testing : public QtEntity::Component
 {
-    DECLARE_COMPONENT_TYPE(EXP)
-    Q_OBJECT    
+    DECLARE_COMPONENT_TYPE(NOEXP)        
 
 public:
 

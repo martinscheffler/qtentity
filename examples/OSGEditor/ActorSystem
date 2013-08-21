@@ -126,8 +126,7 @@ class ActorSystem;
 
 class Actor : public QtEntity::Component
 {
-    friend class ActorSystem;
-    Q_OBJECT
+    friend class ActorSystem;    
     DECLARE_COMPONENT_TYPE(NOEXP)
 
 public:

@@ -50,10 +50,10 @@ ShapeSystem::ShapeSystem(Renderer* renderer)
 
 QtEntity::Component* ShapeSystem::createComponent(QtEntity::EntityId id, const QVariantMap& properties)
 {
-    QtEntity::Component* o = SimpleEntitySystem::createComponent(id, properties);
-    qobject_cast<Shape*>(o)->_renderer = _renderer;
-    qobject_cast<Shape*>(o)->buildShape();
-    return o;
+    Shape* shp = static_cast<Shape*>(SimpleEntitySystem::createComponent(id, properties));
+    shp->_renderer = _renderer;
+    shp->buildShape();
+    return shp;
 }
 
 const QVariantMap ShapeSystem::attributesForProperty(const QString& name) const

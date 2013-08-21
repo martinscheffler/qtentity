@@ -38,8 +38,6 @@ namespace QtEntity
 
         DECLARE_COMPONENT_TYPE(NOEXP)
 
-        Q_OBJECT
-
     public:
 
         PrefabInstance();

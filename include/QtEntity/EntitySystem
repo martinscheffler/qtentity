@@ -9,7 +9,7 @@
 
 namespace QtEntity
 {
-    class Component : public QObject
+    class Component
     {
     public:
         virtual ~Component() {}

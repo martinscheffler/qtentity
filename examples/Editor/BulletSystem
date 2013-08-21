@@ -5,20 +5,16 @@
 
 class Bullet : public QtEntity::Component
 {
-    DECLARE_COMPONENT_TYPE(NOEXP)
-    Q_OBJECT
+    DECLARE_COMPONENT_TYPE(NOEXP)    
 
 public:
-
-    Q_INVOKABLE Bullet() { }
+    Bullet() { }
 
     void setMovement(const QPoint& m) { _movement = m; }
     QPoint movement() const { return _movement; }
 
 private:
-
     QPoint _movement;
-
 };
 
 

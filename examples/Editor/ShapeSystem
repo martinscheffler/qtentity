@@ -10,14 +10,13 @@ class ShapeSystem;
 
 class Shape : public QtEntity::Component
 {
-    DECLARE_COMPONENT_TYPE(NOEXP)
-    Q_OBJECT
+    DECLARE_COMPONENT_TYPE(NOEXP)    
     
     friend class ShapeSystem;
 
 public:
 
-    Q_INVOKABLE Shape();
+    Shape();
 
     void setPosition(const QPoint& p);
     QPoint position() const { return _position; }
