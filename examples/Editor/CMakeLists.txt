@@ -33,13 +33,10 @@ set(LIB_SOURCES
 )
 
 set(MOC_INPUT
-   ${HEADER_PATH}/BulletSystem
-   ${HEADER_PATH}/DamageSystem
    ${HEADER_PATH}/EnemySystem
    ${HEADER_PATH}/Game
    ${HEADER_PATH}/MainWindow
    ${HEADER_PATH}/MetaDataSystem
-   ${HEADER_PATH}/ShapeSystem
 )
 
 QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})

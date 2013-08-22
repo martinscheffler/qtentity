@@ -12,7 +12,7 @@ namespace QtEntity
 
 	EntityManager::~EntityManager()
 	{
-        foreach(EntitySystem* es, _systemsByComponentType)
+        foreach(EntitySystem* es, _systems)
         {
             delete es;
         }
@@ -28,7 +28,7 @@ namespace QtEntity
     
     void EntityManager::destroyEntity(EntityId id)
     {
-        for(auto i = _systemsByComponentType.begin(); i != _systemsByComponentType.end(); ++i)
+        for(auto i = _systems.begin(); i != _systems.end(); ++i)
         {
             i.value()->destroyComponent(id);
         }
@@ -38,32 +38,27 @@ namespace QtEntity
     void EntityManager::addSystem(EntitySystem* es)
     {
         ClassTypeId t = es->componentType();
-        if(_systemsByComponentType.contains(t))
+        if(_systems.contains(t))
         {
             throw std::runtime_error("Entity system already added!");
         }
-        _systemsBySystemType.insert(es->metaObject(), es);
-        _systemsByComponentType.insert(t, es);
+        _systems.insert(t, es);
         es->setEntityManager(this);
     }
 
 
-    bool EntityManager::hasSystem(EntitySystem* es)
+    bool EntityManager::hasSystem(ClassTypeId ctype)
     {
-        return _systemsBySystemType.contains(es->metaObject());
+        return _systems.contains(ctype);
     }
 
 
     bool EntityManager::removeSystem(EntitySystem* es)
     {
-        EntitySystemStore::iterator i = _systemsBySystemType.find(es->metaObject());
-        if(i == _systemsBySystemType.end()) return false;
-        _systemsBySystemType.erase(i);
-
         // assert that system is in both maps
-        auto j = _systemsByComponentType.find(es->componentType());
-        Q_ASSERT(j != _systemsByComponentType.end());
-        _systemsByComponentType.erase(j);
+        auto j = _systems.find(es->componentType());
+        Q_ASSERT(j != _systems.end());
+        _systems.erase(j);
         return true;
     }
 
@@ -77,16 +72,9 @@ namespace QtEntity
 
     EntitySystem* EntityManager::system(ClassTypeId componentType) const
     {        
-        auto i = _systemsByComponentType.find(componentType);
-        if(i == _systemsByComponentType.end()) return nullptr;
+        auto i = _systems.find(componentType);
+        if(i == _systems.end()) return nullptr;
         return i.value();
-    }
-
-
-    EntitySystem* EntityManager::systemBySystemType(const QMetaObject& systemMetaObject) const
-    {
-        EntitySystemStore::const_iterator it = _systemsBySystemType.find(&systemMetaObject);
-        return (it == _systemsBySystemType.end()) ? nullptr : it.value();
     }
 
 }

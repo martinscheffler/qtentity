@@ -162,10 +162,11 @@ private:
 };
 
 
-class ActorSystem : public QtEntity::SimpleEntitySystem
+class ActorSystem 
+    : public QObject
+    , public QtEntity::SimpleEntitySystem
 {
     Q_OBJECT
-
 public:
 
     ActorSystem(osg::Group* rootnode);
@@ -183,10 +184,7 @@ signals:
     void entityAdded(QtEntity::EntityId id, QString name);
     void entityRemoved(QtEntity::EntityId id);
     void entityChanged(QtEntity::EntityId id, QString name);
-
-protected:
-
-    
+  
 private:
     osg::ref_ptr<osg::Group> _rootNode;
 };

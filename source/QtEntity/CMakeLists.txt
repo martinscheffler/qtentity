@@ -28,14 +28,7 @@ set(LIB_SOURCES
   ${SOURCE_PATH}/SimpleEntitySystem.cpp
 )
 
-set(MOC_INPUT
-   ${HEADER_PATH}/SimpleEntitySystem
-   ${HEADER_PATH}/PrefabSystem
-)
-
-QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})
-
-add_library(${LIB_NAME} SHARED ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} ${MOC_SOURCES})
+add_library(${LIB_NAME} SHARED ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} )
 
 #widgets is needed for QColor and other data types:
 qt5_use_modules(${LIB_NAME} Core Widgets)

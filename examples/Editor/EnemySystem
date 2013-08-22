@@ -69,8 +69,6 @@ private:
 
 class EnemySystem : public QtEntity::SimpleEntitySystem
 {
-    Q_OBJECT
-
 public:
     EnemySystem();
 

@@ -13,8 +13,7 @@ namespace QtEntity
      */
     class QTENTITY_EXPORT SimpleEntitySystem : public EntitySystem
     {
-        Q_OBJECT
-
+        
     public:
         // data type of storage
         typedef QHash<EntityId, Component*> ComponentStore;

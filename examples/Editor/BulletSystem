@@ -19,8 +19,7 @@ private:
 
 
 class BulletSystem : public QtEntity::SimpleEntitySystem
-{
-    Q_OBJECT
+{   
 
 public:
     BulletSystem();

@@ -1,5 +1,4 @@
 #include <QtTest/QtTest>
-#include <QObject>
 #include <QtGui/QVector2D>
 #include <QtGui/QVector3D>
 #include <QtGui/QVector4D>

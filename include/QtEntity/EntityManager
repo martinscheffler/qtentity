@@ -18,7 +18,7 @@ namespace QtEntity
     public:
 
         // data type for entity system container
-        typedef QHash<const QMetaObject*,EntitySystem*> EntitySystemStore;
+        typedef QHash<ClassTypeId,EntitySystem*> EntitySystemStore;
 
         EntityManager();
 		~EntityManager();            
@@ -47,33 +47,6 @@ namespace QtEntity
         EntitySystem* system(ClassTypeId ctype) const;
 
         /**
-         * @brief systemBySystemType returns an entity system of type described
-         * by the passed QMetaObject.
-         * @return nullptr if not found, else the system
-         */
-        EntitySystem* systemBySystemType(const QMetaObject& systemMetaObject) const;
-
-        /**
-         * Templated method to get an entity system.
-         * Usage:
-         * MyEntitySystem* sys;
-         * if(em.system(es)) {...}
-         * @param out receives pointer to entity system
-         * @return true if entity system was found.
-         */
-        template <typename T>
-        bool system(T*& out) const;
-
-        /**
-         * Templated method to get an entity system.
-         * Usage:
-         * MyEntitySystem* sys = em.system<MyEntitySystem>();
-         * @return the entity system or nullptr if not found
-         */
-        template <typename T>
-        T* system() const;
-
-        /**
          * @brief Add an entity system to the entity manager.
          * The entity manager takes ownership of the system, it is
          * deleted when entity manager is deleted.
@@ -95,7 +68,7 @@ namespace QtEntity
          *        is present.
          * @return true if exists
          */
-        bool hasSystem(EntitySystem* es);
+        bool hasSystem(ClassTypeId ctype);
 
         /**
          * Templated method to get an existing component.
@@ -187,35 +160,17 @@ namespace QtEntity
         /**
          * iterators for entity systems
          */
-        EntitySystemStore::iterator begin() { return _systemsBySystemType.begin(); }
-        EntitySystemStore::iterator end() { return _systemsBySystemType.end(); }
+        EntitySystemStore::iterator begin() { return _systems.begin(); }
+        EntitySystemStore::iterator end() { return _systems.end(); }
 
-        EntitySystemStore::const_iterator begin() const { return _systemsBySystemType.begin(); }
-        EntitySystemStore::const_iterator end() const { return _systemsBySystemType.end(); }
+        EntitySystemStore::const_iterator begin() const { return _systems.begin(); }
+        EntitySystemStore::const_iterator end() const { return _systems.end(); }
 
     private:
 
-        QHash<ClassTypeId,EntitySystem*> _systemsByComponentType;
-        EntitySystemStore _systemsBySystemType;
+        QHash<ClassTypeId,EntitySystem*> _systems;
         QAtomicInt _entityCounter;
     };
-
-
-    template <typename T>
-    bool EntityManager::system(T*& out) const
-    {
-        EntitySystem* es = this->systemBySystemType(T::staticMetaObject);
-        out = dynamic_cast<T*>(es);
-        return (out != nullptr);
-    }
-
-
-    template <typename T>
-    T* EntityManager::system() const
-    {
-        return dynamic_cast<T*>(this->systemBySystemType(T::staticMetaObject));
-    }
-
 
     template <typename T>
     bool EntityManager::component(EntityId id, T*& component) const

@@ -4,7 +4,6 @@
 #include <QtEntity/SimpleEntitySystem>
 #include <QObject>
 
-
 class MetaDataSystem;
 
 class MetaData : public QtEntity::Component
@@ -14,6 +13,7 @@ class MetaData : public QtEntity::Component
     friend class MetaDataSystem;
 
  public:
+
     MetaData();
 
     /**
@@ -49,10 +49,11 @@ private:
 };
 
 
-class MetaDataSystem : public QtEntity::SimpleEntitySystem
-{
+class MetaDataSystem 
+    : public QObject
+    , public QtEntity::SimpleEntitySystem
+{   
     Q_OBJECT
-
 public:
     MetaDataSystem();
 

@@ -25,8 +25,7 @@ MainWindow::MainWindow()
     _game = new Game(_renderer);
 
     // connect signals of meta data system to entity list
-    MetaDataSystem* ms;
-    _game->entityManager().system(ms);
+    MetaDataSystem* ms = static_cast<MetaDataSystem*>(_game->entityManager().system(MetaData::classTypeId()));
     connect(ms, &MetaDataSystem::entityAdded,   this, &MainWindow::entityAdded);
     connect(ms, &MetaDataSystem::entityRemoved, this, &MainWindow::entityRemoved);
     connect(ms, &MetaDataSystem::entityChanged, this, &MainWindow::entityChanged);

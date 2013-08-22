@@ -177,7 +177,7 @@ namespace QtEntityUtils
 
         if(!prop.valid())
         {
-            qDebug() << "No property named " << propertyname << " on object of type " << es->metaObject()->className();
+            qDebug() << "No property named " << propertyname << " on object of type " << es->componentName();
             return;
         }
 

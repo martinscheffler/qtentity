@@ -49,8 +49,7 @@ private:
 
 
 class ShapeSystem : public QtEntity::SimpleEntitySystem
-{
-    Q_OBJECT
+{   
 
 public:
     ShapeSystem(Renderer* renderer);

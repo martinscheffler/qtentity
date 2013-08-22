@@ -74,8 +74,7 @@ public:
 
 
 class TestingSystem : public SimpleEntitySystem
-{
-    Q_OBJECT 
+{     
 public:
     TestingSystem() : SimpleEntitySystem(Testing::classTypeId())
     {

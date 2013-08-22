@@ -22,8 +22,7 @@ private:
 
 
 class DamageSystem : public QtEntity::SimpleEntitySystem
-{
-    Q_OBJECT
+{    
 
 public:
     DamageSystem();

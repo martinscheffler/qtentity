@@ -53,8 +53,7 @@ namespace QtEntity
 
     class QTENTITY_EXPORT PrefabSystem : public SimpleEntitySystem
     {
-        Q_OBJECT
-
+        
     public:
         PrefabSystem();
         ~PrefabSystem();
