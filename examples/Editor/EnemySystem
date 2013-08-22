@@ -67,7 +67,7 @@ private:
 };
 
 
-class EnemySystem : public QtEntity::SimpleEntitySystem
+class EnemySystem : public QtEntity::SimpleEntitySystem<Enemy>
 {
 public:
     EnemySystem();

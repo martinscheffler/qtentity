@@ -48,7 +48,7 @@ private:
 };
 
 
-class ShapeSystem : public QtEntity::SimpleEntitySystem
+class ShapeSystem : public QtEntity::SimpleEntitySystem<Shape>
 {   
 
 public:

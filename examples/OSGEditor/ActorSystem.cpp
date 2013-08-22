@@ -54,8 +54,7 @@ void Actor::setShapes(const QtEntity::PropertyObjects& v)
 
 
 ActorSystem::ActorSystem(osg::Group* rootnode)
-    : SimpleEntitySystem(Actor::classTypeId())
-    , _rootNode(rootnode)
+    : _rootNode(rootnode)
 {
     QtEntity::registerMetaObject(Box::staticMetaObject);
     QtEntity::registerMetaObject(Sphere::staticMetaObject);

@@ -38,8 +38,7 @@ void Shape::setZIndex(int i)
 
 
 ShapeSystem::ShapeSystem(Renderer* renderer)
-    : SimpleEntitySystem(Shape::classTypeId())
-    , _renderer(renderer)
+    : _renderer(renderer)
 {
     QTE_ADD_PROPERTY("position", QPoint, Shape, position, setPosition);
     QTE_ADD_PROPERTY("path", QString, Shape, path, setPath);

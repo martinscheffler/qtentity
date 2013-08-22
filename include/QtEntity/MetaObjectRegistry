@@ -24,8 +24,7 @@ namespace QtEntity
     typedef qint32 ClassTypeId;
     namespace ComponentRegistry
     {
-        QTENTITY_EXPORT ClassTypeId registerComponent(const QString& classname, const ComponentConstructor& cstr);
-        QTENTITY_EXPORT Component* createComponent(ClassTypeId typeId);
+        QTENTITY_EXPORT ClassTypeId registerComponent(const QString& classname);
         QTENTITY_EXPORT ClassTypeId classTypeId(const QString& classname);
         QTENTITY_EXPORT QString className(ClassTypeId typeId);
     }

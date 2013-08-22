@@ -27,26 +27,17 @@ namespace QtEntity
     }
 
 
-    QVector<ComponentConstructor> s_componentConstructors;
     QHash<QString, ClassTypeId> s_classTypeIds;
     QHash<ClassTypeId, QString> s_classNames;
     
-    ClassTypeId ComponentRegistry::registerComponent(const QString& classname, const ComponentConstructor& cstr)
+    ClassTypeId ComponentRegistry::registerComponent(const QString& classname)
     {
-        ClassTypeId s = (ClassTypeId) s_componentConstructors.size();
-        s_componentConstructors.push_back(cstr);
+        Q_ASSERT(s_classTypeIds.find(classname) == s_classTypeIds.end());
+        ClassTypeId s = (ClassTypeId) s_classTypeIds.size();        
         s_classTypeIds[classname] = s;
         s_classNames[s] = classname;
         return s;
     }
-
-
-    Component* ComponentRegistry::createComponent(ClassTypeId typeId)
-    {
-        if(s_componentConstructors.size() < typeId) return nullptr;
-        return s_componentConstructors[typeId]();
-    }
-
 
     ClassTypeId ComponentRegistry::classTypeId(const QString& classname)
     {

@@ -11,21 +11,28 @@ namespace QtEntity
      * A basic implementation of an EntitySystem.
      * Components are created with new() and stored in a HashMap.
      */
-    class QTENTITY_EXPORT SimpleEntitySystem : public EntitySystem
+    template <typename T>
+    class SimpleEntitySystem : public EntitySystem
     {
         
     public:
         // data type of storage
-        typedef QHash<EntityId, Component*> ComponentStore;
+        typedef QHash<EntityId, T*> ComponentStore;
 
         /**
          * @brief EntitySystem constructor.
          * @param componentMeta the QMetaObject of the Component subclass that
          *                      this entity system uses as components
          */
-        SimpleEntitySystem(ClassTypeId componentType);
+        SimpleEntitySystem() {}
 
-        virtual ~SimpleEntitySystem();
+        virtual ~SimpleEntitySystem()
+	    {
+            foreach(Component* c, _components)
+            {
+                delete c;
+            }
+        }
 
         /**
          * This is called by entity manager when system is added to entity manager
@@ -48,17 +55,18 @@ namespace QtEntity
          * @param id EntityId of component to fetch
          * @return component or nullptr if it does not exist
          */
-        virtual Component* component(EntityId id) const override;
+        virtual Component* component(EntityId id) const override
+        {
+            auto i = _components.find(id);
+            return (i == _components.end()) ? nullptr : i.value();
+        }
 
-        template <typename T>
-        bool component(EntityId id, T*& component) const;
-
-        /**
-         * @brief hasComponent returns true if a component is associated with passed id
-         * @param id EntityId of component to check
-         * @return true if exists
-         */
-        bool hasComponent(EntityId id) const;
+        bool component(EntityId id, T*& component) const
+        {
+            Component* obj = this->component(id);
+            component = static_cast<T*>(obj);
+            return (component != NULL);
+        }
 
         /**
          * @brief createComponent Construct a component from meta type.
@@ -72,7 +80,28 @@ namespace QtEntity
          *                   Format is: { name of QMetaProperty => value to set }
          * @return newly constructed component
          */
-        virtual Component* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) override;
+        virtual Component* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) override
+        {
+            // check if component already exists
+            if(component(id) != nullptr)
+            {
+                throw std::runtime_error("Component already existss!");
+            }
+
+            // use QMetaObject to construct new instance
+            T* component = new T();
+            // out of memory?
+            if(component == nullptr)
+            {
+                qCritical() << "Could not construct component. Have you registered the component type?";
+                throw std::runtime_error("Component could not be constructed.");
+            }
+
+            // store
+            _components[id] = component;
+            applyPropertyValues(this, id, properties);
+            return component;       
+        }
 
         /**
          * @brief destroyComponent remove component from system and destruct it
@@ -82,36 +111,52 @@ namespace QtEntity
          * @param id Entity id of component to destruc
          * @return true if component existed, else false
          */
-        virtual bool destroyComponent(EntityId id);
+        virtual bool destroyComponent(EntityId id) override
+        {        
+            auto i = _components.find(id);
+            if(i == _components.end()) return false;
+            delete i.value();
+            _components.erase(i);
+            return true;
+        }
 
         /**
          * @return type id of component class
          */
-        virtual ClassTypeId componentType() const { return _componentType; }
+        virtual ClassTypeId componentType() const { return T::classTypeId(); }
 
         /**
          * Return begin iterator of component container
          */
-        ComponentStore::iterator begin() { return _components.begin(); }
+        typename ComponentStore::iterator begin() { return _components.begin(); }
 
         /**
          * Return end iterator of component container
          */
-        ComponentStore::iterator end() { return _components.end(); }
+        typename ComponentStore::iterator end() { return _components.end(); }
 
         /**
          * Return begin iterator of component container
          */
-        ComponentStore::const_iterator begin() const { return _components.begin(); }
+        typename ComponentStore::const_iterator begin() const { return _components.begin(); }
 
         /**
          * Return end iterator of component container
          */
-        ComponentStore::const_iterator end() const { return _components.end(); }
+        typename ComponentStore::const_iterator end() const { return _components.end(); }
 
 
-        virtual EntitySystem::Iterator pbegin() override;
-        virtual EntitySystem::Iterator pend() override;
+        virtual EntitySystem::Iterator pbegin() override
+        {
+            return EntitySystem::Iterator(new VIteratorImpl<ComponentStore::Iterator>(begin()));
+        }
+
+        virtual EntitySystem::Iterator pend() override
+        {
+            return EntitySystem::Iterator(new VIteratorImpl<ComponentStore::Iterator>(end()));
+        }
+
+    
 
         /**
          * @brief Returns all additional attributes for a property.
@@ -126,7 +171,10 @@ namespace QtEntity
         /**
          * Return number of components
          */
-        virtual size_t count() const;
+        virtual size_t count() const override
+        {
+            return _components.size();
+        }
 
     protected:
        
@@ -135,18 +183,8 @@ namespace QtEntity
          * Is NULL if entity system was never added
          */
         EntityManager* _entityManager;
-    protected:
 
-        ClassTypeId _componentType;
         ComponentStore _components;
     };
-
-    template <typename T>
-    bool SimpleEntitySystem::component(EntityId id, T*& component) const
-    {
-        Component* obj = this->component(id);
-        component = static_cast<T*>(obj);
-        return (component != NULL);
-    }
-
+    
 }

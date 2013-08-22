@@ -21,7 +21,7 @@ private:
 };
 
 
-class DamageSystem : public QtEntity::SimpleEntitySystem
+class DamageSystem : public QtEntity::SimpleEntitySystem<Damage>
 {    
 
 public:

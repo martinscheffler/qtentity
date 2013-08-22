@@ -51,7 +51,7 @@ private:
 
 class MetaDataSystem 
     : public QObject
-    , public QtEntity::SimpleEntitySystem
+    , public QtEntity::SimpleEntitySystem<MetaData>
 {   
     Q_OBJECT
 public:

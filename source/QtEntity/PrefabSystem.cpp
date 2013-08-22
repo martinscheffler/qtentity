@@ -29,7 +29,6 @@ namespace QtEntity
 
     
     PrefabSystem::PrefabSystem()
-        :QtEntity::SimpleEntitySystem(PrefabInstance::classTypeId())
     {
     }
 

@@ -51,7 +51,7 @@ namespace QtEntity
     };
 
 
-    class QTENTITY_EXPORT PrefabSystem : public SimpleEntitySystem
+    class QTENTITY_EXPORT PrefabSystem : public SimpleEntitySystem<PrefabInstance>
     {
         
     public:

@@ -28,7 +28,7 @@ private slots:
 
         Component* c2 = ts.component(1);
         QVERIFY(c == c2);
-        QVERIFY(ts.hasComponent(1));
+        QVERIFY(ts.component(1) != nullptr);
 
         Component* c3 = ts.component(2);
         QVERIFY(c3 == nullptr);
@@ -48,9 +48,9 @@ private slots:
         Component* c = ts.createComponent(1);
         Component* c2 = ts.component(1);
         QVERIFY(c == c2);
-        QVERIFY(ts.hasComponent(1));
+        QVERIFY(ts.component(1) != nullptr);
         ts.destroyComponent(1);
-        QVERIFY(!ts.hasComponent(1));
+        QVERIFY(ts.component(1) == nullptr);
         Component* c3 = ts.component(1);
         QVERIFY(c3 == nullptr);
     }

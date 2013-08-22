@@ -164,7 +164,7 @@ private:
 
 class ActorSystem 
     : public QObject
-    , public QtEntity::SimpleEntitySystem
+    , public QtEntity::SimpleEntitySystem<Actor>
 {
     Q_OBJECT
 public:
