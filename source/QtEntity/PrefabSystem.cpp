@@ -73,10 +73,10 @@ namespace QtEntity
                     // find all prefab instances and destroy the component
                     for(auto k = this->begin(); k != this->end(); ++k)
                     {
-                        PrefabInstance* pi = static_cast<PrefabInstance*>(k.value());
+                        PrefabInstance* pi = static_cast<PrefabInstance*>(k->second);
                         if(pi->prefab() == prefab)
                         {
-                            es->destroyComponent(k.key());
+                            es->destroyComponent(k->first);
                         }
                     }
                 }
@@ -88,10 +88,10 @@ namespace QtEntity
                     // find all prefab instances and update the components
                     for(auto k = this->begin(); k != this->end(); ++k)
                     {
-                        PrefabInstance* pi = static_cast<PrefabInstance*>(k.value());
+                        PrefabInstance* pi = static_cast<PrefabInstance*>(k->second);
                         if(pi->prefab() == prefab)
                         {
-                            Component* component = es->component(k.key());
+                            Component* component = es->component(k->first);
                             Q_ASSERT(component);
                             if(!component) continue;
 
@@ -105,11 +105,11 @@ namespace QtEntity
                                 {
                                     continue;
                                 }
-                                QVariant current = prop.read(k.key());
+                                QVariant current = prop.read(k->first);
                                 QVariantMap::iterator newval = newvals.find(prop.name());
                                 if(newval != newvals.end() && newval.value() != current)
                                 {
-                                    prop.write(k.key(), newval.value());
+                                    prop.write(k->first, newval.value());
                                 }
                             }
                         }
@@ -129,10 +129,10 @@ namespace QtEntity
                     if(!es) continue;
                     for(auto k = this->begin(); k != this->end(); ++k)
                     {
-                        PrefabInstance* pi = static_cast<PrefabInstance*>(k.value());
+                        PrefabInstance* pi = static_cast<PrefabInstance*>(k->second);
                         if(pi->prefab() == prefab)
                         {
-                            es->createComponent(k.key(), i.value().value<QVariantMap>());
+                            es->createComponent(k->first, i.value().value<QVariantMap>());
                         }
                     }
                 }

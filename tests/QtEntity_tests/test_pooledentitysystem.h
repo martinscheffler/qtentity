@@ -56,7 +56,7 @@ private:
             auto end = es.end();
             for(auto j = es.begin(); j != end; ++j)
             {
-                Component* c = *j;
+                Component* c = j->second;
                 Testing* t = static_cast<Testing*>(c);
                 t->setMyInt(t->myInt() + 1);
             }
@@ -163,7 +163,9 @@ private slots:
 
         QCOMPARE(static_cast<Testing*>(ts.component(1))->myInt(), 1);
         QCOMPARE(static_cast<Testing*>(ts.component(3))->myInt(), 3);
-        
+        ts.destroyComponent(1);
+        ts.destroyComponent(3);
+        QCOMPARE(ts.count(), (size_t)0);
     }
 
     
@@ -200,10 +202,11 @@ private slots:
         m["myint"] = 2; pooled.createComponent(2, m);
         m["myint"] = 3; pooled.createComponent(3, m);
         TestingSystemPooled::Iterator i = pooled.begin();
-        Testing* t = *i;
+        
+        Testing* t = i->second;
         QCOMPARE(t, static_cast<Testing*>(pooled.component(1)));
-        QCOMPARE(*++i, static_cast<Testing*>(pooled.component(2)));
-        QCOMPARE(*++i, static_cast<Testing*>(pooled.component(3)));
+        QCOMPARE((++i)->second, static_cast<Testing*>(pooled.component(2)));
+        QCOMPARE((++i)->second, static_cast<Testing*>(pooled.component(3)));
         TestingSystemPooled::Iterator j = ++i;
         TestingSystemPooled::Iterator end = pooled.end();
         QCOMPARE(j, end);
@@ -221,7 +224,7 @@ private slots:
         int count = 1;
         for(TestingSystemPooled::Iterator i = pooled.begin(); i != pooled.end(); ++i)
         {
-            Testing* o = *i;
+            Testing* o = i->second;
             QCOMPARE(o, static_cast<Testing*>(pooled.component(count++)));
         }
     }
@@ -236,7 +239,7 @@ private slots:
             pooled.createComponent(i, m);
         }
         int count = 1;
-        for(EntitySystem::Iterator i = pooled.pbegin(); i != pooled.pend(); ++i)
+        for(EntitySystem::PIterator i = pooled.pbegin(); i != pooled.pend(); ++i)
         {
             Testing* o = static_cast<Testing*>(*i);
             QCOMPARE(o, static_cast<Testing*>(pooled.component(count++)));

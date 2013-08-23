@@ -2,7 +2,7 @@
 
 #include <QtEntity/Export>
 #include <QtEntity/EntitySystem>
-#include <QHash>
+#include <unordered_map>
 
 namespace QtEntity
 {
@@ -17,7 +17,7 @@ namespace QtEntity
         
     public:
         // data type of storage
-        typedef QHash<EntityId, T*> ComponentStore;
+        typedef std::unordered_map<EntityId, T*> ComponentStore;
 
         /**
          * @brief EntitySystem constructor.
@@ -28,10 +28,11 @@ namespace QtEntity
 
         virtual ~SimpleEntitySystem()
 	    {
-            foreach(Component* c, _components)
+            for(auto i = _components.begin(); i != _components.end(); ++i)
             {
-                delete c;
+                delete i->second;
             }
+            _components.clear();
         }
 
         /**
@@ -58,7 +59,7 @@ namespace QtEntity
         virtual Component* component(EntityId id) const override
         {
             auto i = _components.find(id);
-            return (i == _components.end()) ? nullptr : i.value();
+            return (i == _components.end()) ? nullptr : i->second;
         }
 
         bool component(EntityId id, T*& component) const
@@ -115,7 +116,7 @@ namespace QtEntity
         {        
             auto i = _components.find(id);
             if(i == _components.end()) return false;
-            delete i.value();
+            delete i->second;
             _components.erase(i);
             return true;
         }
@@ -146,14 +147,14 @@ namespace QtEntity
         typename ComponentStore::const_iterator end() const { return _components.end(); }
 
 
-        virtual EntitySystem::Iterator pbegin() override
+        virtual EntitySystem::PIterator pbegin() override
         {
-            return EntitySystem::Iterator(new VIteratorImpl<ComponentStore::Iterator>(begin()));
+            return EntitySystem::PIterator(new VIteratorImpl<ComponentStore::iterator>(begin()));
         }
 
-        virtual EntitySystem::Iterator pend() override
+        virtual EntitySystem::PIterator pend() override
         {
-            return EntitySystem::Iterator(new VIteratorImpl<ComponentStore::Iterator>(end()));
+            return EntitySystem::PIterator(new VIteratorImpl<ComponentStore::iterator>(end()));
         }
 
     

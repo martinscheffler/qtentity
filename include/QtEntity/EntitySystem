@@ -160,7 +160,7 @@ namespace QtEntity
          */
         virtual void setEntityManager(EntityManager* em) = 0;
 
-        class Iterator;
+        class PIterator;
 
         /**
          * pend() and pbegin() implementations have to return EntitySystem::Iterator instances.
@@ -172,8 +172,8 @@ namespace QtEntity
          *    return EntitySystem::Iterator(new VIteratorImpl<std::vector<MyComponent>::Iterator>(begin()));
          * where std::vector<MyComponent> is the type of the container holding the components.
         */
-        virtual Iterator pbegin() = 0;
-        virtual Iterator pend() = 0;
+        virtual PIterator pbegin() = 0;
+        virtual PIterator pend() = 0;
 
         /**
          * Abstract iterator interface for implementing forward iterators.
@@ -200,7 +200,8 @@ namespace QtEntity
         public:
             VIteratorImpl(const U& it) :_iter(it) {}
             virtual VIterator* clone() { return new VIteratorImpl<U>(_iter); }
-            virtual Component* object() { return *_iter; }
+            virtual EntityId id() { return _iter->first; }
+            virtual Component* object() { return _iter->second; }
             virtual bool equal(VIterator* other) { return _iter == static_cast<VIteratorImpl<U>*>(other)->_iter; }
             virtual void increment() { ++_iter; }
         };
@@ -209,26 +210,26 @@ namespace QtEntity
          * @brief The Iterator class for iterating through all components of an EntitySystem.
          * Uses a VIterator heap object for accessing the concrete underlying iterator.
          */
-        class Iterator : public std::iterator<std::forward_iterator_tag, Component*> 
+        class PIterator : public std::iterator<std::forward_iterator_tag, Component*> 
         {
         public:
-            Iterator(VIterator* vit) : _viter(vit) {}
-            Iterator(const Iterator& other) : _viter(other._viter->clone()) {}
-            ~Iterator() { delete _viter; }
-            Iterator operator=(const Iterator& other) { delete _viter; _viter = other._viter->clone(); return *this;  }
-            bool operator!=(const Iterator& other) { return !(_viter->equal(other._viter)); }
+            PIterator(VIterator* vit) : _viter(vit) {}
+            PIterator(const PIterator& other) : _viter(other._viter->clone()) {}
+            ~PIterator() { delete _viter; }
+            PIterator operator=(const PIterator& other) { delete _viter; _viter = other._viter->clone(); return *this;  }
+            bool operator!=(const PIterator& other) { return !(_viter->equal(other._viter)); }
             Component* operator*() { return _viter->object(); }
             Component* operator->() { return _viter->object(); }
-            friend bool operator==(const Iterator &lhs, const Iterator& rhs) { return lhs._viter->equal(rhs._viter); }
-            Iterator& operator++()
+            friend bool operator==(const PIterator &lhs, const PIterator& rhs) { return lhs._viter->equal(rhs._viter); }
+            PIterator& operator++()
             {
                 _viter->increment();
                 return *this;
             }
 
-            Iterator operator++(int)
+            PIterator operator++(int)
             {
-                Iterator tmp(*this);
+                PIterator tmp(*this);
                 ++(*this);
                 return tmp;
             }

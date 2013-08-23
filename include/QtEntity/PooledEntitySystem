@@ -1,8 +1,9 @@
 #pragma once
 
 #include <QtEntity/EntitySystem>
-#include <QHash>
+#include <unordered_map>
 #include <stdexcept>
+#include <assert.h>
 
 namespace QtEntity
 {
@@ -21,21 +22,37 @@ namespace QtEntity
     template<typename T>
     class PooledEntitySystem : public EntitySystem
     {
-        friend class Iterator;
+        struct Entry
+        {
+            Entry(EntityId id) : _id(id) {}
+            EntityId _id;
+            T _component;
+        };
+
+        
+
     public:
         
         /**
          * Fwd iterator for PooledEntitySystem components
          */
-        class Iterator : public std::iterator<std::forward_iterator_tag, T> 
+        class Iterator : public std::iterator<std::forward_iterator_tag, std::pair<EntityId, T*> > 
         {
         public:
-            Iterator(T* obj) : _current(obj) {}
+            Entry* _current;
+            typedef std::pair<EntityId, T*> ValuePair;
+            ValuePair pair;
+
+            Iterator(Entry* obj) 
+                : _current(obj) 
+            {
+            }
             Iterator& operator=(const Iterator& other) { _current = other._current; return *this; }
             bool operator!=(const Iterator& other) { return(_current != other._current); }
-            T* operator*() { return _current; }
-            T* operator->() { return _current; }
+            ValuePair* operator*() { pair.first = _current->_id; pair.second = &_current->_component;  return &pair; }
+            ValuePair* operator->() { return operator*(); }
             friend bool operator==(const Iterator &lhs, const Iterator& rhs) { return (lhs._current == rhs._current); }
+            
             Iterator& operator++()
             {
                 ++_current;
@@ -49,8 +66,6 @@ namespace QtEntity
                 return tmp;
             }
             
-        private:
-            T* _current;
         };
 
 
@@ -65,8 +80,8 @@ namespace QtEntity
             , _chunkSize(chunkSize)
             , _size(0)            
         {
-            Q_ASSERT(chunkSize > 0);
-            _components = (capacity == 0) ? nullptr : operator new [](capacity * sizeof(T));                
+            assert(chunkSize > 0);
+            _components = (capacity == 0) ? nullptr : operator new [](capacity * sizeof(Entry));                
         }
 
         ~PooledEntitySystem()
@@ -74,18 +89,18 @@ namespace QtEntity
             // call all destructors
             for(auto i = begin(); i != end(); ++i)
             {
-                i->~T();
+                i._current->_component.~T();
             }
             operator delete[](_components);
         }
 
         // Concrete iterator, use these!
-        Iterator begin() { return(Iterator(_size == 0 ? nullptr : static_cast<T*>(_components))); }
-        Iterator end() { T* ptr = static_cast<T*>(_components);return(Iterator(_size == 0 ? nullptr : &ptr[_size])); }
+        Iterator begin() { return(Iterator(_size == 0 ? nullptr : static_cast<Entry*>(_components))); }
+        Iterator end() { Entry* ptr = static_cast<Entry*>(_components); return(Iterator(_size == 0 ? nullptr : &ptr[_size])); }
 
         // Polymorphic iterator, slower!
-        virtual EntitySystem::Iterator pbegin() { return EntitySystem::Iterator(new VIteratorImpl<Iterator>(begin())); }
-        virtual EntitySystem::Iterator pend() { return EntitySystem::Iterator(new VIteratorImpl<Iterator>(end())); }
+        virtual EntitySystem::PIterator pbegin() { return EntitySystem::PIterator(new VIteratorImpl<Iterator>(begin())); }
+        virtual EntitySystem::PIterator pend() { return EntitySystem::PIterator(new VIteratorImpl<Iterator>(end())); }
 
         virtual void setEntityManager(EntityManager* em) { _entityManager = em; }
         EntityManager* entityManager() const { return _entityManager; }
@@ -101,8 +116,10 @@ namespace QtEntity
         {
             auto i = _indices.find(id);
             if(i == _indices.end()) return nullptr;
-            T* ptr = static_cast<T*>(_components);
-            return &ptr[i.value()];
+            Entry* ptr = static_cast<Entry*>(_components);
+            size_t idx = i->second;
+            Entry* target = ptr + idx;
+            return &target->_component;
         }
 
 
@@ -115,16 +132,16 @@ namespace QtEntity
             if(_size == _capacity) reserve(_chunkSize);
             size_t index = _size++;
             _indices[id] = index;
-            T* ptr = static_cast<T*>(_components);
-            T* obj = &ptr[index];
-            new (obj) T();
+            Entry* ptr = static_cast<Entry*>(_components);
+            Entry* obj = &ptr[index];
+            new (obj) Entry(id);
             
             if(!properties.empty())
             {
                 applyPropertyValues(this, id, properties);
             }
 
-            return obj;
+            return &obj->_component;
         }
 
 
@@ -132,12 +149,14 @@ namespace QtEntity
         { 
             auto i = _indices.find(id);
             if(i == _indices.end()) return false;
-            size_t indexToDestroy = i.value();
+            size_t indexToDestroy = i->second;
             
             // call destructor
-            T* ptr = static_cast<T*>(_components);
-            ptr[indexToDestroy].~T();
-            _indices.remove(id);
+            Entry* ptr = static_cast<Entry*>(_components);
+            Entry* toDestroy = ptr + indexToDestroy;
+            assert(toDestroy->_id == id);
+            toDestroy->_component.~T();
+            _indices.erase(id);
 
             // copy last entry in _components over entry to be destroyed. 
             // Don't do this if entry to be destroyed is last entry.
@@ -147,26 +166,20 @@ namespace QtEntity
                 // Does a linear search, but probably short when starting at the end
                 QtEntity::EntityId last = 0;
                 size_t lastindex;
-                QHashIterator<QtEntity::EntityId,size_t> j(_indices);
-                j.toBack();
-
-                while(j.hasPrevious())
+                
+                for(auto j = _indices.rbegin(); j != _indices.rend(); ++j)
                 {
-                    j.previous();
-                    if(j.value() == _size - 1)
+                    if(j->second == _size - 1)
                     {
-                        last = j.key();
-                        lastindex = j.value();
-                        _indices.remove(last);
+                        last = j->first;
+                        lastindex = j->second;                        
                         break;
                     }
                 }
-                Q_ASSERT(last != 0);
-                // copy last entry in _components over entry to destroy
-                T* toDestroy = &ptr[indexToDestroy];
-                memcpy(toDestroy, &ptr[lastindex], sizeof(T));                
-                _indices[last] = indexToDestroy;
-                
+                assert(last != 0);
+                // copy last entry in _components over entry to destroy                
+                memcpy(toDestroy, &ptr[lastindex], sizeof(Entry));                
+                _indices[last] = indexToDestroy;                
             }
             --_size;
             return true; 
@@ -177,10 +190,10 @@ namespace QtEntity
 
         void reserve(int chunk)
         {
-            void* components = operator new []( (_capacity + chunk) * sizeof(T) );
+            void* components = operator new []( (_capacity + chunk) * sizeof(Entry) );
             if(_capacity != 0)
             {
-                memcpy(components, _components, _capacity * sizeof(T));
+                memcpy(components, _components, _capacity * sizeof(Entry));
                 operator delete[](_components);
             }            
             _components = components;
@@ -194,7 +207,7 @@ namespace QtEntity
         size_t _size;
 
         void* _components;
-        QHash<QtEntity::EntityId,size_t> _indices;
+        std::unordered_map<QtEntity::EntityId,size_t> _indices;
 
     };
 }
