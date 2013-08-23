@@ -201,14 +201,14 @@ private slots:
 		m["myint"] = 1; pooled.createComponent(1, m);
         m["myint"] = 2; pooled.createComponent(2, m);
         m["myint"] = 3; pooled.createComponent(3, m);
-        TestingSystemPooled::Iterator i = pooled.begin();
+        TestingSystemPooled::iterator i = pooled.begin();
         
         Testing* t = i->second;
         QCOMPARE(t, static_cast<Testing*>(pooled.component(1)));
         QCOMPARE((++i)->second, static_cast<Testing*>(pooled.component(2)));
         QCOMPARE((++i)->second, static_cast<Testing*>(pooled.component(3)));
-        TestingSystemPooled::Iterator j = ++i;
-        TestingSystemPooled::Iterator end = pooled.end();
+        TestingSystemPooled::iterator j = ++i;
+        TestingSystemPooled::iterator end = pooled.end();
         QCOMPARE(j, end);
     }
 
@@ -222,7 +222,7 @@ private slots:
             pooled.createComponent(i, m);
         }
         int count = 1;
-        for(TestingSystemPooled::Iterator i = pooled.begin(); i != pooled.end(); ++i)
+        for(TestingSystemPooled::iterator i = pooled.begin(); i != pooled.end(); ++i)
         {
             Testing* o = i->second;
             QCOMPARE(o, static_cast<Testing*>(pooled.component(count++)));

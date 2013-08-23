@@ -25,7 +25,6 @@ set(LIB_SOURCES
   ${SOURCE_PATH}/MetaObjectRegistry.cpp
   ${SOURCE_PATH}/PrefabSystem.cpp
   ${SOURCE_PATH}/ReaderWriterJSON.cpp
-  ${SOURCE_PATH}/SimpleEntitySystem.cpp
 )
 
 add_library(${LIB_NAME} SHARED ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} )

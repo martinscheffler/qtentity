@@ -18,7 +18,7 @@ namespace QtEntity
     public:
         // data type of storage
         typedef std::unordered_map<EntityId, T*> ComponentStore;
-
+        typedef typename ComponentStore::iterator iterator;
         /**
          * @brief EntitySystem constructor.
          * @param componentMeta the QMetaObject of the Component subclass that
@@ -137,6 +137,16 @@ namespace QtEntity
         typename ComponentStore::iterator end() { return _components.end(); }
 
         /**
+         * Delete component and return iterator pointing to next component
+         */
+        typename ComponentStore::iterator erase(typename const ComponentStore::iterator& i)
+        {
+            ComponentStore::iterator next = i; ++next;
+            bool success = destroyComponent(i->first);
+            return next;
+        }
+
+        /**
          * Return begin iterator of component container
          */
         typename ComponentStore::const_iterator begin() const { return _components.begin(); }
@@ -146,7 +156,7 @@ namespace QtEntity
          */
         typename ComponentStore::const_iterator end() const { return _components.end(); }
 
-
+       
         virtual EntitySystem::PIterator pbegin() override
         {
             return EntitySystem::PIterator(new VIteratorImpl<ComponentStore::iterator>(begin()));

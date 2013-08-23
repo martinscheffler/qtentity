@@ -36,32 +36,32 @@ namespace QtEntity
         /**
          * Fwd iterator for PooledEntitySystem components
          */
-        class Iterator : public std::iterator<std::forward_iterator_tag, std::pair<EntityId, T*> > 
+        class iterator : public std::iterator<std::forward_iterator_tag, std::pair<EntityId, T*> > 
         {
         public:
             Entry* _current;
             typedef std::pair<EntityId, T*> ValuePair;
             ValuePair pair;
 
-            Iterator(Entry* obj) 
+            iterator(Entry* obj) 
                 : _current(obj) 
             {
             }
-            Iterator& operator=(const Iterator& other) { _current = other._current; return *this; }
-            bool operator!=(const Iterator& other) { return(_current != other._current); }
+            iterator& operator=(const iterator& other) { _current = other._current; return *this; }
+            bool operator!=(const iterator& other) { return(_current != other._current); }
             ValuePair* operator*() { pair.first = _current->_id; pair.second = &_current->_component;  return &pair; }
             ValuePair* operator->() { return operator*(); }
-            friend bool operator==(const Iterator &lhs, const Iterator& rhs) { return (lhs._current == rhs._current); }
+            friend bool operator==(const iterator &lhs, const iterator& rhs) { return (lhs._current == rhs._current); }
             
-            Iterator& operator++()
+            iterator& operator++()
             {
                 ++_current;
                 return *this;
             }
 
-            Iterator operator++(int)
+            iterator operator++(int)
             {
-                Iterator tmp(*this);
+                iterator tmp(*this);
                 ++(*this);
                 return tmp;
             }
@@ -95,12 +95,21 @@ namespace QtEntity
         }
 
         // Concrete iterator, use these!
-        Iterator begin() { return(Iterator(_size == 0 ? nullptr : static_cast<Entry*>(_components))); }
-        Iterator end() { Entry* ptr = static_cast<Entry*>(_components); return(Iterator(_size == 0 ? nullptr : &ptr[_size])); }
+        iterator begin() { return(iterator(_size == 0 ? nullptr : static_cast<Entry*>(_components))); }
+        iterator end() { Entry* ptr = static_cast<Entry*>(_components); return(iterator(_size == 0 ? nullptr : &ptr[_size])); }
+         /**
+         * Delete component and return iterator pointing to next component
+         */
+        iterator erase(const iterator& i)
+        {
+            destroyComponent(i.first);
+
+            return i;
+        }
 
         // Polymorphic iterator, slower!
-        virtual EntitySystem::PIterator pbegin() { return EntitySystem::PIterator(new VIteratorImpl<Iterator>(begin())); }
-        virtual EntitySystem::PIterator pend() { return EntitySystem::PIterator(new VIteratorImpl<Iterator>(end())); }
+        virtual EntitySystem::PIterator pbegin() { return EntitySystem::PIterator(new VIteratorImpl<iterator>(begin())); }
+        virtual EntitySystem::PIterator pend() { return EntitySystem::PIterator(new VIteratorImpl<iterator>(end())); }
 
         virtual void setEntityManager(EntityManager* em) { _entityManager = em; }
         EntityManager* entityManager() const { return _entityManager; }
@@ -122,6 +131,12 @@ namespace QtEntity
             return &target->_component;
         }
 
+        bool component(EntityId id, T*& component) const
+        {
+            Component* obj = this->component(id);
+            component = static_cast<T*>(obj);
+            return (component != NULL);
+        }
 
         virtual Component* createComponent(EntityId id, const QVariantMap& properties = QVariantMap())
         {
