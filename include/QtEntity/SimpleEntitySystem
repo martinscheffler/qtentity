@@ -3,6 +3,7 @@
 #include <QtEntity/Export>
 #include <QtEntity/EntitySystem>
 #include <unordered_map>
+#include <stdexcept>
 
 namespace QtEntity
 {
@@ -139,10 +140,10 @@ namespace QtEntity
         /**
          * Delete component and return iterator pointing to next component
          */
-        typename ComponentStore::iterator erase(typename const ComponentStore::iterator& i)
+        typename ComponentStore::iterator erase(typename ComponentStore::iterator& i)
         {
-            ComponentStore::iterator next = i; ++next;
-            bool success = destroyComponent(i->first);
+            typename ComponentStore::iterator next = i; ++next;
+            destroyComponent(i->first);
             return next;
         }
 
@@ -159,12 +160,12 @@ namespace QtEntity
        
         virtual EntitySystem::PIterator pbegin() override
         {
-            return EntitySystem::PIterator(new VIteratorImpl<ComponentStore::iterator>(begin()));
+            return EntitySystem::PIterator(new VIteratorImpl<typename ComponentStore::iterator>(begin()));
         }
 
         virtual EntitySystem::PIterator pend() override
         {
-            return EntitySystem::PIterator(new VIteratorImpl<ComponentStore::iterator>(end()));
+            return EntitySystem::PIterator(new VIteratorImpl<typename ComponentStore::iterator>(end()));
         }
 
     

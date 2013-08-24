@@ -178,11 +178,11 @@ namespace QtEntity
             if(indexToDestroy != _size - 1)
             {              
                 // find index of last entry in components array.
-                // Does a linear search, but probably short when starting at the end
+                // Does a linear search!
                 QtEntity::EntityId last = 0;
                 size_t lastindex;
                 
-                for(auto j = _indices.rbegin(); j != _indices.rend(); ++j)
+                for(auto j = _indices.begin(); j != _indices.end(); ++j)
                 {
                     if(j->second == _size - 1)
                     {
