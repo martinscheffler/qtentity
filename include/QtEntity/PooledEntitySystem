@@ -205,6 +205,20 @@ namespace QtEntity
         }
 
 
+        virtual void clear()
+        {
+            // call all destructors
+            for(auto i = begin(); i != end(); ++i)
+            {
+                i._current->_component.~T();
+            }
+            operator delete[](_components);
+            _components = nullptr;   
+            _size = 0;
+            _capacity = 0;
+            _indices.clear();
+        }
+
     protected:
 
         void reserve(int chunk)

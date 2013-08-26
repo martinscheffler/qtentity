@@ -74,6 +74,18 @@ private slots:
         QVERIFY(ts.component(2) == nullptr);
     }
 
+    void clear()
+    {
+        TestingSystem ts;       
+        ts.createComponent(1);
+        ts.createComponent(2);        
+        ts.createComponent(3);
+        ts.clear();
+        QCOMPARE(ts.count(), (size_t)0);
+        ts.createComponent(1);
+        QCOMPARE(ts.count(), (size_t)1);
+    }
+
     void iteratorTest1()
     {
         TestingSystem ts;

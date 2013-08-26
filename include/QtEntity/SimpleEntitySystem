@@ -168,7 +168,10 @@ namespace QtEntity
             return EntitySystem::PIterator(new VIteratorImpl<typename ComponentStore::iterator>(end()));
         }
 
-    
+        virtual void clear()
+        {
+            _components.clear();
+        }
 
         /**
          * @brief Returns all additional attributes for a property.

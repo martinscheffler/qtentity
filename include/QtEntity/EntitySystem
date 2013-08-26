@@ -141,6 +141,11 @@ namespace QtEntity
          */
         virtual size_t count() const = 0;
 
+        /**
+         * Clear all components
+         */
+        virtual void clear() = 0;
+
         // TODO remove
         virtual const QVariantMap attributesForProperty(const QString& name) const = 0;
         //////////////////////////////////////
