@@ -41,7 +41,7 @@ namespace QtEntity
         public:
             Entry* _current;
             typedef std::pair<EntityId, T*> ValuePair;
-            ValuePair pair;
+            mutable ValuePair pair;
 
             iterator(Entry* obj) 
                 : _current(obj) 
@@ -49,8 +49,8 @@ namespace QtEntity
             }
             iterator& operator=(const iterator& other) { _current = other._current; return *this; }
             bool operator!=(const iterator& other) { return(_current != other._current); }
-            ValuePair* operator*() { pair.first = _current->_id; pair.second = &_current->_component;  return &pair; }
-            ValuePair* operator->() { return operator*(); }
+            ValuePair* operator*() const { pair.first = _current->_id; pair.second = &_current->_component;  return &pair; }
+            ValuePair* operator->() const { return operator*(); }
             friend bool operator==(const iterator &lhs, const iterator& rhs) { return (lhs._current == rhs._current); }
             
             iterator& operator++()
@@ -100,12 +100,16 @@ namespace QtEntity
          /**
          * Delete component and return iterator pointing to next component
          */
-        iterator erase(const iterator& i)
+        iterator erase(const iterator& it)
         {
-            destroyComponent(i.first);
-
-            return i;
+            auto i = _indices.find(it->first);
+            if(i == _indices.end()) return end();
+            size_t indexToDestroy = i->second;
+            destroyComponent(it->first);
+            if(indexToDestroy == _size - 1) return end();
+            return iterator(static_cast<Entry*>(_components) + indexToDestroy);
         }
+
 
         // Polymorphic iterator, slower!
         virtual EntitySystem::PIterator pbegin() { return EntitySystem::PIterator(new VIteratorImpl<iterator>(begin())); }

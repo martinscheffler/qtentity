@@ -168,6 +168,25 @@ private slots:
         QCOMPARE(ts.count(), (size_t)0);
     }
 
+
+     void erase()
+    {
+        TestingSystemPooled ts;
+        QVariantMap m;
+		m["myint"] = 1;
+        ts.createComponent(1, m);
+        m["myint"] = 2;
+        ts.createComponent(2, m);
+        m["myint"] = 3;
+        ts.createComponent(3, m);
+        auto i = ts.begin(); 
+        QCOMPARE(i->second->myInt(), 1);
+        ++i;
+        QCOMPARE(i->second->myInt(), 2);
+        i = ts.erase(i);
+        QCOMPARE(i->second->myInt(), 3);
+        QVERIFY(ts.component(2) == nullptr);
+    }
     
     void speedTest()
     {
