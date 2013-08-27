@@ -106,7 +106,7 @@ namespace QtEntity
             if(i == _indices.end()) return end();
             size_t indexToDestroy = i->second;
             destroyComponent(it->first);
-            if(indexToDestroy == _size - 1) return end();
+            if(indexToDestroy == _size) return end();
             return iterator(static_cast<Entry*>(_components) + indexToDestroy);
         }
 
