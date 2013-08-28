@@ -31,6 +31,10 @@ namespace QtEntity
     typedef QVector<PropertyObjectPointer> PropertyObjects;
 
 
+    /**
+     * Identifier for component classes
+     */
+    typedef qint32 ClassTypeId;
 }
 
 // have to do this in global namespace

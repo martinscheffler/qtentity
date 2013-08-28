@@ -1,4 +1,6 @@
 #include <QtEntity/EntityManager>
+
+#include <QtEntity/MetaObjectRegistry>
 #include <stdexcept>
 #include <new>
 

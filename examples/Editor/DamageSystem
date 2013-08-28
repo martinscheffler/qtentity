@@ -28,5 +28,4 @@ public:
     DamageSystem();
 
     void step(int frameNumber, int totalTime, int delta);
-    virtual const QVariantMap attributesForProperty(const QString& name) const;
 };

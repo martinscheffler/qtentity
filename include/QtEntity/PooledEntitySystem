@@ -75,8 +75,7 @@ namespace QtEntity
          * @param chunkSize When capacity is depleted allocate place for that many additional components
          */
         PooledEntitySystem(size_t capacity = 0, size_t chunkSize = 4)
-            : _entityManager(nullptr)
-            , _capacity(capacity)
+            : _capacity(capacity)
             , _chunkSize(chunkSize)
             , _size(0)            
         {
@@ -112,15 +111,12 @@ namespace QtEntity
 
 
         // Polymorphic iterator, slower!
-        virtual EntitySystem::PIterator pbegin() { return EntitySystem::PIterator(new VIteratorImpl<iterator>(begin())); }
-        virtual EntitySystem::PIterator pend() { return EntitySystem::PIterator(new VIteratorImpl<iterator>(end())); }
+        virtual PIterator pbegin() { return PIterator(new VIteratorImpl<iterator>(begin())); }
+        virtual PIterator pend() { return PIterator(new VIteratorImpl<iterator>(end())); }
 
-        virtual void setEntityManager(EntityManager* em) { _entityManager = em; }
-        EntityManager* entityManager() const { return _entityManager; }
 
         virtual size_t count() const { return _size; }
 
-        virtual const QVariantMap attributesForProperty(const QString& name) const { return QVariantMap(); }
         virtual ClassTypeId componentType() const { return T::classTypeId(); }
 
         size_t capacity() const { return _capacity; }

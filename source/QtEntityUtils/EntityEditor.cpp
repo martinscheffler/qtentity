@@ -175,7 +175,7 @@ namespace QtEntityUtils
             }
         }
 
-        if(!prop.valid())
+        if(!prop.hasSetter())
         {
             qDebug() << "No property named " << propertyname << " on object of type " << es->componentName();
             return;

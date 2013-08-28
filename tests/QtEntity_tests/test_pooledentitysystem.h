@@ -270,7 +270,7 @@ private slots:
             pooled.createComponent(i, m);
         }
         int count = 1;
-        for(EntitySystem::PIterator i = pooled.pbegin(); i != pooled.pend(); ++i)
+        for(PIterator i = pooled.pbegin(); i != pooled.pend(); ++i)
         {
             Testing* o = static_cast<Testing*>(*i);
             QCOMPARE(o, static_cast<Testing*>(pooled.component(count++)));

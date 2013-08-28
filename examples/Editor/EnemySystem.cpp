@@ -12,7 +12,14 @@ EnemySystem::EnemySystem()
     QtEntity::registerMetaObject(TestObj2::staticMetaObject);
 
     QTE_ADD_PROPERTY("lifetime", int, Enemy, lifetime, setLifetime);
-    QTE_ADD_PROPERTY("myobjects", QtEntity::PropertyObjects, Enemy, myObjects, setMyObjects);
+
+    QVariantMap r;
+    QStringList sl;
+    sl.push_back(TestObj1::staticMetaObject.className());
+    sl.push_back(TestObj2::staticMetaObject.className());
+    r["classnames"] = sl;
+    
+    QTE_ADD_PROPERTY_WITH_ATTRIBS("myobjects", QtEntity::PropertyObjects, Enemy, myObjects, setMyObjects, r);
 
 }
 
@@ -32,19 +39,4 @@ void EnemySystem::step(int frameNumber, int totalTime, int delta)
         int y = float(lifetime * 3.0f) + cos(t / 20.0f) * 10 - 50;
         shape->setPosition(QPoint(x, y));
     }
-}
-
-
-
-const QVariantMap EnemySystem::attributesForProperty(const QString& name) const
-{
-    QVariantMap r;
-    if(name == "myobjects")
-    {
-        QStringList sl;
-        sl.push_back(TestObj1::staticMetaObject.className());
-        sl.push_back(TestObj2::staticMetaObject.className());
-        r["classnames"] = sl;
-    }
-    return r;
 }

@@ -1,21 +1,28 @@
 #pragma once
 
+#include <QtEntity/Export>
 #include <QtEntity/DataTypes>
+#include <QtEntity/MetaObjectRegistry>
 #include <QVariantMap>
 #include <QDebug>
 #include <functional>
-#include <QtEntity/MetaObjectRegistry>
+#include <assert.h>
 
 namespace QtEntity
 {
-    class Component
-    {
-    public:
-        virtual ~Component() {}
-        virtual QtEntity::ClassTypeId typeId() const = 0;
-    };
-
+    
+    /**
+     * Empty macro to use when no exporter macro is needed
+     */
 #define NOEXP
+
+    /**
+     * Macro to use in class declaration of QtEntity::Component subclasses.
+     * Adds a static class type id and a dynamic, virtual type id method.
+     * Parameter EXMACRO can be used to pass name of export macro for windows DLLs.
+     * Use NOEXP as parameter if methods don't need to be exported or the whole
+     * component class is exported
+     */
 #define DECLARE_COMPONENT_TYPE(EXPMACRO)\
     public:\
         EXPMACRO static QtEntity::ClassTypeId classTypeId();\
@@ -24,12 +31,25 @@ namespace QtEntity
         static QtEntity::ClassTypeId _typeId;
 
 
+    /**
+     * Macro for implementing the component types of a component.
+     * Call this in the cpp of a component.
+     * Use parameter TYPE to pass in class name of the component
+     */
 #define IMPLEMENT_COMPONENT_TYPE(TYPE)\
     QtEntity::ClassTypeId TYPE::_typeId = QtEntity::ComponentRegistry::registerComponent(#TYPE);\
     QtEntity::ClassTypeId TYPE::classTypeId(void) { return TYPE::_typeId; }\
     QtEntity::ClassTypeId TYPE::typeId(void) const { return _typeId; }
 
-
+    /**
+     * Macro to create and register a PropertyAccessor for a getter/setter pair of a component.
+     * Creates one lambda function for getter and one for the setter and stores them in a property accessor
+     * Parameter NAME: String name of parameter. Used to access this later.
+     * Parameter VARIANTTYPE or class name parameter value. Has to be registered with qRegisterMetaType.
+     * Parameter COMPONENTTYPE: Class name of component
+     * Parameter GETTER: method name of getter on component. Method has return value of type VARIANTTYPE and no parameters.
+     * Parameter SETTER: method name of getter on component. Method has void return value and a single paremeter of type VARIANTTYPE
+     */
 #define QTE_ADD_PROPERTY(NAME, VARIANTTYPE, COMPONENTTYPE, GETTER, SETTER) \
     {    auto getter = [this](QtEntity::EntityId id) {\
             auto c = static_cast<COMPONENTTYPE*>(component(id)); return(c) ? QVariant::fromValue(c->GETTER()) : QVariant();\
@@ -40,6 +60,16 @@ namespace QtEntity
         addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), getter, setter));\
     }
 
+    /**
+     * Macro to create and register a PropertyAccessor for a getter/setter pair of a component. Also a QVariantMap with 
+     * attributes for the property are passed.
+     * Parameter NAME: String name of parameter. Used to access this later.
+     * Parameter VARIANTTYPE or class name parameter value. Has to be registered with qRegisterMetaType.
+     * Parameter COMPONENTTYPE: Class name of component
+     * Parameter GETTER: method name of getter on component. Method has return value of type VARIANTTYPE and no parameters.
+     * Parameter SETTER: method name of getter on component. Method has void return value and a single paremeter of type VARIANTTYPE
+     * Parameter ATTRIBS a QVariantMap with attributes that are stored in the property accessor and can be used by property browser.
+     */
 #define QTE_ADD_PROPERTY_WITH_ATTRIBS(NAME, VARIANTTYPE, COMPONENTTYPE, GETTER, SETTER, ATTRIBS) \
     {    auto getter = [this](QtEntity::EntityId id) {\
             auto c = static_cast<COMPONENTTYPE*>(component(id)); return(c) ? QVariant::fromValue(c->GETTER()) : QVariant();\
@@ -50,10 +80,36 @@ namespace QtEntity
         addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), getter, setter, ATTRIBS));\
     }
 
-    class PropertyAccessor
+
+    /**
+     * Base class for all QtEntity components.
+     * Simply holds a type id for identifying the type of the component.
+     */
+    class Component
     {
     public:
+        virtual ~Component() {}
+
+        /**
+         * Returns type ID of component class. These are usually assigned by ComponentRegistry::registerComponent().
+         */
+        virtual QtEntity::ClassTypeId typeId() const = 0;
+    };
+
+
+    /**
+     * PropertyAccessor is used by entity systems to register properties of their components.
+     * They give read and write access to properties of components and hold additional
+     * attributes for that property in a variant map.
+     */
+    class QTENTITY_EXPORT PropertyAccessor
+    {
+    public:
+
+        /** Method pointer for getting a property value from a component*/
         typedef std::function<QVariant(EntityId)> Getter;
+
+        /** Method pointer for setting a property value on a component*/
         typedef std::function<void(EntityId, const QVariant&)> Setter;
 
         PropertyAccessor()
@@ -64,6 +120,13 @@ namespace QtEntity
         {
         }
 
+        /**
+         * @param name String identifier of property
+         * @param variantType Qt Meta type id of property value
+         * @param getter std::Function pointer to getter method
+         * @param setter std::Function pointer to setter method
+         * @param attributes A QVariantMap which is stored in property accessor. Can be used to provide property attributes to QPropertyBrowser
+         */
         PropertyAccessor(const QString& name, int variantType, Getter getter, Setter setter, const QVariantMap& attributes = QVariantMap())
             : _name(name)
             , _variantType(variantType)
@@ -73,14 +136,41 @@ namespace QtEntity
         {
         }
 
+        /**
+         * Name of parameter
+         */
         QString name() const { return _name; }
-        QVariant read(EntityId id) { Q_ASSERT(_getter); return _getter(id); }
-        bool write(EntityId id, const QVariant& val) { if(!_setter) return false; _setter(id, val); return true; }
-        const QVariantMap& attributes() const { return _attributes; }
-        bool valid() const { return _getter != nullptr && _setter != nullptr; }
 
-        // return QVariant type
+        /**
+         * Fetches parameter value from component with given id
+         */
+        QVariant read(EntityId id) const { assert(_getter); return _getter(id); }
+
+        /**
+         *  Calls setter method with parameter val, writing to component identified by id
+        */
+        bool write(EntityId id, const QVariant& val) { if(!_setter) return false; _setter(id, val); return true; }
+
+        /**
+         * Fetch parameter attributes map
+         */
+        const QVariantMap& attributes() const { return _attributes; }
+        
+        /**
+         * Returns if property accessor has a valid getter 
+         */
+        bool hasGetter() const { return _getter != nullptr; }
+        
+        /**
+         * Returns if property accessor has a valid setter 
+         */
+        bool hasSetter() const { return _setter != nullptr; }
+
+        /**
+         * QVariant type of parameter
+         */
         int variantType() const { return _variantType; }
+
     private:
         QString _name;
         int _variantType;
@@ -89,19 +179,103 @@ namespace QtEntity
         QVariantMap _attributes;
     };
 
+
+    /**
+     * Abstract iterator interface for implementing forward iterators.
+     * Used in EntitySystem::Iterator for wrapping other iterators in a polymorphic interface.
+     */
+    class VIterator
+    {
+    public:
+        virtual ~VIterator() {}
+        virtual VIterator* clone() = 0;            
+        virtual Component* object() = 0;
+        virtual bool equal(VIterator* other) = 0;
+        virtual void increment() = 0;
+    };
+
+
+     /**
+        * Convenience template for implementing VIterator interface with a concrete Iterator class.
+        * U is the type of the concrete iterator.
+        */
+    template <typename U>
+    class VIteratorImpl : public VIterator
+    {
+        U _iter;
+    public:
+        VIteratorImpl(const U& it) :_iter(it) {}
+        virtual VIterator* clone() { return new VIteratorImpl<U>(_iter); }
+        virtual EntityId id() { return _iter->first; }
+        virtual Component* object() { return _iter->second; }
+        virtual bool equal(VIterator* other) { return _iter == static_cast<VIteratorImpl<U>*>(other)->_iter; }
+        virtual void increment() { ++_iter; }
+    };
+
+    /**
+        * @brief The Iterator class for iterating through all components of an EntitySystem.
+        * Uses a VIterator heap object for accessing the concrete underlying iterator.
+        */
+    class PIterator : public std::iterator<std::forward_iterator_tag, Component*> 
+    {
+    public:
+        PIterator(VIterator* vit) : _viter(vit) {}
+        PIterator(const PIterator& other) : _viter(other._viter->clone()) {}
+        ~PIterator() { delete _viter; }
+        PIterator operator=(const PIterator& other) { delete _viter; _viter = other._viter->clone(); return *this;  }
+        bool operator!=(const PIterator& other) { return !(_viter->equal(other._viter)); }
+        Component* operator*() { return _viter->object(); }
+        Component* operator->() { return _viter->object(); }
+        friend bool operator==(const PIterator &lhs, const PIterator& rhs) { return lhs._viter->equal(rhs._viter); }
+        PIterator& operator++()
+        {
+            _viter->increment();
+            return *this;
+        }
+
+        PIterator operator++(int)
+        {
+            PIterator tmp(*this);
+            ++(*this);
+            return tmp;
+        }
+            
+    private:
+            
+        VIterator* _viter;
+            
+    };
+
+
     // fwd declaration
     class EntityManager;
 
     /**
-     * An interface class for defining entity systems.
+     * Entity system base class.
      * Entity systems are responsible for storing and managing components.
      * Each entity system instance holds components of a specific type.
      */
     class EntitySystem
     {
+    private:
+
+        QVector<PropertyAccessor> _properties;
+        EntityManager* _entityManager;
+
     public:
 
-        virtual ~EntitySystem() {}
+        QTENTITY_EXPORT EntitySystem();
+        QTENTITY_EXPORT virtual ~EntitySystem();
+
+        /**
+         * This is called by entity manager when system is added to entity manager
+         */
+        inline void setEntityManager(EntityManager* em) { _entityManager = em; }
+
+        /**
+         * Fetch entity manager this system is assigned to
+         */
+        inline EntityManager* entityManager() const { return _entityManager; }
 
         /**
          * @brief component Return component associated with passed id
@@ -134,7 +308,10 @@ namespace QtEntity
          */
         virtual ClassTypeId componentType() const = 0;
 
-        QString componentName() const { return ComponentRegistry::className(componentType()); }
+        /**
+         * Return class name of component type stored in this entity system
+         */
+        QTENTITY_EXPORT QString componentName() const;
 
         /**
          * @return number of components
@@ -146,26 +323,21 @@ namespace QtEntity
          */
         virtual void clear() = 0;
 
-        // TODO remove
-        virtual const QVariantMap attributesForProperty(const QString& name) const = 0;
-        //////////////////////////////////////
-        int propertyCount() const { return _properties.size(); }
-        PropertyAccessor property(int idx) { return _properties.at(idx); }
-        const PropertyAccessor property(int idx) const { return _properties.at(idx); }
-
-    protected:
-        void addProperty(const PropertyAccessor& a) { _properties.push_back(a); }
-    private:
-        QVector<PropertyAccessor> _properties;
-    public:
-        //////////////////////////////////////
+        /**
+         * Return number of properties
+         */
+        QTENTITY_EXPORT int propertyCount() const;
 
         /**
-         * This is called by entity manager when system is added to entity manager
+         * Return a property accessor by index
          */
-        virtual void setEntityManager(EntityManager* em) = 0;
+        QTENTITY_EXPORT PropertyAccessor property(int idx);
 
-        class PIterator;
+        /**
+         * Return a const proeprty accessor by index
+         */
+        QTENTITY_EXPORT const PropertyAccessor property(int idx) const;
+          
 
         /**
          * pend() and pbegin() implementations have to return EntitySystem::Iterator instances.
@@ -179,70 +351,14 @@ namespace QtEntity
         */
         virtual PIterator pbegin() = 0;
         virtual PIterator pend() = 0;
+    
+    protected:
 
         /**
-         * Abstract iterator interface for implementing forward iterators.
-         * Used in EntitySystem::Iterator for wrapping other iterators in a polymorphic interface.
+         * Add a property accessor to system
          */
-        class VIterator
-        {
-        public:
-            virtual ~VIterator() {}
-            virtual VIterator* clone() = 0;            
-            virtual Component* object() = 0;
-            virtual bool equal(VIterator* other) = 0;
-            virtual void increment() = 0;
-        };
+        QTENTITY_EXPORT void addProperty(const PropertyAccessor& a);
 
-        /**
-         * Convenience template for implementing VIterator interface with a concrete Iterator class.
-         * U is the type of the concrete iterator.
-         */
-        template <typename U>
-        class VIteratorImpl : public VIterator
-        {
-            U _iter;
-        public:
-            VIteratorImpl(const U& it) :_iter(it) {}
-            virtual VIterator* clone() { return new VIteratorImpl<U>(_iter); }
-            virtual EntityId id() { return _iter->first; }
-            virtual Component* object() { return _iter->second; }
-            virtual bool equal(VIterator* other) { return _iter == static_cast<VIteratorImpl<U>*>(other)->_iter; }
-            virtual void increment() { ++_iter; }
-        };
-
-        /**
-         * @brief The Iterator class for iterating through all components of an EntitySystem.
-         * Uses a VIterator heap object for accessing the concrete underlying iterator.
-         */
-        class PIterator : public std::iterator<std::forward_iterator_tag, Component*> 
-        {
-        public:
-            PIterator(VIterator* vit) : _viter(vit) {}
-            PIterator(const PIterator& other) : _viter(other._viter->clone()) {}
-            ~PIterator() { delete _viter; }
-            PIterator operator=(const PIterator& other) { delete _viter; _viter = other._viter->clone(); return *this;  }
-            bool operator!=(const PIterator& other) { return !(_viter->equal(other._viter)); }
-            Component* operator*() { return _viter->object(); }
-            Component* operator->() { return _viter->object(); }
-            friend bool operator==(const PIterator &lhs, const PIterator& rhs) { return lhs._viter->equal(rhs._viter); }
-            PIterator& operator++()
-            {
-                _viter->increment();
-                return *this;
-            }
-
-            PIterator operator++(int)
-            {
-                PIterator tmp(*this);
-                ++(*this);
-                return tmp;
-            }
-
-        private:
-            
-            VIterator* _viter;
-        };
         
     };
 

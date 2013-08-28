@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QtEntity/DataTypes>
 #include <QtEntity/Export>
 #include <QMetaObject>
 #include <functional>
@@ -21,7 +22,7 @@ namespace QtEntity
     class Component;
     typedef std::function<Component*()> ComponentConstructor;
     
-    typedef qint32 ClassTypeId;
+    
     namespace ComponentRegistry
     {
         QTENTITY_EXPORT ClassTypeId registerComponent(const QString& classname);

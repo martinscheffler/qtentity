@@ -22,6 +22,7 @@ set(LIB_PUBLIC_HEADERS
 
 set(LIB_SOURCES
   ${SOURCE_PATH}/EntityManager.cpp
+  ${SOURCE_PATH}/EntitySystem.cpp
   ${SOURCE_PATH}/MetaObjectRegistry.cpp
   ${SOURCE_PATH}/PrefabSystem.cpp
   ${SOURCE_PATH}/ReaderWriterJSON.cpp

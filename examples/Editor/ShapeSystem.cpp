@@ -41,7 +41,11 @@ ShapeSystem::ShapeSystem(Renderer* renderer)
     : _renderer(renderer)
 {
     QTE_ADD_PROPERTY("position", QPoint, Shape, position, setPosition);
-    QTE_ADD_PROPERTY("path", QString, Shape, path, setPath);
+
+    QVariantMap r;
+    r["filter"] = "SVG files (*.svg)";    
+
+    QTE_ADD_PROPERTY_WITH_ATTRIBS("path", QString, Shape, path, setPath, r);
     QTE_ADD_PROPERTY("zIndex", int, Shape, zIndex, setZIndex);
     QTE_ADD_PROPERTY("subTex", QRect, Shape, subTex, setSubtex);
 }
@@ -55,12 +59,3 @@ QtEntity::Component* ShapeSystem::createComponent(QtEntity::EntityId id, const Q
     return shp;
 }
 
-const QVariantMap ShapeSystem::attributesForProperty(const QString& name) const
-{
-    QVariantMap r;
-    if(name == "path")
-    {
-        r["filter"] = "SVG files (*.svg)";
-    }
-    return r;
-}

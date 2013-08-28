@@ -36,21 +36,6 @@ namespace QtEntity
             _components.clear();
         }
 
-        /**
-         * This is called by entity manager when system is added to entity manager
-         */
-        virtual void setEntityManager(EntityManager* em) override
-        {
-            _entityManager = em;
-        }
-
-        /**
-         * @brief fetch entityManager this system is associated with
-         */
-        EntityManager* entityManager() const
-        {
-            return _entityManager;
-        }
 
         /**
          * @brief component Return component associated with passed id
@@ -158,30 +143,20 @@ namespace QtEntity
         typename ComponentStore::const_iterator end() const { return _components.end(); }
 
        
-        virtual EntitySystem::PIterator pbegin() override
+        virtual PIterator pbegin() override
         {
-            return EntitySystem::PIterator(new VIteratorImpl<typename ComponentStore::iterator>(begin()));
+            return PIterator(new VIteratorImpl<typename ComponentStore::iterator>(begin()));
         }
 
-        virtual EntitySystem::PIterator pend() override
+        virtual PIterator pend() override
         {
-            return EntitySystem::PIterator(new VIteratorImpl<typename ComponentStore::iterator>(end()));
+            return PIterator(new VIteratorImpl<typename ComponentStore::iterator>(end()));
         }
 
         virtual void clear()
         {
             _components.clear();
         }
-
-        /**
-         * @brief Returns all additional attributes for a property.
-         * This can be overwritten by entity system implementations to return
-         * a map of QVariants. This is especially used for specifying constraints
-         * for the QtPropertyBrowser, but can be used for other means.
-         * @param name Name of the property
-         * @return a map of QVariants
-         */
-        virtual const QVariantMap attributesForProperty(const QString& name) const override { return QVariantMap(); }
 
         /**
          * Return number of components
