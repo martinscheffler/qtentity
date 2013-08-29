@@ -14,9 +14,9 @@ namespace QtEntity
 
 	EntityManager::~EntityManager()
 	{
-        foreach(EntitySystem* es, _systems)
+        for(auto i = _systems.begin(); i != _systems.end(); ++i)
         {
-            delete es;
+            delete i->second;
         }
 	}
 
@@ -32,7 +32,7 @@ namespace QtEntity
     {
         for(auto i = _systems.begin(); i != _systems.end(); ++i)
         {
-            i.value()->destroyComponent(id);
+            i->second->destroyComponent(id);
         }
     }
 
@@ -40,18 +40,18 @@ namespace QtEntity
     void EntityManager::addSystem(EntitySystem* es)
     {
         ClassTypeId t = es->componentType();
-        if(_systems.contains(t))
+        if(_systems.find(t) != _systems.end())
         {
             throw std::runtime_error("Entity system already added!");
         }
-        _systems.insert(t, es);
+        _systems[t] = es;
         es->setEntityManager(this);
     }
 
 
     bool EntityManager::hasSystem(ClassTypeId ctype)
     {
-        return _systems.contains(ctype);
+        return _systems.find(ctype) != _systems.end();
     }
 
 
@@ -76,7 +76,7 @@ namespace QtEntity
     {        
         auto i = _systems.find(componentType);
         if(i == _systems.end()) return nullptr;
-        return i.value();
+        return i->second;
     }
 
 }

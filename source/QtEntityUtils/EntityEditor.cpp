@@ -141,7 +141,7 @@ namespace QtEntityUtils
         QVariantMap components;
         for(auto i = em.begin(); i != em.end(); ++i)
         {
-            QtEntity::EntitySystem* es = *i;
+            QtEntity::EntitySystem* es = i->second;
             if(!es->component(eid)) continue;
             QVariantMap vals = QtEntity::propertyValues(es, eid);
             vals = replacePropertyObjectsWithVariantLists(vals);

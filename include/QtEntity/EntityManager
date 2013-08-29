@@ -2,8 +2,7 @@
 
 #include <QtEntity/Export>
 #include <QtEntity/EntitySystem>
-#include <QHash>
-#include <QDebug>
+#include <unordered_map>
 
 namespace QtEntity
 {
@@ -18,7 +17,7 @@ namespace QtEntity
     public:
 
         // data type for entity system container
-        typedef QHash<ClassTypeId,EntitySystem*> EntitySystemStore;
+        typedef std::unordered_map<ClassTypeId,EntitySystem*> EntitySystemStore;
 
         EntityManager();
 		~EntityManager();            
@@ -168,7 +167,7 @@ namespace QtEntity
 
     private:
 
-        QHash<ClassTypeId,EntitySystem*> _systems;
+        EntitySystemStore _systems;
         QAtomicInt _entityCounter;
     };
 
