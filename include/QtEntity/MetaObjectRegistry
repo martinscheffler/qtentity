@@ -19,14 +19,4 @@ namespace QtEntity
       */
     QTENTITY_EXPORT const QMetaObject* metaObjectByClassName(const QString& classname);    
 
-    class Component;
-    typedef std::function<Component*()> ComponentConstructor;
-    
-    
-    namespace ComponentRegistry
-    {
-        QTENTITY_EXPORT ClassTypeId registerComponent(const QString& classname);
-        QTENTITY_EXPORT ClassTypeId classTypeId(const QString& classname);
-        QTENTITY_EXPORT QString className(ClassTypeId typeId);
-    }
 }

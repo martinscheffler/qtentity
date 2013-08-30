@@ -2,7 +2,6 @@
 
 #include <QtEntity/Export>
 #include <QtEntity/DataTypes>
-#include <QtEntity/MetaObjectRegistry>
 #include <QVariantMap>
 #include <QDebug>
 #include <functional>
@@ -10,7 +9,18 @@
 
 namespace QtEntity
 {
-    
+
+    /**
+     * Global methods assigning class type ids
+     */
+    namespace ComponentRegistry
+    {
+        QTENTITY_EXPORT ClassTypeId registerComponent(const QString& classname);
+        QTENTITY_EXPORT ClassTypeId classTypeId(const QString& classname);
+        QTENTITY_EXPORT QString className(ClassTypeId typeId);
+    }
+
+
     /**
      * Empty macro to use when no exporter macro is needed
      */
