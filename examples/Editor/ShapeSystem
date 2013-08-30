@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtEntity/SimpleEntitySystem>
+#include <QtEntity/PooledEntitySystem>
 #include <QtEntityUtils/VariantManager>
 
 #include <QRect>
@@ -48,7 +48,7 @@ private:
 };
 
 
-class ShapeSystem : public QtEntity::SimpleEntitySystem<Shape>
+class ShapeSystem : public QtEntity::PooledEntitySystem<Shape>
 {   
 
 public:

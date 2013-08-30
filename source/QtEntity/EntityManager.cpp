@@ -1,8 +1,7 @@
 #include <QtEntity/EntityManager>
 
-#include <QtEntity/MetaObjectRegistry>
-#include <stdexcept>
-#include <new>
+#include <QtEntity/EntitySystem>
+#include <QDebug>
 
 namespace QtEntity
 {
@@ -39,12 +38,8 @@ namespace QtEntity
 
     void EntityManager::addSystem(EntitySystem* es)
     {
-        ClassTypeId t = es->componentType();
-        if(_systems.find(t) != _systems.end())
-        {
-            throw std::runtime_error("Entity system already added!");
-        }
-        _systems[t] = es;
+        ClassTypeId ctype = es->componentType();
+        _systems[ctype] = es;
         es->setEntityManager(this);
     }
 
@@ -59,7 +54,8 @@ namespace QtEntity
     {
         // assert that system is in both maps
         auto j = _systems.find(es->componentType());
-        Q_ASSERT(j != _systems.end());
+        assert(j != _systems.end());
+        assert(es == j->second);
         _systems.erase(j);
         return true;
     }
@@ -76,7 +72,47 @@ namespace QtEntity
     {        
         auto i = _systems.find(componentType);
         if(i == _systems.end()) return nullptr;
+        assert(i->second->componentType() == componentType);
         return i->second;
+    }
+
+
+    Component* EntityManager::component(EntityId id, ClassTypeId tid) const
+    {
+        EntitySystem* s = this->system(tid);
+        return (s == nullptr) ? nullptr : s->component(id);
+    }
+
+
+    Component* EntityManager::createComponent(EntityId id, ClassTypeId cid, const QVariantMap& properties)
+    {
+        EntitySystem* s = this->system(cid);
+
+        if(s == nullptr) return nullptr;
+
+        if(s->component(id) != nullptr)
+        {
+            qDebug() << "Component already exists! ComponentType:" << s->componentName() << " EntityId " << id;
+            return nullptr;
+        }
+
+        try
+        {
+            return s->createComponent(id, properties);
+        }
+        catch(std::bad_alloc&)
+        {
+            qCritical() << "Could not create component, bad allocation!";
+            return nullptr;
+        }
+    }
+
+
+    bool EntityManager::destroyComponent(EntityId id, ClassTypeId cid)
+    {
+        EntitySystem* s = this->system(cid);
+        if(s == nullptr) return false;
+        return s->destroyComponent(id);
     }
 
 }

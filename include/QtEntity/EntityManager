@@ -1,11 +1,16 @@
 #pragma once
 
+#include <QtEntity/DataTypes>
 #include <QtEntity/Export>
-#include <QtEntity/EntitySystem>
 #include <unordered_map>
+#include <QAtomicInt>
+#include <QVariantMap>
 
 namespace QtEntity
 {
+    class EntitySystem;
+    class Component;
+
     /**
      * @brief The EntityManager class holds a number of entity systems in a data structure.
      * It offers methods to add and remove entity systems, also
@@ -70,6 +75,11 @@ namespace QtEntity
         bool hasSystem(ClassTypeId ctype);
 
         /**
+         * Fetch component by component type id
+         **/
+        Component* component(EntityId id, ClassTypeId tid) const;
+
+        /**
          * Templated method to get an existing component.
          * If component was not fonud then component is set to nullptr
          * Usage:
@@ -91,6 +101,15 @@ namespace QtEntity
          */
         template <typename T>
         T* component(EntityId id) const;
+
+        /**
+         * Fetch entity system with given ClassTypeId and create a component.
+         * @param id Entity id to create component for
+         * @param cid Class type id of entity system
+         * @return nullptr if component could not be created, else the newly created component
+         */
+        Component* createComponent(EntityId id, ClassTypeId cid, const QVariantMap& properties = QVariantMap());
+
 
         /**
          * Templated method to create a new component.
@@ -141,6 +160,14 @@ namespace QtEntity
         bool getOrCreateComponent(EntityId id, T*& component, const QVariantMap& properties = QVariantMap());
 
         /**
+         * Destroy existing component.
+         * @param id entity id of component to destroy
+         * @param class type id of component to destroy
+         * @return true if component existed, else false
+         */
+        bool destroyComponent(EntityId id, ClassTypeId cid);
+
+        /**
          * Templated method to destroy existing component.
          * Returns true if component was found and could be destroyed, else false
          * Usage: bool success = em.destroyComponent<MyComponentType>(eid);
@@ -171,17 +198,17 @@ namespace QtEntity
         QAtomicInt _entityCounter;
     };
 
+
     template <typename T>
-    bool EntityManager::component(EntityId id, T*& component) const
+    bool EntityManager::component(EntityId id, T*& comp) const
     {
-        EntitySystem* s = this->system(T::classTypeId());
-        Component* c;
-        if(s == nullptr || nullptr == (c = s->component(id)))
+        Component* c = component(id, T::classTypeId());
+        if(c == nullptr)
         {
-            component = nullptr;
+            comp = nullptr;
             return false;
         }
-        component = static_cast<T*>(c);
+        comp = static_cast<T*>(c);
         return true;
     }
 
@@ -189,69 +216,49 @@ namespace QtEntity
     template <typename T>
     T* EntityManager::component(EntityId id) const
     {
-        EntitySystem* s = this->system(T::classTypeId());
-        Component* c;
-        if(s == nullptr || nullptr == (c = s->component(id)))
-        {
-            return nullptr;
-        }
-        return static_cast<T*>(c);
+        return static_cast<T*>(component(id, T::classTypeId()));
     }
 
 
     template <typename T>
-    bool EntityManager::createComponent(EntityId id, T*& component, const QVariantMap& properties)
+    bool EntityManager::createComponent(EntityId id, T*& comp, const QVariantMap& properties)
     {
-        EntitySystem* s = this->system(T::classTypeId());
-
-        if(s == nullptr || s->component(id) != nullptr)
+        Component* c = createComponent(id, T::classTypeId(), properties);
+        if(c == nullptr)
         {
+            comp = nullptr;
             return false;
         }
-        try
-        {
-            component = static_cast<T*>(s->createComponent(id, properties));
-            return component != nullptr;
-        }
-        catch(std::bad_alloc&)
-        {
-            qCritical() << "Could not create component, bad allocation!";
-            return false;
-        }
-
+        comp = static_cast<T*>(c);
+        return true;
     }
 
 
     template <typename T>
     T* EntityManager::createComponent(EntityId id, const QVariantMap& properties)
     {
-        T* ret;
-        createComponent(id, ret, properties);
-        return ret;
+        return static_cast<T*>(createComponent(id, T::classTypeId(), properties));
     }
 
 
     template <typename T>
-    bool EntityManager::getOrCreateComponent(EntityId id, T*& component, const QVariantMap& properties)
+    bool EntityManager::getOrCreateComponent(EntityId id, T*& comp, const QVariantMap& properties)
     {
-        EntitySystem* s = this->system(T::classTypeId());
-
-        if(s == nullptr) return false;
-        component = static_cast<T*>(s->component(id));
-
-        if(component != nullptr) return true;
-
-        component = static_cast<T*>(s->createComponent(id, properties));
-        return (component != nullptr);
+        Component* c = component(id, T::classTypeId());
+        if(c) {
+            comp = static_cast<T*>(c);
+            return true;
+        }
+        c = createComponent(id, T::classTypeId(), properties);
+        comp = static_cast<T*>(c);
+        return comp != nullptr;
     }
 
 
     template <typename T>
     bool EntityManager::destroyComponent(EntityId id)
     {
-        EntitySystem* s = this->system(T::classTypeId());
-        if(s == nullptr) return false;
-        return s->destroyComponent(id);
+        return destroyComponent(id, T::classTypeId());
     }
 
 }

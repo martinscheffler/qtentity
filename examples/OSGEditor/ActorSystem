@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtEntity/SimpleEntitySystem>
+#include <QtEntity/PooledEntitySystem>
 #include <QVector3D>
 #include <osg/Group>
 #include <osg/Shape>
@@ -164,9 +164,10 @@ private:
 
 class ActorSystem 
     : public QObject
-    , public QtEntity::SimpleEntitySystem<Actor>
+    , public QtEntity::PooledEntitySystem<Actor>
 {
     Q_OBJECT
+    typedef QtEntity::PooledEntitySystem<Actor> Super;
 public:
 
     ActorSystem(osg::Group* rootnode);

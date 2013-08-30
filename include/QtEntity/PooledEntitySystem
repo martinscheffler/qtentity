@@ -229,8 +229,6 @@ namespace QtEntity
             _capacity += chunk;
         }
 
-        EntityManager* _entityManager;
-
         size_t _capacity;
         size_t _chunkSize;
         size_t _size;

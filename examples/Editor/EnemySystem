@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtEntity/SimpleEntitySystem>
+#include <QtEntity/PooledEntitySystem>
 #include <QRect>
 
 class TestObj1 : public QObject
@@ -67,7 +67,7 @@ private:
 };
 
 
-class EnemySystem : public QtEntity::SimpleEntitySystem<Enemy>
+class EnemySystem : public QtEntity::PooledEntitySystem<Enemy>
 {
 public:
     EnemySystem();

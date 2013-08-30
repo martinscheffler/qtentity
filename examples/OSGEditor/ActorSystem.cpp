@@ -72,7 +72,7 @@ ActorSystem::ActorSystem(osg::Group* rootnode)
 
 QtEntity::Component* ActorSystem::createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals)
 {
-    QtEntity::Component* obj = SimpleEntitySystem::createComponent(id, propertyVals);
+    QtEntity::Component* obj = Super::createComponent(id, propertyVals);
     if(obj != NULL)
     {
         Actor* entry = static_cast<Actor*>(obj);
@@ -96,7 +96,7 @@ bool ActorSystem::destroyComponent(QtEntity::EntityId id)
         emit entityRemoved(id);
     }
 
-    return SimpleEntitySystem::destroyComponent(id);
+    return Super::destroyComponent(id);
 }
 
 

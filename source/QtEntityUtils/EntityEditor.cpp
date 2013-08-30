@@ -4,12 +4,14 @@
 #include <QtEntityUtils/PropertyObjectsEdit>
 #include <QtPropertyBrowser/QtTreePropertyBrowser>
 #include <QtEntity/EntityManager>
+#include <QtEntity/EntitySystem>
 #include <QtEntity/MetaObjectRegistry>
 #include <QDate>
 #include <QLocale>
 #include <QHBoxLayout>
 #include <QMetaProperty>
 #include <QUuid>
+#include <QDebug>
 
 namespace QtEntityUtils
 {

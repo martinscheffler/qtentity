@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtEntity/SimpleEntitySystem>
+#include <QtEntity/PooledEntitySystem>
 #include <QRect>
 
 class Bullet : public QtEntity::Component
@@ -18,9 +18,9 @@ private:
 };
 
 
-class BulletSystem : public QtEntity::SimpleEntitySystem<Bullet>
+class BulletSystem : public QtEntity::PooledEntitySystem<Bullet>
 {   
-
+    typedef QtEntity::PooledEntitySystem<Bullet> Super;
 public:
     BulletSystem();
 

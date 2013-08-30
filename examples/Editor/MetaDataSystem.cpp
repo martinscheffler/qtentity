@@ -40,7 +40,7 @@ MetaDataSystem::MetaDataSystem()
 
 QtEntity::Component* MetaDataSystem::createComponent(QtEntity::EntityId id, const QVariantMap& properties)
 {
-    QtEntity::Component* obj = SimpleEntitySystem::createComponent(id, properties);
+    QtEntity::Component* obj = PooledEntitySystem::createComponent(id, properties);
     if(obj != NULL)
     {
         auto md = static_cast<MetaData*>(obj);
@@ -61,6 +61,6 @@ bool MetaDataSystem::destroyComponent(QtEntity::EntityId id)
         emit entityRemoved(id);
     }
 
-    return SimpleEntitySystem::destroyComponent(id);
+    return PooledEntitySystem::destroyComponent(id);
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtEntity/SimpleEntitySystem>
+#include <QtEntity/PooledEntitySystem>
 
 #define EXP
 class Damage : public QtEntity::Component
@@ -21,7 +21,7 @@ private:
 };
 
 
-class DamageSystem : public QtEntity::SimpleEntitySystem<Damage>
+class DamageSystem : public QtEntity::PooledEntitySystem<Damage>
 {    
 
 public:

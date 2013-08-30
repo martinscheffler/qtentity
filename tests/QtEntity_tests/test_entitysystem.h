@@ -65,12 +65,22 @@ private slots:
         ts.createComponent(2, m);
         m["myint"] = 3;
         ts.createComponent(3, m);
-        auto i = ts.begin(); 
-        QCOMPARE(i->second->myInt(), 1);
-        ++i;
-        QCOMPARE(i->second->myInt(), 2);
-        i = ts.erase(i);
-        QCOMPARE(i->second->myInt(), 3);
+        for(auto i = ts.begin(); i != ts.end(); ++i)
+        {
+            if(i->second->myInt() == 2)
+            {
+                ts.erase(i);
+                break;
+            }
+        }
+        int sum = 0;
+        for(auto i = ts.begin(); i != ts.end(); ++i)
+        {
+            sum += i->second->myInt();
+        }
+        QCOMPARE(sum, 4);
+
+        QCOMPARE(ts.count(), (size_t)2);
         QVERIFY(ts.component(2) == nullptr);
     }
 

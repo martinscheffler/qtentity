@@ -16,7 +16,7 @@ void DamageSystem::step(int frameNumber, int totalTime, int delta)
     for(auto i = begin(); i != end(); ++i)
     {
         Shape* shape;
-        _entityManager->component(i->first, shape);
+        entityManager()->component(i->first, shape);
     }
 }
 

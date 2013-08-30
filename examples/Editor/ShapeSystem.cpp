@@ -53,7 +53,7 @@ ShapeSystem::ShapeSystem(Renderer* renderer)
 
 QtEntity::Component* ShapeSystem::createComponent(QtEntity::EntityId id, const QVariantMap& properties)
 {
-    Shape* shp = static_cast<Shape*>(SimpleEntitySystem::createComponent(id, properties));
+    Shape* shp = static_cast<Shape*>(PooledEntitySystem::createComponent(id, properties));
     shp->_renderer = _renderer;
     shp->buildShape();
     return shp;

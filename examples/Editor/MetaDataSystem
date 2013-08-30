@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtEntity/DataTypes>
-#include <QtEntity/SimpleEntitySystem>
+#include <QtEntity/PooledEntitySystem>
 #include <QObject>
 
 class MetaDataSystem;
@@ -51,7 +51,7 @@ private:
 
 class MetaDataSystem 
     : public QObject
-    , public QtEntity::SimpleEntitySystem<MetaData>
+    , public QtEntity::PooledEntitySystem<MetaData>
 {   
     Q_OBJECT
 public:
