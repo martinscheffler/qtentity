@@ -3,8 +3,6 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <unordered_map>
-#include <QString>
-#include <QVector>
 
 namespace QtEntity
 {
