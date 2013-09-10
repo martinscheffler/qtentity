@@ -233,7 +233,7 @@ namespace QtEntity
 
     protected:
 
-        void reserve(int chunk)
+        void reserve(size_t chunk)
         {
             void* components = operator new []( (_capacity + chunk) * sizeof(Entry) );
             if(_capacity != 0)
