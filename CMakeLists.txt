@@ -20,6 +20,13 @@ endif(UNIX AND NOT WIN32)
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
+OPTION(QTENTITY_LIBRARY_SHARED "Set to ON to build QtEntity for dynamic linking.  Use OFF for static." ON)
+SET(BUILD_SHARED_LIBS ${QTENTITY_LIBRARY_SHARED})	
+IF (WIN32)
+  SET(CMAKE_STATIC_LIBRARY_SUFFIX "_static.lib")
+ENDIF (WIN32)
+
+message("Building shared library: " ${QTENTITY_LIBRARY_SHARED})
 find_package(Qt5Widgets REQUIRED)
 
 add_subdirectory(source)

@@ -101,7 +101,7 @@ QT5_ADD_RESOURCES(RCC_SOURCES
    qtpropertybrowser.qrc
 )
 
-add_library(${LIB_NAME} SHARED ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} ${MOC_SOURCES})
+add_library(${LIB_NAME} ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} ${MOC_SOURCES})
 
 #widgets is needed for QColor and other data types:
 qt5_use_modules(${LIB_NAME} Core Widgets)

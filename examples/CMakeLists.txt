@@ -1,5 +1,5 @@
 add_subdirectory(Editor)
-option(BUILD_OSG_EXAMPLE off)
-if(BUILD_OSG_EXAMPLE)
+option(QTENTITY_BUILD_OSG_EXAMPLE off)
+if(QTENTITY_BUILD_OSG_EXAMPLE)
   add_subdirectory(OSGEditor)
-endif(BUILD_OSG_EXAMPLE)
+endif(QTENTITY_BUILD_OSG_EXAMPLE)

@@ -28,7 +28,7 @@ set(LIB_SOURCES
   ${SOURCE_PATH}/ReaderWriterJSON.cpp
 )
 
-add_library(${LIB_NAME} SHARED ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} )
+add_library(${LIB_NAME} ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} )
 
 #widgets is needed for QColor and other data types:
 qt5_use_modules(${LIB_NAME} Core Widgets)
