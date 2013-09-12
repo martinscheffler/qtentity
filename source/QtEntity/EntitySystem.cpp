@@ -19,32 +19,44 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace QtEntity
 {
+    typedef std::unordered_map<std::string, ClassTypeId> ClassTypeIds;
+    typedef std::unordered_map<ClassTypeId, std::string> ClassNames;
+    
+    inline ClassTypeIds& classTypeIds() 
+    {
+        static ClassTypeIds ids;
+        return ids;
+    }
 
-    std::unordered_map<std::string, ClassTypeId> s_classTypeIds;
-    std::unordered_map<ClassTypeId, std::string> s_classNames;
+    inline ClassNames& classNames() 
+    {
+        static ClassNames names;
+        return names;
+    }
 
     ClassTypeId ComponentRegistry::registerComponent(const QString& classname)
     {
-        Q_ASSERT(s_classTypeIds.find(classname.toStdString()) == s_classTypeIds.end());
-        ClassTypeId s = (ClassTypeId) s_classTypeIds.size();
-        s_classTypeIds[classname.toStdString()] = s;
-        s_classNames[s] = classname.toStdString();
+        int count = classTypeIds().size();
+        Q_ASSERT(classTypeIds().find(classname.toStdString()) == classTypeIds().end());
+        ClassTypeId s = (ClassTypeId) classTypeIds().size();
+        classTypeIds()[classname.toStdString()] = s;
+        classNames()[s] = classname.toStdString();
         return s;
     }
 
 
     ClassTypeId ComponentRegistry::classTypeId(const QString& classname)
     {
-        auto i = s_classTypeIds.find(classname.toStdString());
-        if(i == s_classTypeIds.end()) return -1;
+        auto i = classTypeIds().find(classname.toStdString());
+        if(i == classTypeIds().end()) return -1;
         return i->second;
     }
 
 
     QString ComponentRegistry::className(ClassTypeId typeId)
     {
-        auto i = s_classNames.find(typeId);
-        if(i == s_classNames.end()) return "<Class not registered>";
+        auto i = classNames().find(typeId);
+        if(i == classNames().end()) return "<Class not registered>";
         return QString::fromStdString(i->second);
     }
 
