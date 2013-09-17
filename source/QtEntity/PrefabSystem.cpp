@@ -100,7 +100,7 @@ namespace QtEntity
                 else
                 {
                     // component exists in component map and in prefab. Update prefab.
-                    QVariantMap newvals = newcomponents[j.key()].value<QVariantMap>();
+                    QVariantMap newvals = newcomponents[j.key()].toMap();
 
                     // find all prefab instances and update the components
                     for(auto k = this->begin(); k != this->end(); ++k)
@@ -149,7 +149,7 @@ namespace QtEntity
                         PrefabInstance* pi = static_cast<PrefabInstance*>(k->second);
                         if(pi->prefab() == prefab)
                         {
-                            es->createComponent(k->first, i.value().value<QVariantMap>());
+                            es->createComponent(k->first, i.value().toMap());
                         }
                     }
                 }

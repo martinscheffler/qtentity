@@ -18,7 +18,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtEntity/EntityManager>
 #include <QtEntity/EntitySystem>
-#include <QtEntity/MetaObjectRegistry>
 #include <QColor>
 #include <QDebug>
 #include <QJsonArray>
@@ -54,28 +53,31 @@ namespace QtEntity
         int t = variant.userType();
 
         // check if a vector of QObjects is stored in the variant
-        if(t == qMetaTypeId<QtEntity::PropertyObjects>())
+        if(t == qMetaTypeId<QVariantList>())
         {
+            // TODO reimplement
+            /*
             QJsonArray arr;
-            PropertyObjects objs = variant.value<PropertyObjects>();
+            PropertyObjects vars = variant.value<PropertyObjects>();
 
             // for each object in vector, create a JSON object and
             // set its content by parsing the QObject's properties recursively
-            foreach(PropertyObjectPointer obj, objs)
+            foreach(QVariant var, vars)
             {
-                const QMetaObject* meta = obj->metaObject();
-
-                if(metaObjectByClassName(meta->className()) == nullptr)
+                QVariantMap varmap = var.value<QVariantMap>();
+                QString classname = varmap["classname"];
+               
+                if(metaObjectByClassName(classname) == nullptr)
                 {
                     qDebug() << "Cannot convert object to json, use QtEntity::registerMetaObject to register its type!";
-                    qDebug() << "Classname is: " << meta->className();
+                    qDebug() << "Classname is: " << classname;
                     continue;
                 }
 
                 QJsonObject qobj;
 
                 // write type name of QObject to JSON param
-                qobj.insert("classname", QString(meta->className()));
+                qobj.insert("classname", QString(classname));
 
                 // convert the properties of the QObject
                 for(int i = 0; i < meta->propertyCount(); ++i)
@@ -92,7 +94,7 @@ namespace QtEntity
                 }
                 arr.push_back(qobj);
             }
-            return arr;
+            return arr;*/
         }
 		else if(t == qMetaTypeId<QColor>())
 		{
@@ -152,9 +154,10 @@ namespace QtEntity
     QVariant ReaderWriterJSON::jsonToVariant(int t, const QJsonValue& val)
     {
         // check if a vector of QObjects is stored in the variant
-        if(t == qMetaTypeId<QtEntity::PropertyObjects>() && val.isArray())
+        if(t == qMetaTypeId<QVariantList>() && val.isArray())
         {
-            PropertyObjects ret;
+           // TODO reimplement
+            /*PropertyObjects ret;
             QJsonArray arr = val.toArray();
             for(auto i = arr.begin(); i != arr.end(); ++i)
             {
@@ -186,7 +189,7 @@ namespace QtEntity
                     }
                 }   
             }
-            return QVariant::fromValue(ret);
+            return QVariant::fromValue(ret);*/
             
         }
         else if(t == qMetaTypeId<QColor>() && val.isString())

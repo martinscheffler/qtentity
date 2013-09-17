@@ -21,7 +21,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtPropertyBrowser/QtTreePropertyBrowser>
 #include <QtEntity/EntityManager>
 #include <QtEntity/EntitySystem>
-#include <QtEntity/MetaObjectRegistry>
 #include <QDate>
 #include <QLocale>
 #include <QHBoxLayout>
@@ -60,47 +59,44 @@ namespace QtEntityUtils
 
         if(!data.canConvert<QVariantMap>()) return;
         
-        QVariantMap components = data.value<QVariantMap>();
+        QVariantMap components = data.toMap();
         for(auto i = components.begin(); i != components.end(); ++i)
         {
             QString componenttype = i.key();
+            QVariant component = i.value();
+
             QtProperty* item = _propertyManager->addProperty(QtVariantPropertyManager::groupTypeId(), componenttype);
             _editor->addProperty(item);
-            QVariant variant = i.value();
-            if(!variant.canConvert<QVariantMap>()) continue;
-            QVariantMap props = variant.value<QVariantMap>();
+            
+            if(!component.canConvert<QVariantMap>()) continue;
+            QVariantMap props = component.toMap();
             for(auto j = props.begin(); j != props.end(); ++j)
             {
                 QString propname = j.key();
+                QVariantMap propvals = j.value().toMap();
 
-                // skip property attributes
-                if(propname.left(2) == "#|") continue;
-                QVariant propval = j.value();
+                QVariant propval = propvals["__value__"];
+                int typeval = propvals["__type__"].toInt();
+                QVariantMap attribsval = propvals["__attributes__"].toMap();
 
-                int t = propval.userType();
-                
+               
                 // qvariant has no float type :(
 
-                if(t == (int)QMetaType::Float)
+                if(typeval == (int)QMetaType::Float)
                 {
-                    t = QVariant::Double;
+                    typeval = QVariant::Double;
                 }
 
-                QtVariantProperty* propitem = _propertyManager->addProperty(t, propname);
+                QtVariantProperty* propitem = _propertyManager->addProperty(typeval, propname);
 				if(propitem)
 				{
 					propitem->setValue(propval);
 
 					// fetch property attributes
-					auto i = props.find(QString("#|%1").arg(propname));
-					if(i != props.end())
-					{
-						QVariantMap attrs = i.value().value<QVariantMap>();
-						for(auto j = attrs.begin(); j != attrs.end(); ++j)
-						{
-							propitem->setAttribute(j.key(), j.value());
-						}
-					}
+                    for(auto k = attribsval.begin(); k != attribsval.end(); ++k)
+                    {
+                        propitem->setAttribute(k.key(), k.value());                        
+                    }					
 
 					item->addSubProperty(propitem);
 				}
@@ -121,7 +117,7 @@ namespace QtEntityUtils
     }
 
 
-    QVariantMap replacePropertyObjectsWithVariantLists(const QVariantMap& in)
+   /* QVariantMap replacePropertyObjectsWithVariantLists(const QVariantMap& in)
     {
         QVariantMap out;
         for(auto i = in.begin(); i != in.end(); ++i)
@@ -151,7 +147,7 @@ namespace QtEntityUtils
             }
         }
         return out;
-    }
+    }*/
 
 
     QVariant EntityEditor::fetchEntityData(const QtEntity::EntityManager& em, QtEntity::EntityId eid)
@@ -161,15 +157,20 @@ namespace QtEntityUtils
         {
             QtEntity::EntitySystem* es = i->second;
             if(!es->component(eid)) continue;
-            QVariantMap vals = QtEntity::propertyValues(es, eid);
-            vals = replacePropertyObjectsWithVariantLists(vals);
-            QVariantMap attribs = QtEntity::propertyAttributes(es);
-            for(auto j = attribs.begin(); j != attribs.end(); ++j)
+                
+            QVariantMap component;
+            for(int i = 0; i < es->propertyCount(); ++i)
             {
-                vals[QString("#|%1").arg(j.key())] = j.value();
+                auto prop = es->property(i);
+                QVariantMap param;
+                param["__value__"] = prop.read(eid);
+                param["__type__"] = prop.variantType();
+                param["__attributes__"] = prop.attributes();
+                component[prop.name()] = param;
             }
-            components[es->componentName()] = vals;
+            components[es->componentName()] = component;
         }
+       
         return components;
     }
 
@@ -198,18 +199,7 @@ namespace QtEntityUtils
             qDebug() << "No property named " << propertyname << " on object of type " << es->componentName();
             return;
         }
-
-        if(prop.variantType() == VariantManager::propertyObjectsId())
-        {
-            QVariantList vars = value.value<QVariantList>();
-            QtEntity::PropertyObjects objs = prop.read(eid).value<QtEntity::PropertyObjects>();
-            QtEntity::PropertyObjects objsnew = PropertyObjectEditor::updatePropertyObjectsFromVariantList(objs, vars);
-            prop.write(eid, QVariant::fromValue(objsnew));
-        }
-        else
-        {
-            prop.write(eid, value);
-        }
+        prop.write(eid, value);        
     }
 
 

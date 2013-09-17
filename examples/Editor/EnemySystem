@@ -3,66 +3,23 @@
 #include <QtEntity/PooledEntitySystem>
 #include <QRect>
 
-class TestObj1 : public QObject
-{
-    Q_OBJECT
-
-    Q_PROPERTY(int propint READ propInt WRITE setPropInt USER true)
-    Q_PROPERTY(QString name READ name WRITE setName USER true)
-    qint32 _propint;
-    QString _name;
-public:
-
-     Q_INVOKABLE TestObj1() 
-         : _propint(0)
-     {}
-
-    void setPropInt(qint32 v) { _propint = v; }
-    qint32 propInt() const  { return _propint; }
-
-    void setName(const QString& n) { _name = n; }
-    QString name() const { return _name; }
-
-};
-
-
-class TestObj2 : public QObject
-{
-    Q_OBJECT
-public:
-    Q_INVOKABLE TestObj2() {}
-};
-
 class Enemy : public QtEntity::Component
 {
     DECLARE_COMPONENT_TYPE(NOEXP)    
 
 public:
 
-    Enemy() : _lifetime(0) {
-
-        QtEntity::PropertyObjects o;
-        auto to = new TestObj1();
-        to->setName(" BLABLA ");
-        o.push_back(QtEntity::PropertyObjectPointer(to));
-        o.push_back(QtEntity::PropertyObjectPointer(new TestObj2()));
-        setMyObjects(o);
+    Enemy() 
+        : _lifetime(0) 
+    {       
     }
 
     void setLifetime(int v) { _lifetime = v; }
-    int lifetime() const { return _lifetime; }
-
-    void setMyObjects(const QtEntity::PropertyObjects& v) 
-    { 
-        _myobjects = v;            
-    }
-
-    QtEntity::PropertyObjects myObjects() const  { return _myobjects; }
+    int lifetime() const { return _lifetime; }     
 
 private:
 
     int _lifetime;
-    QtEntity::PropertyObjects _myobjects;
 
 };
 

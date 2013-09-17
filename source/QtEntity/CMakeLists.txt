@@ -13,7 +13,6 @@ set(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/DataTypes
   ${HEADER_PATH}/EntityManager
   ${HEADER_PATH}/EntitySystem
-  ${HEADER_PATH}/MetaObjectRegistry
   ${HEADER_PATH}/PooledEntitySystem
   ${HEADER_PATH}/PrefabSystem
   ${HEADER_PATH}/ReaderWriterJSON
@@ -23,7 +22,6 @@ set(LIB_PUBLIC_HEADERS
 set(LIB_SOURCES
   ${SOURCE_PATH}/EntityManager.cpp
   ${SOURCE_PATH}/EntitySystem.cpp
-  ${SOURCE_PATH}/MetaObjectRegistry.cpp
   ${SOURCE_PATH}/PrefabSystem.cpp
   ${SOURCE_PATH}/ReaderWriterJSON.cpp
 )

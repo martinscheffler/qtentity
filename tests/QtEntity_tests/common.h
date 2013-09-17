@@ -2,7 +2,6 @@
 
 #include <QtEntity/EntityManager>
 #include <QtEntity/SimpleEntitySystem>
-#include <QtEntity/MetaObjectRegistry>
 #include <QtCore/QObject>
 #include <QtGui/QVector2D>
 #include <QtGui/QVector3D>
@@ -59,15 +58,15 @@ public:
     void setMyColor(const QColor& v) { _mycolor = v; }
     QColor myColor() const  { return _mycolor; }
 
-    void setMyObjects(const PropertyObjects& v) { _myobjects = v; }
-    PropertyObjects myObjects() const  { return _myobjects; }
+    void setMyObjects(const QVariantList& v) { _myobjects = v; }
+    QVariantList myObjects() const  { return _myobjects; }
 
     QVector2D _myvec2;
     QVector3D _myvec3;
     QVector4D _myvec4;
     QColor _mycolor;
     qint32 _myint;
-    PropertyObjects _myobjects;
+    QVariantList _myobjects;
 
 };
 
@@ -83,10 +82,8 @@ public:
         QTE_ADD_PROPERTY("myvec3", QVector3D, Testing, myVec3, setMyVec3);
         QTE_ADD_PROPERTY("myvec4", QVector4D, Testing, myVec4, setMyVec4);
         QTE_ADD_PROPERTY("mycolor", QColor, Testing, myColor, setMyColor);
-        QTE_ADD_PROPERTY("myobjects", QtEntity::PropertyObjects, Testing, myObjects, setMyObjects);
+        QTE_ADD_PROPERTY("myobjects", QVariantList, Testing, myObjects, setMyObjects);
 
         QtEntity::registerMetaTypes();
-        registerMetaObject(TestObj1::staticMetaObject);
-        registerMetaObject(TestObj2::staticMetaObject);
     }
 };

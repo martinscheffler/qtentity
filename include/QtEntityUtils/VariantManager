@@ -80,7 +80,7 @@ namespace QtEntityUtils
 
         struct PropertyObjectsData {
             QVariantList value;
-            QStringList classnames;
+            QVariantMap classes;
         };
         QMap<const QtProperty *, PropertyObjectsData> _propertyObjectsValues;
     }; 

@@ -17,8 +17,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include <cstdint>
-#include <QObject>
-#include <QSharedPointer>
+#include <QVariantList>
 #include <QVector>
 
 namespace QtEntity
@@ -33,21 +32,6 @@ namespace QtEntity
     typedef uint32_t EntityId;
 
     /**
-     * @brief PropertyObjectPointer Pointer to a QObject. See below for
-     *        explanation
-     */
-    typedef QSharedPointer<QObject> PropertyObjectPointer;
-
-    /**
-     * @brief PropertyObjects A vector of QObjects.
-     * A QProperty can hold a PropertyObjects vector where each entry points
-     * to a QObject. These QObjects can be serialized to JSON or
-     * manipulated with the Property Editor.
-     */
-    typedef QVector<PropertyObjectPointer> PropertyObjects;
-
-
-    /**
      * Identifier for component classes
      */
     typedef uint32_t ClassTypeId;
@@ -55,7 +39,6 @@ namespace QtEntity
 
 // have to do this in global namespace
 Q_DECLARE_METATYPE(QtEntity::EntityId)
-Q_DECLARE_METATYPE(QtEntity::PropertyObjects)
 
 
 namespace QtEntity
@@ -67,6 +50,5 @@ namespace QtEntity
     inline void registerMetaTypes()
     {
         qRegisterMetaType<QtEntity::EntityId>("QtEntity::EntityId");
-        qRegisterMetaType<QtEntity::PropertyObjects>("QtEntity::PropertyObjects");
     }
 }

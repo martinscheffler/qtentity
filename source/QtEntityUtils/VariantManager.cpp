@@ -40,7 +40,7 @@ namespace QtEntityUtils
 
     int VariantManager::propertyObjectsId()
     {
-        return qMetaTypeId<QtEntity::PropertyObjects>();
+        return qMetaTypeId<QVariantList>();
     }
 
 
@@ -98,7 +98,7 @@ namespace QtEntityUtils
         if (propertyType == variantListId())
         {
             QStringList attr;
-            attr << QLatin1String("classnames");
+            attr << QLatin1String("classes");
             return attr;
         }
         return QtVariantPropertyManager::attributes(propertyType);
@@ -116,8 +116,8 @@ namespace QtEntityUtils
 
         if (propertyType == variantListId())
         {
-            if (attribute == QLatin1String("classnames"))
-               return QVariant::StringList;
+            if (attribute == QLatin1String("classes"))
+               return QVariant::Map;
             return 0;
         }
         return QtVariantPropertyManager::attributeType(propertyType, attribute);
@@ -134,8 +134,8 @@ namespace QtEntityUtils
         }
         if (_propertyObjectsValues.contains(property))
         {
-            if (attribute == QLatin1String("classnames"))
-                return _propertyObjectsValues[property].classnames;
+            if (attribute == QLatin1String("classes"))
+                return _propertyObjectsValues[property].classes;
             return QVariant();
         }
         return QtVariantPropertyManager::attributeValue(property, attribute);
@@ -156,7 +156,7 @@ namespace QtEntityUtils
             foreach(auto o, val)
             {
                 if(!o.canConvert<QVariantMap>()) continue;
-                QVariantMap obj = o.value<QVariantMap>();
+                QVariantMap obj = o.toMap();
                 if(first)
                     first = false;
                 else
@@ -227,16 +227,16 @@ namespace QtEntityUtils
         }
         if (_propertyObjectsValues.contains(property))
         {
-            if (attribute == QLatin1String("classnames")) {
-                if (val.type() != QVariant::StringList && !val.canConvert(QVariant::StringList))
+            if (attribute == QLatin1String("classes")) {
+                if (val.type() != QVariant::Map && !val.canConvert(QVariant::Map))
                     return;
-                QStringList str = val.value<QStringList>();
+                QVariantMap classes = val.toMap();
                 PropertyObjectsData d = _propertyObjectsValues[property];
-                if (d.classnames == str)
+                if (d.classes == classes)
                     return;
-                d.classnames = str;
+                d.classes = classes;
                 _propertyObjectsValues[property] = d;
-                emit attributeChanged(property, attribute, str);
+                emit attributeChanged(property, attribute, classes);
             }
             return;
         }

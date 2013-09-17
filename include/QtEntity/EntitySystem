@@ -405,7 +405,10 @@ namespace QtEntity
         for(int i = 0; i < es->propertyCount(); ++i)
         {
             auto prop = es->property(i);
-            m[prop.name()] = prop.attributes();
+            if(!prop.attributes().empty())
+            {
+                m[prop.name()] = prop.attributes();
+            }
         }
         return m;
     }

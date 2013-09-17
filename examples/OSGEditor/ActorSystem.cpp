@@ -1,8 +1,6 @@
 #include "ActorSystem"
 #include <osg/Geode>
 #include <QStringList>
-#include <QtEntity/MetaObjectRegistry>
-
 
 IMPLEMENT_COMPONENT_TYPE(Actor);
 
@@ -12,8 +10,7 @@ Actor::Actor()
     , _transform(new osg::PositionAttitudeTransform())
     , _system(nullptr)
 {
-    _transform->addChild(_geode);
-    
+    _transform->addChild(_geode);    
 }
 
 
@@ -40,15 +37,40 @@ QVector3D Actor::position() const
 }
 
 
-void Actor::setShapes(const QtEntity::PropertyObjects& v)
+void Actor::setShapes(const QVariantList& shapes)
 {
-    _shapes = v;
+    _shapes = shapes;
     _geode->removeDrawables(0, _geode->getNumDrawables());
 
-    foreach(auto o, v)
+    for(auto i = shapes.begin(); i != shapes.end(); ++i)
     {
-        ShapeDrawable* sd = static_cast<ShapeDrawable*>(o.data());
-        _geode->addDrawable(sd->_shapeDrawable);
+        QVariantMap val = i->toMap();
+        if(!val.contains("classname"))
+        {
+            qDebug() << "Shape contains no classname!?!";
+            continue;
+        }
+        QString classname = val["classname"].toString();
+
+        osg::ref_ptr<osg::ShapeDrawable> sd = new osg::ShapeDrawable();
+        
+        if(classname == "Box")
+        {
+            QVector3D hl = val["HalfLengths"].value<QVector3D>();
+            QVector3D c = val["Center"].value<QVector3D>();
+            sd->setShape(new osg::Box(osg::Vec3(c.x(), c.y(), c.z()), hl.x(), hl.y(), hl.z()));
+            
+        }
+        else if(classname == "Sphere")
+        {
+            QVector3D c = val["Center"].value<QVector3D>();
+            float radius = val["Radius"].toFloat();
+            sd->setShape(new osg::Sphere(osg::Vec3(c.x(), c.y(), c.z()), radius));
+        }
+        QColor co = val["Color"].value<QColor>();
+        sd->setColor(osg::Vec4(co.redF(), co.greenF(), co.blueF(), co.alphaF()));
+        _geode->addDrawable(sd);
+
     }
 }
 
@@ -56,17 +78,37 @@ void Actor::setShapes(const QtEntity::PropertyObjects& v)
 ActorSystem::ActorSystem(osg::Group* rootnode)
     : _rootNode(rootnode)
 {
-    QtEntity::registerMetaObject(Box::staticMetaObject);
-    QtEntity::registerMetaObject(Sphere::staticMetaObject);
 
     QTE_ADD_PROPERTY("name", QString, Actor, name, setName);
     QTE_ADD_PROPERTY("position", QVector3D, Actor, position, setPosition);
-    QStringList sl;
-    sl.push_back(Box::staticMetaObject.className());
-    sl.push_back(Sphere::staticMetaObject.className());
+    
+    QVariantMap box, sphere, radius, center, halflengths, color;
+    radius["__value__"] = 1.0f;
+    radius["__type__"] =  qMetaTypeId<float>();
+    sphere["Radius"] = radius;
+
+    color["__value__"] = QColor(255,0,0,255);
+    color["__type__"] =  qMetaTypeId<QColor>();
+    sphere["Color"] = color;
+
+    center["__value__"] = QVector3D(0,0,0);
+    center["__type__"] =  qMetaTypeId<QVector3D>();
+    sphere["Center"] = center;
+
+    halflengths["__value__"] = QVector3D(0.5f,0.5f,0.5f);
+    halflengths["__type__"] =  qMetaTypeId<QVector3D>();
+    box["HalfLengths"] = halflengths;
+
+    box["Center"] = center;
+    box["Color"] = color;
+
+    QVariantMap classes;
+    classes["Box"] = box;
+    classes["Sphere"] = sphere;
+    
     QVariantMap attribs;
-    attribs["classnames"] = sl;
-    QTE_ADD_PROPERTY_WITH_ATTRIBS("shapes", QtEntity::PropertyObjects, Actor, shapes, setShapes, attribs);
+    attribs["classes"] = classes;
+    QTE_ADD_PROPERTY_WITH_ATTRIBS("shapes", QVariantList, Actor, shapes, setShapes, attribs);
 }
 
 
@@ -101,15 +143,3 @@ bool ActorSystem::destroyComponent(QtEntity::EntityId id)
 
 
 
-const QVariantMap ActorSystem::attributesForProperty(const QString& name) const
-{
-    QVariantMap r;
-    if(name == "shapes")
-    {
-        QStringList sl;
-        sl.push_back(Box::staticMetaObject.className());
-        sl.push_back(Sphere::staticMetaObject.className());
-        r["classnames"] = sl;
-    }
-    return r;
-}

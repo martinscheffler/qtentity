@@ -29,19 +29,16 @@ class QtBrowserItem;
 
 namespace QtEntityUtils
 {
-
+    
     class PropertyObjectEditor : public QDialog
     {
         Q_OBJECT
     public:
-        PropertyObjectEditor(QVariantList& objects, const QStringList& classnames);
+        PropertyObjectEditor(QVariantList& objects, const QVariantMap& classes);
 
         QVariantList propertyObjects() const;
 
-        static QVariantMap componentToVariantMap(const QObject& object);
-        static QObject* variantMapToObject(const QVariantMap& map);
-        static QtEntity::PropertyObjects updatePropertyObjectsFromVariantList(const QtEntity::PropertyObjects& in, const QVariantList& varlist);
-
+        
     protected slots:
 
         void addObject();
@@ -51,9 +48,9 @@ namespace QtEntityUtils
         void removePressed();
 
     private:
-        void addObjectProperties(const QString& classname, const QVariantMap& obj);
+        void addObjectProperties(const QString& classname, const QVariantMap& obj, const QVariantMap& values = QVariantMap());
 
-        QStringList _classNames;
+        QVariantMap _classes;
         Ui_PropertyObjectsEdit* _ui;
         QtVariantPropertyManager* _propertyManager;
         QtTreePropertyBrowser* _editor;
@@ -67,7 +64,7 @@ namespace QtEntityUtils
     public:
         PropertyObjectsEdit(QWidget *parent = 0);
         void setValue(const QVariantList& o) { _value = o; }
-        void setClassNames(const QStringList& l) { _classnames = l; }
+        void setClasses(const QVariantMap& l) { _classes = l; }
     signals:
         void objectsChanged(const QVariantList& objs);
 
@@ -78,6 +75,6 @@ namespace QtEntityUtils
         PropertyObjectEditor* _editor;
         QPushButton* _editButton;
         QVariantList _value;
-        QStringList _classnames;
+        QVariantMap _classes;
     };
 }

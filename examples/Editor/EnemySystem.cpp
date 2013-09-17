@@ -2,25 +2,12 @@
 #include "ShapeSystem"
 
 #include <QtEntity/EntityManager>
-#include <QtEntity/MetaObjectRegistry>
 
 IMPLEMENT_COMPONENT_TYPE(Enemy)
 
 EnemySystem::EnemySystem()
 {
-    QtEntity::registerMetaObject(TestObj1::staticMetaObject);
-    QtEntity::registerMetaObject(TestObj2::staticMetaObject);
-
-    QTE_ADD_PROPERTY("lifetime", int, Enemy, lifetime, setLifetime);
-
-    QVariantMap r;
-    QStringList sl;
-    sl.push_back(TestObj1::staticMetaObject.className());
-    sl.push_back(TestObj2::staticMetaObject.className());
-    r["classnames"] = sl;
-    
-    QTE_ADD_PROPERTY_WITH_ATTRIBS("myobjects", QtEntity::PropertyObjects, Enemy, myObjects, setMyObjects, r);
-
+    QTE_ADD_PROPERTY("lifetime", int, Enemy, lifetime, setLifetime);  
 }
 
 

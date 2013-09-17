@@ -69,8 +69,10 @@ namespace QtEntityUtils
         if (manager->propertyType(property) == VariantManager::variantListId())
         {
             PropertyObjectsEdit *editor = new PropertyObjectsEdit(parent);
-            editor->setValue(manager->value(property).value<QVariantList>());
-            editor->setClassNames(manager->attributeValue(property, QLatin1String("classnames")).toStringList());
+
+            editor->setClasses(manager->attributeValue(property, QLatin1String("classes")).toMap());
+            editor->setValue( manager->value(property).value<QVariantList>());
+            
             _createdPropertyObjectsEditors[property].append(editor);
             _propertyObjectsEditorToProperty[editor] = property;
 
@@ -130,13 +132,13 @@ namespace QtEntityUtils
         }
         if (_createdPropertyObjectsEditors.contains(property))
         {
-            if (attribute != QLatin1String("classnames"))
+            if (attribute != QLatin1String("classes"))
                 return;
 
             QList<PropertyObjectsEdit *> editors = _createdPropertyObjectsEditors[property];
             QListIterator<PropertyObjectsEdit *> itEditor(editors);
             while (itEditor.hasNext())
-                itEditor.next()->setClassNames(value.toStringList());
+                itEditor.next()->setClasses(value.toMap());
 
         }
     }

@@ -33,7 +33,6 @@ set(LIB_SOURCES
 )
 
 set(MOC_INPUT
-   ${HEADER_PATH}/EnemySystem
    ${HEADER_PATH}/Game
    ${HEADER_PATH}/MainWindow
    ${HEADER_PATH}/MetaDataSystem

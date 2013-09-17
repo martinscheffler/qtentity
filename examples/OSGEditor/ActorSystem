@@ -9,21 +9,17 @@
 #include <osg/PositionAttitudeTransform>
 #include <QColor>
 
-class ActorSystem;
 
-class ShapeDrawable : public QObject
+/*
+class ShapeDrawable
 {
-    Q_OBJECT
-
+    
 public:
     osg::ref_ptr<osg::ShapeDrawable> _shapeDrawable;
-
-    Q_PROPERTY(QColor color READ color WRITE setColor USER true)
 
     ShapeDrawable()
         : _shapeDrawable(new osg::ShapeDrawable())
     {
-
     }
 
     QColor color() const
@@ -42,17 +38,12 @@ public:
 };
 
 class Sphere : public ShapeDrawable
-{
-    Q_OBJECT
+{    
 public:
-
-    Q_PROPERTY(float radius READ radius WRITE setRadius USER true)
-    Q_PROPERTY(QVector3D center READ center WRITE setCenter USER true)
 
     osg::ref_ptr<osg::Sphere> _sphere;
 
-     Q_INVOKABLE Sphere()
-        : _sphere(new osg::Sphere(osg::Vec3(), 1))
+    Sphere() : _sphere(new osg::Sphere(osg::Vec3(), 1))
     {
         _shapeDrawable->setShape(_sphere);
     }
@@ -83,16 +74,13 @@ public:
 
 class Box : public ShapeDrawable
 {
-    Q_OBJECT
+    
 public:
 
-    Q_PROPERTY(QVector3D halfLengths READ halfLengths WRITE setHalfLengths USER true)
-    Q_PROPERTY(QVector3D center READ center WRITE setCenter USER true)
 
     osg::ref_ptr<osg::Box> _box;
 
-     Q_INVOKABLE Box()
-        : _box(new osg::Box(osg::Vec3(), 1))
+    Box() : _box(new osg::Box(osg::Vec3(), 1))
     {
         _shapeDrawable->setShape(_box);
     }
@@ -121,8 +109,7 @@ public:
     }
 
 };
-
-class ActorSystem;
+*/
 
 class Actor : public QtEntity::Component
 {
@@ -148,8 +135,8 @@ public:
     void setPosition(const QVector3D& p);
     QVector3D position() const;
 
-    void setShapes(const QtEntity::PropertyObjects& v);
-    QtEntity::PropertyObjects shapes() const  { return _shapes; }
+    void setShapes(const QVariantList& v);
+    QVariantList shapes() const  { return _shapes; }
 
 private:
 
@@ -158,7 +145,7 @@ private:
     osg::ref_ptr<osg::Geode> _geode;
     osg::ref_ptr<osg::PositionAttitudeTransform> _transform;
     ActorSystem* _system;
-    QtEntity::PropertyObjects _shapes;
+    QVariantList _shapes;
 };
 
 
@@ -177,8 +164,6 @@ public:
 
     // override to emit signal for removing entity list entry
     virtual bool destroyComponent(QtEntity::EntityId id) override;
-
-    virtual const QVariantMap attributesForProperty(const QString& name) const;
 
 signals:
 

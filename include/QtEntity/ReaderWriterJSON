@@ -40,7 +40,7 @@ namespace QtEntity
         /**
          * @brief variantToJson converts a single variant to Json.
          * This handles QColor, QVector[2|3|4]D.
-         * Special case: Variants of type PropertyObjects.
+         * Special case: Variants of type QVariantList.
          * These are converted to arrays of objects.
          * @return the converted Json object
          */
