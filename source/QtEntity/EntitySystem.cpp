@@ -36,7 +36,6 @@ namespace QtEntity
 
     ClassTypeId ComponentRegistry::registerComponent(const QString& classname)
     {
-        int count = classTypeIds().size();
         Q_ASSERT(classTypeIds().find(classname.toStdString()) == classTypeIds().end());
         ClassTypeId s = (ClassTypeId) classTypeIds().size();
         classTypeIds()[classname.toStdString()] = s;
