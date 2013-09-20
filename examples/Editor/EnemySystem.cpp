@@ -5,7 +5,8 @@
 
 IMPLEMENT_COMPONENT_TYPE(Enemy)
 
-EnemySystem::EnemySystem()
+EnemySystem::EnemySystem(QtEntity::EntityManager* em)
+   : BaseClass(em)
 {
     QTE_ADD_PROPERTY("lifetime", int, Enemy, lifetime, setLifetime);  
 }

@@ -75,8 +75,9 @@ void Actor::setShapes(const QVariantList& shapes)
 }
 
 
-ActorSystem::ActorSystem(osg::Group* rootnode)
-    : _rootNode(rootnode)
+ActorSystem::ActorSystem(QtEntity::EntityManager* em, osg::Group* rootnode)
+    : BaseClass(em)
+    , _rootNode(rootnode)
 {
 
     QTE_ADD_PROPERTY("name", QString, Actor, name, setName);
@@ -114,7 +115,7 @@ ActorSystem::ActorSystem(osg::Group* rootnode)
 
 QtEntity::Component* ActorSystem::createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals)
 {
-    QtEntity::Component* obj = Super::createComponent(id, propertyVals);
+    QtEntity::Component* obj = BaseClass::createComponent(id, propertyVals);
     if(obj != NULL)
     {
         Actor* entry = static_cast<Actor*>(obj);
@@ -138,7 +139,7 @@ bool ActorSystem::destroyComponent(QtEntity::EntityId id)
         emit entityRemoved(id);
     }
 
-    return Super::destroyComponent(id);
+    return BaseClass::destroyComponent(id);
 }
 
 

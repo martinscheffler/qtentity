@@ -45,7 +45,8 @@ namespace QtEntity
     }
 
     
-    PrefabSystem::PrefabSystem()
+    PrefabSystem::PrefabSystem(QtEntity::EntityManager* em)
+        : BaseClass(em)
     {
     }
 

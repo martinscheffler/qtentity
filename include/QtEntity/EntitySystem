@@ -281,23 +281,18 @@ namespace QtEntity
      * Entity systems are responsible for storing and managing components.
      * Each entity system instance holds components of a specific type.
      */
-    class EntitySystem
+    class EntitySystem : public QObject
     {
-    private:
+        Q_OBJECT
 
         QVector<PropertyAccessor> _properties;
         EntityManager* _entityManager;
 
     public:
 
-        QTENTITY_EXPORT EntitySystem();
+        QTENTITY_EXPORT EntitySystem(ClassTypeId cid, EntityManager* em);
         QTENTITY_EXPORT virtual ~EntitySystem();
-
-        /**
-         * This is called by entity manager when system is added to entity manager
-         */
-        inline void setEntityManager(EntityManager* em) { _entityManager = em; }
-
+        
         /**
          * Fetch entity manager this system is assigned to
          */

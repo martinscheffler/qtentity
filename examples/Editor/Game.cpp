@@ -16,18 +16,13 @@ Game::Game(Renderer* renderer)
     , _spacepressed(false)
     , _renderer(renderer)
     , _isRunning(false)
-    , _bulletsys(new BulletSystem())
-    , _damagesys(new DamageSystem())
-    , _metasys(new MetaDataSystem())
-    , _enemysys(new EnemySystem())
-    , _shapesys(new ShapeSystem(renderer))
+    , _bulletsys(new BulletSystem(&_entityManager))
+    , _damagesys(new DamageSystem(&_entityManager))
+    , _metasys(new MetaDataSystem(&_entityManager))
+    , _enemysys(new EnemySystem(&_entityManager))
+    , _shapesys(new ShapeSystem(&_entityManager, renderer))
     , _playerid(0)
 {
-    _entityManager.addSystem(_bulletsys);
-    _entityManager.addSystem(_damagesys);
-    _entityManager.addSystem(_metasys);
-    _entityManager.addSystem(_enemysys);
-    _entityManager.addSystem(_shapesys);
 
     _renderer->createShape(QPixmap(":/assets/space.jpg"), QPointF(0,0), -10);
 

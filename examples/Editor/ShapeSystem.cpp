@@ -37,8 +37,9 @@ void Shape::setZIndex(int i)
 }
 
 
-ShapeSystem::ShapeSystem(Renderer* renderer)
-    : _renderer(renderer)
+ShapeSystem::ShapeSystem(QtEntity::EntityManager* em, Renderer* renderer)
+    : BaseClass(em)
+    , _renderer(renderer)
 {
     QTE_ADD_PROPERTY("position", QPoint, Shape, position, setPosition);
 

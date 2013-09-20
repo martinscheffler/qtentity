@@ -5,7 +5,8 @@
 
 IMPLEMENT_COMPONENT_TYPE(Bullet)
 
-BulletSystem::BulletSystem()
+BulletSystem::BulletSystem(QtEntity::EntityManager* em)
+   : BaseClass(em)
 {
     QTE_ADD_PROPERTY("movement", QPoint, Bullet, movement, setMovement);
 }

@@ -16,6 +16,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtEntity/EntitySystem>
 #include <unordered_map>
+#include <QtEntity/EntityManager>
 
 namespace QtEntity
 {
@@ -60,9 +61,11 @@ namespace QtEntity
     }
 
 
-    EntitySystem::EntitySystem()
-        : _entityManager(nullptr)
+    EntitySystem::EntitySystem(ClassTypeId cid, EntityManager* em)
+        : _entityManager(em)
     {
+        em->addSystem(cid, this);
+        //setObjectName(componentName());        
     }
 
 

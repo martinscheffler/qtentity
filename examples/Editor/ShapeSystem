@@ -52,7 +52,8 @@ class ShapeSystem : public QtEntity::PooledEntitySystem<Shape>
 {   
 
 public:
-    ShapeSystem(Renderer* renderer);
+    typedef QtEntity::PooledEntitySystem<Shape> BaseClass;
+    ShapeSystem(QtEntity::EntityManager* em, Renderer* renderer);
 
     virtual QtEntity::Component* createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;
 

@@ -90,8 +90,9 @@ namespace QtEntity
          * @param capacity Allocate place for that many components initially.
          * @param chunkSize When capacity is depleted allocate place for that many additional components
          */
-        PooledEntitySystem(size_t capacity = 0, size_t chunkSize = 4)
-            : _capacity(capacity)
+        PooledEntitySystem(EntityManager* em, size_t capacity = 0, size_t chunkSize = 4)
+            : EntitySystem(T::classTypeId(), em)
+            , _capacity(capacity)
             , _chunkSize(chunkSize)
             , _size(0)            
         {

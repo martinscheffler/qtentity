@@ -50,12 +50,12 @@ private:
 
 
 class MetaDataSystem 
-    : public QObject
-    , public QtEntity::PooledEntitySystem<MetaData>
+    : public QtEntity::PooledEntitySystem<MetaData>
 {   
     Q_OBJECT
 public:
-    MetaDataSystem();
+    typedef QtEntity::PooledEntitySystem<MetaData> BaseClass;
+    MetaDataSystem(QtEntity::EntityManager* em);
 
     // override to emit signal for creating entity list entry
     virtual QtEntity::Component* createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;

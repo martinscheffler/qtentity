@@ -12,8 +12,8 @@ using namespace QtEntity;
 class TestingSystemPooled : public PooledEntitySystem<Testing>
 {
 public:
-    TestingSystemPooled(size_t capacity = 0, size_t chunkSize = 4)
-        : PooledEntitySystem<Testing>(capacity, chunkSize)
+    TestingSystemPooled(EntityManager* em, size_t capacity = 0, size_t chunkSize = 4)
+        : PooledEntitySystem<Testing>(em, capacity, chunkSize)
     {
         QTE_ADD_PROPERTY("myint", int, Testing, myInt, setMyInt);
         QTE_ADD_PROPERTY("myvec2", QVector2D, Testing, myVec2, setMyVec2);
@@ -105,18 +105,19 @@ private slots:
 
     void createAndFetch()
     {
-        TestingSystemPooled ts;
+        EntityManager em;
+        TestingSystemPooled* ts = new TestingSystemPooled(&em);
 
 		QVariantMap m;
 		m["myint"] = 666;
 		m["myvec2"] =  QVector2D(77.0,88.0);
-        Component* c = ts.createComponent(1, m);
+        Component* c = ts->createComponent(1, m);
 
-        Component* c2 = ts.component(1);
+        Component* c2 = ts->component(1);
         QVERIFY(c == c2);
-        QVERIFY(ts.component(1) != nullptr);
+        QVERIFY(ts->component(1) != nullptr);
 
-        Component* c3 = ts.component(2);
+        Component* c3 = ts->component(2);
         QVERIFY(c3 == nullptr);
 
         Testing* tr = static_cast<Testing*>(c);
@@ -130,94 +131,101 @@ private slots:
 
     void reserve()
     {
-        TestingSystemPooled ts(0, 2);
-		for(int i = 0; i < 3; ++i) ts.createComponent(i + 1);
-        QCOMPARE(ts.count(), (size_t)3);
-        QCOMPARE(ts.capacity(), (size_t)4);
+        EntityManager em;
+        TestingSystemPooled* ts = new TestingSystemPooled(&em, 0, 2);
+		for(int i = 0; i < 3; ++i) ts->createComponent(i + 1);
+        QCOMPARE(ts->count(), (size_t)3);
+        QCOMPARE(ts->capacity(), (size_t)4);
     }
 
     void destroyOne()
     {
-        TestingSystemPooled ts(0, 2);
-		ts.createComponent(1);
-        ts.destroyComponent(1);
-        QCOMPARE(ts.count(), (size_t)0);
-        QCOMPARE(ts.capacity(), (size_t)2);
+        EntityManager em;
+        TestingSystemPooled* ts = new TestingSystemPooled(&em, 0, 2);
+		ts->createComponent(1);
+        ts->destroyComponent(1);
+        QCOMPARE(ts->count(), (size_t)0);
+        QCOMPARE(ts->capacity(), (size_t)2);
     }
 
 
      void destroyMore()
     {
-        TestingSystemPooled ts(0, 2);
+        EntityManager em;
+        TestingSystemPooled* ts = new TestingSystemPooled(&em, 0, 2);
         QVariantMap m;
 		m["myint"] = 1;		
-        ts.createComponent(1, m);
+        ts->createComponent(1, m);
         m["myint"] = 2;
-        ts.createComponent(2, m);
+        ts->createComponent(2, m);
         m["myint"] = 3;
-        ts.createComponent(3, m);
+        ts->createComponent(3, m);
         
-        QCOMPARE(ts.count(), (size_t)3);
-        ts.destroyComponent(2);
-        QCOMPARE(ts.count(), (size_t)2);
+        QCOMPARE(ts->count(), (size_t)3);
+        ts->destroyComponent(2);
+        QCOMPARE(ts->count(), (size_t)2);
 
-        QCOMPARE(static_cast<Testing*>(ts.component(1))->myInt(), 1);
-        QCOMPARE(static_cast<Testing*>(ts.component(3))->myInt(), 3);
-        ts.destroyComponent(1);
-        ts.destroyComponent(3);
-        QCOMPARE(ts.count(), (size_t)0);
+        QCOMPARE(static_cast<Testing*>(ts->component(1))->myInt(), 1);
+        QCOMPARE(static_cast<Testing*>(ts->component(3))->myInt(), 3);
+        ts->destroyComponent(1);
+        ts->destroyComponent(3);
+        QCOMPARE(ts->count(), (size_t)0);
     }
 
 
      void erase()
     {
-        TestingSystemPooled ts;
+        EntityManager em;
+        TestingSystemPooled* ts = new TestingSystemPooled(&em);
         QVariantMap m;
 		m["myint"] = 1;
-        ts.createComponent(1, m);
+        ts->createComponent(1, m);
         m["myint"] = 2;
-        ts.createComponent(2, m);
+        ts->createComponent(2, m);
         m["myint"] = 3;
-        ts.createComponent(3, m);
-        auto i = ts.begin(); 
+        ts->createComponent(3, m);
+        auto i = ts->begin(); 
         QCOMPARE(i->second->myInt(), 1);
         ++i;
         QCOMPARE(i->second->myInt(), 2);
-        i = ts.erase(i);
+        i = ts->erase(i);
         QCOMPARE(i->second->myInt(), 3);
-        QVERIFY(ts.component(2) == nullptr);
+        QVERIFY(ts->component(2) == nullptr);
     }
 
      void clear()
     {
-        TestingSystemPooled ts;       
-        ts.createComponent(1);
-        ts.createComponent(2);        
-        ts.createComponent(3);
-        ts.clear();
-        QCOMPARE(ts.count(), (size_t)0);
-        ts.createComponent(1);
-        QCOMPARE(ts.count(), (size_t)1);
+        EntityManager em;
+        TestingSystemPooled* ts = new TestingSystemPooled(&em);   
+        ts->createComponent(1);
+        ts->createComponent(2);        
+        ts->createComponent(3);
+        ts->clear();
+        QCOMPARE(ts->count(), (size_t)0);
+        ts->createComponent(1);
+        QCOMPARE(ts->count(), (size_t)1);
     }
     
     void speedTest()
     {
         {
-            TestingSystemPooled pooled(0, 8);
-            TestingSystem simple;
+            EntityManager em;
+            TestingSystemPooled* pooled = new TestingSystemPooled(&em, 0, 8);
+            TestingSystem* simple = new TestingSystem(&em);
 
-            float timepooled = float(speed1(pooled)) / 1000.0f;
-            float timesimple = float(speed1(simple)) / 1000.0f;
+            float timepooled = float(speed1(*pooled)) / 1000.0f;
+            float timesimple = float(speed1(*simple)) / 1000.0f;
             qDebug() << "Time pooled1: " << timepooled;
             qDebug() << "Time simple1: " << timesimple;
         }
 
         {
-            TestingSystemPooled pooled(0, 8);
-            TestingSystem simple;
+            EntityManager em;
+            TestingSystemPooled* pooled = new TestingSystemPooled(&em, 0, 8);
+            TestingSystem* simple = new TestingSystem(&em);
 
-            float timepooled = float(speed2(pooled)) / 1000.0f;
-            float timesimple = float(speed2(simple)) / 1000.0f;
+            float timepooled = float(speed2(*pooled)) / 1000.0f;
+            float timesimple = float(speed2(*simple)) / 1000.0f;
             qDebug() << "Time pooled1: " << timepooled;
              qDebug() << "Time simple1: " << timesimple;
         }
@@ -225,55 +233,58 @@ private slots:
 
     void iteratorTest1()
     {
-        TestingSystemPooled pooled(0, 8);
-        QVERIFY(pooled.begin() == pooled.end());
+        EntityManager em;
+        TestingSystemPooled* pooled = new TestingSystemPooled(&em, 0, 8);
+        QVERIFY(pooled->begin() == pooled->end());
 
         QVariantMap m;
-		m["myint"] = 1; pooled.createComponent(1, m);
-        m["myint"] = 2; pooled.createComponent(2, m);
-        m["myint"] = 3; pooled.createComponent(3, m);
-        TestingSystemPooled::iterator i = pooled.begin();
+		m["myint"] = 1; pooled->createComponent(1, m);
+        m["myint"] = 2; pooled->createComponent(2, m);
+        m["myint"] = 3; pooled->createComponent(3, m);
+        TestingSystemPooled::iterator i = pooled->begin();
         
         Testing* t = i->second;
-        QCOMPARE(t, static_cast<Testing*>(pooled.component(1)));
-        QCOMPARE((++i)->second, static_cast<Testing*>(pooled.component(2)));
-        QCOMPARE((++i)->second, static_cast<Testing*>(pooled.component(3)));
+        QCOMPARE(t, static_cast<Testing*>(pooled->component(1)));
+        QCOMPARE((++i)->second, static_cast<Testing*>(pooled->component(2)));
+        QCOMPARE((++i)->second, static_cast<Testing*>(pooled->component(3)));
         TestingSystemPooled::iterator j = ++i;
-        TestingSystemPooled::iterator end = pooled.end();
+        TestingSystemPooled::iterator end = pooled->end();
         QCOMPARE(j, end);
     }
 
     void iteratorTest2()
     {
-        TestingSystemPooled pooled(0, 8);
+        EntityManager em;
+        TestingSystemPooled* pooled = new TestingSystemPooled(&em, 0, 8);
         QVariantMap m;
         for(int i = 1; i <= 10; ++i)
         {
             m["myint"] = i;
-            pooled.createComponent(i, m);
+            pooled->createComponent(i, m);
         }
         int count = 1;
-        for(TestingSystemPooled::iterator i = pooled.begin(); i != pooled.end(); ++i)
+        for(TestingSystemPooled::iterator i = pooled->begin(); i != pooled->end(); ++i)
         {
             Testing* o = i->second;
-            QCOMPARE(o, static_cast<Testing*>(pooled.component(count++)));
+            QCOMPARE(o, static_cast<Testing*>(pooled->component(count++)));
         }
     }
 
     void iteratorTest3()
     {
-        TestingSystemPooled pooled(0, 8);
+        EntityManager em;
+        TestingSystemPooled* pooled = new TestingSystemPooled(&em, 0, 8);
         QVariantMap m;
         for(int i = 1; i <= 10; ++i)
         {
             m["myint"] = i;
-            pooled.createComponent(i, m);
+            pooled->createComponent(i, m);
         }
         int count = 1;
-        for(PIterator i = pooled.pbegin(); i != pooled.pend(); ++i)
+        for(PIterator i = pooled->pbegin(); i != pooled->pend(); ++i)
         {
             Testing* o = static_cast<Testing*>(*i);
-            QCOMPARE(o, static_cast<Testing*>(pooled.component(count++)));
+            QCOMPARE(o, static_cast<Testing*>(pooled->component(count++)));
         }
     }
 };

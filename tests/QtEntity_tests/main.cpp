@@ -5,6 +5,7 @@
 #include "test_readerwriterjson.h"
 #include "test_pooledentitysystem.h"
 #include "test_prefabsystem.h"
+#include "test_scripting.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,6 +17,7 @@ int main(int argc, char *argv[])
     { ReaderWriterJSONTest t; if(0 != QTest::qExec(&t, argc, argv)) return 1; }
     { PooledEntitySystemTest t; if(0 != QTest::qExec(&t, argc, argv)) return 1; }
     { PrefabSystemTest t; if(0 != QTest::qExec(&t, argc, argv)) return 1; }
+    { ScriptingTest t; if(0 != QTest::qExec(&t, argc, argv)) return 1; }
 
     return 0;
 }

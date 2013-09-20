@@ -26,7 +26,14 @@ set(LIB_SOURCES
   ${SOURCE_PATH}/ReaderWriterJSON.cpp
 )
 
-add_library(${LIB_NAME} ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} )
+set(MOC_INPUT
+   ${HEADER_PATH}/EntityManager
+   ${HEADER_PATH}/EntitySystem
+)
+
+QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})
+
+add_library( ${LIB_NAME} ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} ${MOC_SOURCES} )
 
 #widgets is needed for QColor and other data types:
 qt5_use_modules(${LIB_NAME} Core Widgets)

@@ -72,7 +72,9 @@ namespace QtEntity
     {
         
     public:
-        PrefabSystem();
+        typedef SimpleEntitySystem<PrefabInstance> BaseClass;
+
+        PrefabSystem(QtEntity::EntityManager* em);
         ~PrefabSystem();
 
         //bool saveEntityAsPrefab(EntityId entity, const QString& path, const QVariantMap& properties) const;

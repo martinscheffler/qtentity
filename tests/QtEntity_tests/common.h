@@ -75,7 +75,8 @@ public:
 class TestingSystem : public SimpleEntitySystem<Testing>
 {     
 public:
-    TestingSystem()
+    TestingSystem(QtEntity::EntityManager* em)
+        : SimpleEntitySystem<Testing>(em)
     {
         QTE_ADD_PROPERTY("myint", int, Testing, myInt, setMyInt);        
         QTE_ADD_PROPERTY("myvec2", QVector2D, Testing, myVec2, setMyVec2);

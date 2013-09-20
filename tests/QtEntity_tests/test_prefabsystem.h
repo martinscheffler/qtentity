@@ -16,12 +16,10 @@ private slots:
     void create()
     {
         EntityManager em;
-        PrefabSystem* ps = new PrefabSystem();
-        em.addSystem(ps);
-
-        TestingSystem* ts = new TestingSystem();
-        em.addSystem(ts);
-
+        PrefabSystem* ps = new PrefabSystem(&em);
+        
+        TestingSystem* ts = new TestingSystem(&em);
+        
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
 
@@ -47,12 +45,10 @@ private slots:
     void update()
     {
         EntityManager em;
-        PrefabSystem* ps = new PrefabSystem();
-        em.addSystem(ps);
-
-        TestingSystem* ts = new TestingSystem();
-        em.addSystem(ts);
-
+        PrefabSystem* ps = new PrefabSystem(&em);
+        
+        TestingSystem* ts = new TestingSystem(&em);
+       
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
 
@@ -80,12 +76,10 @@ private slots:
     void destroyComponent()
     {
         EntityManager em;
-        PrefabSystem* ps = new PrefabSystem();
-        em.addSystem(ps);
-
-        TestingSystem* ts = new TestingSystem();
-        em.addSystem(ts);
-
+        PrefabSystem* ps = new PrefabSystem(&em);
+        
+        TestingSystem* ts = new TestingSystem(&em);
+        
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
 
@@ -116,12 +110,10 @@ private slots:
     void add()
     {
         EntityManager em;
-        PrefabSystem* ps = new PrefabSystem();
-        em.addSystem(ps);
-
-        TestingSystem* ts = new TestingSystem();
-        em.addSystem(ts);
-
+        PrefabSystem* ps = new PrefabSystem(&em);
+        
+        TestingSystem* ts = new TestingSystem(&em);
+        
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
 

@@ -24,7 +24,8 @@ class DamageSystem : public QtEntity::PooledEntitySystem<Damage>
 {    
 
 public:
-    DamageSystem();
+    typedef QtEntity::PooledEntitySystem<Damage> BaseClass;
+    DamageSystem(QtEntity::EntityManager* em);
 
     void step(int frameNumber, int totalTime, int delta);
 };

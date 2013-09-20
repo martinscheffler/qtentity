@@ -21,6 +21,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <unordered_map>
 #include <QAtomicInt>
 #include <QVariantMap>
+#include <QObject>
 
 namespace QtEntity
 {
@@ -33,8 +34,10 @@ namespace QtEntity
      * convenience methods to get, add or remove components from these systems.
      * The entity manager is also responsible for creating unique entity IDs which are basically integers counting up.
      */
-    class QTENTITY_EXPORT EntityManager
+    class QTENTITY_EXPORT EntityManager : public QObject
     {
+        Q_OBJECT
+
     public:
 
         // data type for entity system container
@@ -48,7 +51,7 @@ namespace QtEntity
          *        integers, starting with 1 and counting up from there.
          * @return a new entity id
          */
-        EntityId createEntityId();
+        Q_INVOKABLE QtEntity::EntityId createEntityId();
 
         /**
          * @brief system returns an entity system that holds components
@@ -56,7 +59,7 @@ namespace QtEntity
          *        Iterates through all entity systems, so has O(n/2) of number of entity systems
          * @return nullptr if not found, else the system
          */
-        EntitySystem* system(const QString& classname) const;
+        Q_INVOKABLE EntitySystem* system(const QString& classname) const;
 
         
         /**
@@ -72,7 +75,7 @@ namespace QtEntity
          * deleted when entity manager is deleted.
          * @throw runtime_error if entity system already in manager
          */
-        void addSystem(EntitySystem* es);
+        void addSystem(ClassTypeId cid, EntitySystem* es);
 
         /**
          * @brief removeSystem removes entity system from manager.

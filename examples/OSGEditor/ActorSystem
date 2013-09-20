@@ -50,14 +50,13 @@ private:
 
 
 class ActorSystem 
-    : public QObject
-    , public QtEntity::PooledEntitySystem<Actor>
+    : public QtEntity::PooledEntitySystem<Actor>
 {
     Q_OBJECT
-    typedef QtEntity::PooledEntitySystem<Actor> Super;
+    typedef QtEntity::PooledEntitySystem<Actor> BaseClass;
 public:
 
-    ActorSystem(osg::Group* rootnode);
+    ActorSystem(QtEntity::EntityManager* em, osg::Group* rootnode);
 
     // override to emit signal for creating entity list entry
     virtual QtEntity::Component* createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;

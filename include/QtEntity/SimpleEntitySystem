@@ -41,7 +41,10 @@ namespace QtEntity
          * @param componentMeta the QMetaObject of the Component subclass that
          *                      this entity system uses as components
          */
-        SimpleEntitySystem() {}
+        SimpleEntitySystem(EntityManager* em) 
+            : EntitySystem(T::classTypeId(), em)
+        {
+        }
 
         virtual ~SimpleEntitySystem()
 	    {

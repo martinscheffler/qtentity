@@ -52,11 +52,9 @@ namespace QtEntity
     }
 
 
-    void EntityManager::addSystem(EntitySystem* es)
+    void EntityManager::addSystem(ClassTypeId cid, EntitySystem* es)
     {
-        ClassTypeId ctype = es->componentType();
-        _systems[ctype] = es;
-        es->setEntityManager(this);
+        _systems[cid] = es;        
     }
 
 

@@ -5,7 +5,8 @@
 
 IMPLEMENT_COMPONENT_TYPE(Damage)
 
-DamageSystem::DamageSystem()
+DamageSystem::DamageSystem(QtEntity::EntityManager* em)
+    : BaseClass(em)
 {
     QTE_ADD_PROPERTY("energy", int, Damage, energy, setEnergy);
 }

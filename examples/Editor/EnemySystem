@@ -27,7 +27,8 @@ private:
 class EnemySystem : public QtEntity::PooledEntitySystem<Enemy>
 {
 public:
-    EnemySystem();
+    typedef QtEntity::PooledEntitySystem<Enemy> BaseClass;
+    EnemySystem(QtEntity::EntityManager* em);
 
     void step(int frameNumber, int totalTime, int delta);
 

@@ -19,8 +19,7 @@ private slots:
         EntitySystem* esnothing = em.system(Testing::classTypeId());
         QVERIFY(esnothing == nullptr);
 
-        auto es = new TestingSystem();
-        em.addSystem(es);
+        auto es = new TestingSystem(&em);
         EntitySystem* es2 = em.system(Testing::classTypeId());
         QVERIFY(es == es2);
     }  
@@ -29,8 +28,7 @@ private slots:
     {
         EntityManager em;
 
-        auto es = new TestingSystem();
-        em.addSystem(es);
+        auto es = new TestingSystem(&em);
         em.removeSystem(es);
         EntitySystem* es2 = em.system(Testing::classTypeId());
         QVERIFY(nullptr == es2);
@@ -41,8 +39,7 @@ private slots:
     void getComponent()
     {
         EntityManager em;
-        auto es = new TestingSystem();
-        em.addSystem(es);
+        auto es = new TestingSystem(&em);
         Testing *comp, *comp2;
         em.createComponent(1, comp);
 
@@ -54,8 +51,7 @@ private slots:
     void getComponent2()
     {
         EntityManager em;
-        auto es = new TestingSystem();
-        em.addSystem(es);
+        auto es = new TestingSystem(&em);
         Testing *comp, *comp2;
         em.createComponent(1, comp);
 
@@ -66,8 +62,7 @@ private slots:
     void createComponent2()
     {
         EntityManager em;
-        auto es = new TestingSystem();
-        em.addSystem(es);
+        auto es = new TestingSystem(&em);
         auto c1 = em.createComponent<Testing>(1);
 
         Testing* c2;
@@ -79,8 +74,7 @@ private slots:
     void destroyComponent()
     {
         EntityManager em;
-        auto es = new TestingSystem();
-        em.addSystem(es);
+        auto es = new TestingSystem(&em);
         Testing *comp, *comp2;
         em.createComponent(1, comp);
         em.createComponent(2, comp2);
@@ -96,8 +90,7 @@ private slots:
     void destroyEntity()
     {
         EntityManager em;
-        auto es = new TestingSystem();
-        em.addSystem(es);
+        auto es = new TestingSystem(&em);
         Testing *comp;
         em.createComponent(1, comp);
         em.destroyEntity(1);
@@ -109,8 +102,7 @@ private slots:
     void getOrCreateComponent()
     {
         EntityManager em;
-        auto es = new TestingSystem();
-        em.addSystem(es);
+        auto es = new TestingSystem(&em);
         Testing *comp, *comp2;
         em.getOrCreateComponent(1, comp);
 
