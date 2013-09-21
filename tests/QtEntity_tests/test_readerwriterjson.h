@@ -49,7 +49,7 @@ private slots:
     void decode()
     {
         EntityManager em;
-        TestingSystem* ts = new TestingSystem(&em);
+        new TestingSystem(&em);
 
         QString jsonstr = "{\"classname\": \"Testing\", \"mycolor\": \"0,0,0,255\",\"myint\": 666,\"myvec2\": \"0,0\",\"myvec3\": \"-1,0,354\",\"myvec4\": \"0,0,0,0\"}";
         QJsonDocument doc = QJsonDocument::fromJson(jsonstr.toUtf8());

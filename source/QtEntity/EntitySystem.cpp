@@ -62,10 +62,14 @@ namespace QtEntity
 
 
     EntitySystem::EntitySystem(ClassTypeId cid, EntityManager* em)
-        : _entityManager(em)
+        : QObject(em)
+        , _entityManager(em)
     {
         em->addSystem(cid, this);
-        //setObjectName(componentName());        
+
+        // Set object name, this is important to make the system accessible
+        // from QtScripts
+        setObjectName(ComponentRegistry::className(cid));
     }
 
 

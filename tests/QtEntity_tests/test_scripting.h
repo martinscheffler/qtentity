@@ -15,7 +15,6 @@ inline void entityIdFromScriptValue(const QScriptValue &obj, QtEntity::EntityId 
 }
 
 
-
 class ScriptingTest: public QObject
 {
     Q_OBJECT
@@ -51,15 +50,13 @@ private slots:
     }
         
     void testCreateComponent()
-    {
-        /*QtEntity::EntityId count = _em.createEntityId();        
-        QScriptValue ret = _engine.evaluate("EM.system(\"Testing\");");
+    {        
+        QScriptValue ret = _engine.evaluate("EM.Testing.createComponent(1);EM.Testing.count();");
         if(_engine.hasUncaughtException())
         {
             qDebug() << "Script error: " << _engine.uncaughtException().toString();
         }
-        QtEntity::EntitySystem* es = qscriptvalue_cast<QtEntity::EntitySystem*>(ret);
-        QCOMPARE(es, _ts);*/
+        QCOMPARE(ret.toInt32(), 1);
     }
 };
 

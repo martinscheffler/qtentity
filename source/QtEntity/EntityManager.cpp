@@ -29,10 +29,6 @@ namespace QtEntity
 
 	EntityManager::~EntityManager()
 	{
-        for(auto i = _systems.begin(); i != _systems.end(); ++i)
-        {
-            delete i->second;
-        }
 	}
 
 
@@ -71,6 +67,7 @@ namespace QtEntity
         assert(j != _systems.end());
         assert(es == j->second);
         _systems.erase(j);
+        es->setParent(nullptr);
         return true;
     }
 

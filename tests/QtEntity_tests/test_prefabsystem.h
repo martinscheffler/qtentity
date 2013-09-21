@@ -18,7 +18,7 @@ private slots:
         EntityManager em;
         PrefabSystem* ps = new PrefabSystem(&em);
         
-        TestingSystem* ts = new TestingSystem(&em);
+        new TestingSystem(&em);
         
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
@@ -47,7 +47,7 @@ private slots:
         EntityManager em;
         PrefabSystem* ps = new PrefabSystem(&em);
         
-        TestingSystem* ts = new TestingSystem(&em);
+        new TestingSystem(&em);
        
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
@@ -78,7 +78,7 @@ private slots:
         EntityManager em;
         PrefabSystem* ps = new PrefabSystem(&em);
         
-        TestingSystem* ts = new TestingSystem(&em);
+        new TestingSystem(&em);
         
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
@@ -112,7 +112,7 @@ private slots:
         EntityManager em;
         PrefabSystem* ps = new PrefabSystem(&em);
         
-        TestingSystem* ts = new TestingSystem(&em);
+        new TestingSystem(&em);
         
         QVariantMap mycomponent;
         mycomponent["myint"] = 12345;
