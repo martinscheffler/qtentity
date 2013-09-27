@@ -7,7 +7,7 @@
 #include <QtGui/QVector3D>
 #include <QtGui/QVector4D>
 #include <QtGui/QColor>
-
+#include <QScriptable>
 
 using namespace QtEntity;
 
@@ -87,4 +87,16 @@ public:
 
         QtEntity::registerMetaTypes();
     }
+};
+
+
+class EntitySystemPrototype : public QObject, public QScriptable
+{
+    Q_OBJECT
+public:
+    EntitySystemPrototype(QObject *parent = 0);
+
+
+    Q_INVOKABLE bool createComponent(QtEntity::EntityId id, const QVariantMap& params);
+    Q_INVOKABLE quint32 count() const;
 };

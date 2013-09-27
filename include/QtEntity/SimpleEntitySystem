@@ -19,7 +19,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtEntity/Export>
 #include <QtEntity/EntitySystem>
 #include <unordered_map>
-#include <stdexcept>
 
 namespace QtEntity
 {
@@ -76,7 +75,6 @@ namespace QtEntity
 
         /**
          * @brief createComponent Construct a component from meta type.
-         * @throw runtime_exception
          *
          * If you override this method then please make sure that you emit componentCreated() when
          * a component was created
@@ -91,7 +89,8 @@ namespace QtEntity
             // check if component already exists
             if(component(id) != nullptr)
             {
-                throw std::runtime_error("Component already existss!");
+                qCritical() << "Component already exists!";
+                return nullptr;
             }
 
             // use QMetaObject to construct new instance
@@ -100,7 +99,7 @@ namespace QtEntity
             if(component == nullptr)
             {
                 qCritical() << "Could not construct component. Have you registered the component type?";
-                throw std::runtime_error("Component could not be constructed.");
+                return nullptr;
             }
 
             // store

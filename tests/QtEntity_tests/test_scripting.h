@@ -31,6 +31,9 @@ public:
          QScriptValue objectValue = _engine.newQObject(&_em);
         _engine.globalObject().setProperty("EM", objectValue);
         qScriptRegisterMetaType(&_engine, entityIdToScriptValue, entityIdFromScriptValue);
+
+        EntitySystemPrototype* esProto = new EntitySystemPrototype();
+        _engine.setDefaultPrototype(qMetaTypeId<QtEntity::EntitySystem*>(), _engine.newQObject(esProto));
     }
 
 
@@ -51,12 +54,24 @@ private slots:
         
     void testCreateComponent()
     {        
-        QScriptValue ret = _engine.evaluate("EM.Testing.createComponent(1);EM.Testing.count();");
+        size_t count = _ts->count();       
+        QScriptValue ret = _engine.evaluate("EM.Testing.createComponent(667, {myint:999});");
         if(_engine.hasUncaughtException())
         {
             qDebug() << "Script error: " << _engine.uncaughtException().toString();
         }
-        QCOMPARE(ret.toInt32(), 1);
+        QCOMPARE(_ts->count(), count + 1);
+    }
+
+    void testGetProperty()
+    {        
+        size_t count = _ts->count();       
+        QScriptValue ret = _engine.evaluate("EM.Testing.createComponent(667, {myint:999});");
+        if(_engine.hasUncaughtException())
+        {
+            qDebug() << "Script error: " << _engine.uncaughtException().toString();
+        }
+        QCOMPARE(_ts->count(), count + 1);
     }
 };
 
