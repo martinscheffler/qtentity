@@ -65,13 +65,15 @@ private slots:
 
     void testGetProperty()
     {        
-        size_t count = _ts->count();       
-        QScriptValue ret = _engine.evaluate("EM.Testing.createComponent(667, {myint:999});");
+        size_t count = _ts->count();   
+        QVariantMap m; m["myint"] = 12345;
+        _ts->createComponent(999, m);
+        QScriptValue ret = _engine.evaluate("var prop = EM.Testing.property('myint'); prop.read(999);");
         if(_engine.hasUncaughtException())
         {
             qDebug() << "Script error: " << _engine.uncaughtException().toString();
         }
-        QCOMPARE(_ts->count(), count + 1);
+        QCOMPARE(ret.toInt32(), 12345);
     }
 };
 
