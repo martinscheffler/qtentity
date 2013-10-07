@@ -106,7 +106,34 @@ namespace QtEntity
         addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), getter, setter, ATTRIBS));\
     }
 
+/**
+     * Macro to create and register a PropertyAccessor for a getter/setter pair of an entity system.
+     * Expects a setter and getter pair of methods in the entity system, getter expecting a single entity id argument, setter two args,
+     * an entity id and a QVariant.
+     * Parameter NAME: String name of parameter. Used to access this later.
+     * Parameter VARIANTTYPE or class name parameter value. Has to be registered with qRegisterMetaType.
+     * Parameter GETTER: method name of getter on entity system. Method has return value of type QVariant and an entity id as input
+     * Parameter SETTER: method name of getter on component. Method has void return value and two args, EntityId and QVariant.
+     */
+#define QTE_ADD_SYSTEM_PROPERTY(NAME, VARIANTTYPE, GETTER, SETTER) \
+    {   addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), std::bind(GETTER, this, std::placeholders::_1),\
+        std::bind(SETTER, this, std::placeholders::_1, std::placeholders::_2)));\
+    }
 
+    /**
+     * Macro to create and register a PropertyAccessor for a getter/setter pair of an entity system.
+     * Expects a setter and getter pair of methods in the entity system, getter expecting a single entity id argument, setter two args,
+     * an entity id and a QVariant.
+     * Parameter NAME: String name of parameter. Used to access this later.
+     * Parameter VARIANTTYPE or class name parameter value. Has to be registered with qRegisterMetaType.
+     * Parameter GETTER: method name of getter on entity system. Method has return value of type QVariant and an entity id as input
+     * Parameter SETTER: method name of getter on component. Method has void return value and two args, EntityId and QVariant.
+     * Parameter ATTRIBS a QVariantMap with attributes that are stored in the property accessor and can be used by property browser.
+     */
+#define QTE_ADD_SYSTEM_PROPERTY_WITH_ATTRIBS(NAME, VARIANTTYPE, GETTER, SETTER, ATTRIBS) \
+    {   addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), std::bind(GETTER, this, std::placeholders::_1),\
+        std::bind(SETTER, this, std::placeholders::_1, std::placeholders::_2)), ATTRIBS);\
+    }
     /**
      * Base class for all QtEntity components.
      * Simply holds a type id for identifying the type of the component.
