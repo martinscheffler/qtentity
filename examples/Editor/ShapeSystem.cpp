@@ -1,5 +1,7 @@
 #include "ShapeSystem"
 
+#include <QtEntity/PropertyAccessor>
+
 IMPLEMENT_COMPONENT_TYPE(Shape)
 
 

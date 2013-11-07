@@ -18,16 +18,43 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtEntity/Export>
 #include <QtEntity/DataTypes>
-#include <QtEntity/PropertyAccessor>
 #include <QVariantMap>
 #include <QDebug>
 
 namespace QtEntity
 {
+    /**
+     * Empty macro to use when no exporter macro is needed
+     */
+#define NOEXP
 
+    /**
+     * Macro to use in class declaration of QtEntity::Component subclasses.B
+     * Adds a static class type id and a dynamic, virtual type id method.
+     * Parameter EXMACRO can be used to pass name of export macro for windows DLLs.
+     * Use NOEXP as parameter if methods don't need to be exported or the whole
+     * component class is exported
+     */
+#define DECLARE_COMPONENT_TYPE(EXPMACRO)\
+    public:\
+        EXPMACRO static QtEntity::ClassTypeId classTypeId();\
+        EXPMACRO virtual QtEntity::ClassTypeId typeId() const override;\
+    private:\
+        static QtEntity::ClassTypeId _typeId;
     /**
      * Global methods assigning class type ids
      */
+
+    /**
+     * Macro for implementing the component types of a component.
+     * Call this in the cpp of a component.
+     * Use parameter TYPE to pass in class name of the component
+     */
+#define IMPLEMENT_COMPONENT_TYPE(TYPE)\
+    QtEntity::ClassTypeId TYPE::_typeId = QtEntity::ComponentRegistry::registerComponent(#TYPE);\
+    QtEntity::ClassTypeId TYPE::classTypeId(void) { return TYPE::_typeId; }\
+    QtEntity::ClassTypeId TYPE::typeId(void) const { return _typeId; }
+
     namespace ComponentRegistry
     {
         QTENTITY_EXPORT ClassTypeId registerComponent(const QString& classname);
@@ -122,6 +149,7 @@ namespace QtEntity
 
     // fwd declaration
     class EntityManager;
+    class PropertyAccessor;
 
     /**
      * Entity system base class.
@@ -243,35 +271,14 @@ namespace QtEntity
      * @param eid ID of component entity to fetch from
      * @return A map from property names to QVariant values
      */
-    inline QVariantMap propertyValues(EntitySystem* es, EntityId eid)
-    {
-        QVariantMap m;
-        for(int i = 0; i < es->propertyCount(); ++i)
-        {
-            auto prop = es->property(i);
-            m[prop->name()] = prop->read(eid);
-        }
-        return m;
-    }
+    QVariantMap QTENTITY_EXPORT propertyValues(EntitySystem* es, EntityId eid);
 
     /**
      * Helper function to fetch all property attributes for an entity system.
      * @param es Entity system to fetch from
      * @return A map from property names to property attributes map
      */
-    inline QVariantMap propertyAttributes(EntitySystem* es)
-    {
-        QVariantMap m;
-        for(int i = 0; i < es->propertyCount(); ++i)
-        {
-            auto prop = es->property(i);
-            if(!prop->attributes().empty())
-            {
-                m[prop->name()] = prop->attributes();
-            }
-        }
-        return m;
-    }
+    QVariantMap QTENTITY_EXPORT propertyAttributes(EntitySystem* es);
 
     /**
      * Helper function to assign multiple property values to a specified component
@@ -280,19 +287,5 @@ namespace QtEntity
      * @param eid ID identifying component
      * @param m A map from property name => value
      */
-    inline void applyPropertyValues(EntitySystem* es, EntityId eid, const QVariantMap& m)
-    {
-        for(int i = 0; i < es->propertyCount(); ++i)
-        {
-            auto prop = es->property(i);
-            if(m.contains(prop->name())) 
-            {
-                bool success = prop->write(eid, m[prop->name()]);
-                if(!success)
-                {
-                    qWarning() << "Could not set property. Name is: " << prop->name();
-                }
-            }
-        }
-    }
+    void QTENTITY_EXPORT applyPropertyValues(EntitySystem* es, EntityId eid, const QVariantMap& m);
 }

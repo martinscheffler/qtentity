@@ -18,6 +18,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtEntity/EntitySystem>
 #include <QDebug>
+#include <assert.h>
 
 namespace QtEntity
 {

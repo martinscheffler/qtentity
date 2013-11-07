@@ -15,8 +15,10 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include <QtEntity/EntitySystem>
-#include <unordered_map>
+
 #include <QtEntity/EntityManager>
+#include <QtEntity/PropertyAccessor>
+#include <unordered_map>
 
 namespace QtEntity
 {
@@ -101,4 +103,47 @@ namespace QtEntity
         _properties.push_back(a); 
     }
 
+
+    QVariantMap propertyValues(EntitySystem* es, EntityId eid)
+    {
+        QVariantMap m;
+        for(int i = 0; i < es->propertyCount(); ++i)
+        {
+            auto prop = es->property(i);
+            m[prop->name()] = prop->read(eid);
+        }
+        return m;
+    }
+
+
+    QVariantMap propertyAttributes(EntitySystem* es)
+    {
+        QVariantMap m;
+        for(int i = 0; i < es->propertyCount(); ++i)
+        {
+            auto prop = es->property(i);
+            if(!prop->attributes().empty())
+            {
+                m[prop->name()] = prop->attributes();
+            }
+        }
+        return m;
+    }
+
+
+    void applyPropertyValues(EntitySystem* es, EntityId eid, const QVariantMap& m)
+    {
+        for(int i = 0; i < es->propertyCount(); ++i)
+        {
+            auto prop = es->property(i);
+            if(m.contains(prop->name())) 
+            {
+                bool success = prop->write(eid, m[prop->name()]);
+                if(!success)
+                {
+                    qWarning() << "Could not set property. Name is: " << prop->name();
+                }
+            }
+        }
+    }
 }

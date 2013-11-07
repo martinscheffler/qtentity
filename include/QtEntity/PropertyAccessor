@@ -19,7 +19,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtEntity/Export>
 #include <QtEntity/DataTypes>
 #include <functional>
-#include <assert.h>
 #include <QString>
 #include <QVariantMap>
 #include <QObject>
@@ -27,35 +26,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace QtEntity
 {
  
-    /**
-     * Empty macro to use when no exporter macro is needed
-     */
-#define NOEXP
-
-    /**
-     * Macro to use in class declaration of QtEntity::Component subclasses.
-     * Adds a static class type id and a dynamic, virtual type id method.
-     * Parameter EXMACRO can be used to pass name of export macro for windows DLLs.
-     * Use NOEXP as parameter if methods don't need to be exported or the whole
-     * component class is exported
-     */
-#define DECLARE_COMPONENT_TYPE(EXPMACRO)\
-    public:\
-        EXPMACRO static QtEntity::ClassTypeId classTypeId();\
-        EXPMACRO virtual QtEntity::ClassTypeId typeId() const override;\
-    private:\
-        static QtEntity::ClassTypeId _typeId;
-
-
-    /**
-     * Macro for implementing the component types of a component.
-     * Call this in the cpp of a component.
-     * Use parameter TYPE to pass in class name of the component
-     */
-#define IMPLEMENT_COMPONENT_TYPE(TYPE)\
-    QtEntity::ClassTypeId TYPE::_typeId = QtEntity::ComponentRegistry::registerComponent(#TYPE);\
-    QtEntity::ClassTypeId TYPE::classTypeId(void) { return TYPE::_typeId; }\
-    QtEntity::ClassTypeId TYPE::typeId(void) const { return _typeId; }
 
     /**
      * Macro to create and register a PropertyAccessor for a getter/setter pair of a component.
@@ -156,17 +126,17 @@ namespace QtEntity
         /**
          * Name of parameter
          */
-        QString name() const;
+        Q_INVOKABLE QString name() const;
 
         /**
          * Fetches parameter value from component with given id
          */
-        QVariant read(EntityId id) const;
+        Q_INVOKABLE QVariant read(EntityId id) const;
 
         /**
          *  Calls setter method with parameter val, writing to component identified by id
         */
-        bool write(EntityId id, const QVariant& val) const;
+        Q_INVOKABLE bool write(EntityId id, const QVariant& val) const;
 
         /**
          * Fetch parameter attributes map

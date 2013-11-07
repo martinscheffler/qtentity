@@ -2,6 +2,7 @@
 #include "ShapeSystem"
 
 #include <QtEntity/EntityManager>
+#include <QtEntity/PropertyAccessor>
 
 IMPLEMENT_COMPONENT_TYPE(Damage)
 

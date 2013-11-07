@@ -1,4 +1,6 @@
 #include "ActorSystem"
+
+#include <QtEntity/PropertyAccessor>
 #include <osg/Geode>
 #include <QStringList>
 

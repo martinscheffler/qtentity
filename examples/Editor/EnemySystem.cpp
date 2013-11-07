@@ -1,6 +1,7 @@
 #include "EnemySystem"
-#include "ShapeSystem"
 
+#include "ShapeSystem"
+#include <QtEntity/PropertyAccessor>
 #include <QtEntity/EntityManager>
 
 IMPLEMENT_COMPONENT_TYPE(Enemy)

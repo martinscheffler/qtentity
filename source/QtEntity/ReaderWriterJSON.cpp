@@ -18,6 +18,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtEntity/EntityManager>
 #include <QtEntity/EntitySystem>
+#include <QtEntity/PropertyAccessor>
 #include <QtEntity/VecUtils>
 #include <QColor>
 #include <QDebug>

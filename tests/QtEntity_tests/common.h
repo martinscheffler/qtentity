@@ -2,6 +2,7 @@
 
 #include <QtEntity/EntityManager>
 #include <QtEntity/SimpleEntitySystem>
+#include <QtEntity/PropertyAccessor>
 #include <QtEntity/DataTypes>
 #include <QtCore/QObject>
 #include <QtGui/QColor>

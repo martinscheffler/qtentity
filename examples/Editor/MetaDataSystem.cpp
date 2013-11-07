@@ -1,5 +1,6 @@
 #include "MetaDataSystem"
 
+#include <QtEntity/PropertyAccessor>
 
 IMPLEMENT_COMPONENT_TYPE(MetaData)
 

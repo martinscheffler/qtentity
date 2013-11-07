@@ -15,6 +15,8 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include <QtEntityUtils/EntityEditor>
+
+#include <QtEntity/PropertyAccessor>
 #include <QtEntityUtils/VariantFactory>
 #include <QtEntityUtils/VariantManager>
 #include <QtEntityUtils/PropertyObjectsEdit>

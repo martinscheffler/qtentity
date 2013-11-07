@@ -17,6 +17,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtEntity/PrefabSystem>
 
 #include <QtEntity/EntityManager>
+#include <QtEntity/PropertyAccessor>
 #include <QMetaProperty>
 
 namespace QtEntity
