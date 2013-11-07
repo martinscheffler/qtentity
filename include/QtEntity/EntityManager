@@ -43,12 +43,20 @@ namespace QtEntity
         // data type for entity system container
         typedef std::unordered_map<ClassTypeId,EntitySystem*> EntitySystemStore;
 
+        /**
+         * CTor
+         */
         EntityManager(QObject* parent = nullptr);
-		~EntityManager();            
+
+        /**
+         * DTor
+         */
+        ~EntityManager();
 
         /**
          * @brief createEntityId is a thread-safe method returning
-         *        integers, starting with 1 and counting up from there.
+         *        integers for identifying entities,
+         *        starting with 1 and counting up from there.
          * @return a new entity id
          */
         Q_INVOKABLE QtEntity::EntityId createEntityId();

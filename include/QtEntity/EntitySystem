@@ -317,8 +317,19 @@ namespace QtEntity
 
     public:
 
-        EntitySystem(ClassTypeId cid, EntityManager* em);
-        virtual ~EntitySystem();
+        /**
+         * CTor.
+         *@param cid Class type id uniquely identifying this entity system.
+         *           The id is usually created by ComponentRegistry::registerComponent.
+         *@param em Entity manager that should hold this system. Class instance is
+         *          added to the entity manager. Entity manager takes ownership.
+         */
+        QTENTITY_EXPORT EntitySystem(ClassTypeId cid, EntityManager* em);
+
+        /**
+         * DTor. Deletes all components.
+         */
+        QTENTITY_EXPORT virtual ~EntitySystem();
         
         /**
          * Fetch entity manager this system is assigned to
@@ -410,6 +421,13 @@ namespace QtEntity
         
     };
 
+    /**
+     * Helper function for fetching a map containing property names => values
+     * from an entity system for a specific component
+     * @param es Entity system to fetch from
+     * @param eid ID of component entity to fetch from
+     * @return A map from property names to QVariant values
+     */
     inline QVariantMap propertyValues(EntitySystem* es, EntityId eid)
     {
         QVariantMap m;
@@ -421,6 +439,11 @@ namespace QtEntity
         return m;
     }
 
+    /**
+     * Helper function to fetch all property attributes for an entity system.
+     * @param es Entity system to fetch from
+     * @return A map from property names to property attributes map
+     */
     inline QVariantMap propertyAttributes(EntitySystem* es)
     {
         QVariantMap m;
@@ -435,6 +458,13 @@ namespace QtEntity
         return m;
     }
 
+    /**
+     * Helper function to assign multiple property values to a specified component
+     * in the given system
+     * @param es Entity system holding component
+     * @param eid ID identifying component
+     * @param m A map from property name => value
+     */
     inline void applyPropertyValues(EntitySystem* es, EntityId eid, const QVariantMap& m)
     {
         for(int i = 0; i < es->propertyCount(); ++i)
