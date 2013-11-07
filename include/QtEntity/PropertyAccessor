@@ -1,0 +1,210 @@
+#pragma once
+
+/*
+Copyright (c) 2013 Martin Scheffler
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial 
+portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+#include <functional>
+#include <assert.h>
+#include <QString>
+#include <QVariantMap>
+
+namespace QtEntity
+{
+ 
+    /**
+     * Empty macro to use when no exporter macro is needed
+     */
+#define NOEXP
+
+    /**
+     * Macro to use in class declaration of QtEntity::Component subclasses.
+     * Adds a static class type id and a dynamic, virtual type id method.
+     * Parameter EXMACRO can be used to pass name of export macro for windows DLLs.
+     * Use NOEXP as parameter if methods don't need to be exported or the whole
+     * component class is exported
+     */
+#define DECLARE_COMPONENT_TYPE(EXPMACRO)\
+    public:\
+        EXPMACRO static QtEntity::ClassTypeId classTypeId();\
+        EXPMACRO virtual QtEntity::ClassTypeId typeId() const override;\
+    private:\
+        static QtEntity::ClassTypeId _typeId;
+
+
+    /**
+     * Macro for implementing the component types of a component.
+     * Call this in the cpp of a component.
+     * Use parameter TYPE to pass in class name of the component
+     */
+#define IMPLEMENT_COMPONENT_TYPE(TYPE)\
+    QtEntity::ClassTypeId TYPE::_typeId = QtEntity::ComponentRegistry::registerComponent(#TYPE);\
+    QtEntity::ClassTypeId TYPE::classTypeId(void) { return TYPE::_typeId; }\
+    QtEntity::ClassTypeId TYPE::typeId(void) const { return _typeId; }
+
+    /**
+     * Macro to create and register a PropertyAccessor for a getter/setter pair of a component.
+     * Creates one lambda function for getter and one for the setter and stores them in a property accessor
+     * Parameter NAME: String name of parameter. Used to access this later.
+     * Parameter VARIANTTYPE or class name parameter value. Has to be registered with qRegisterMetaType.
+     * Parameter COMPONENTTYPE: Class name of component
+     * Parameter GETTER: method name of getter on component. Method has return value of type VARIANTTYPE and no parameters.
+     * Parameter SETTER: method name of getter on component. Method has void return value and a single paremeter of type VARIANTTYPE
+     */
+#define QTE_ADD_PROPERTY(NAME, VARIANTTYPE, COMPONENTTYPE, GETTER, SETTER) \
+    {    auto getter = [this](QtEntity::EntityId id) -> QVariant {\
+            auto c = static_cast<COMPONENTTYPE*>(component(id)); return(c) ? QVariant::fromValue(c->GETTER()) : QVariant();\
+        };\
+        auto setter = [this](QtEntity::EntityId id, const QVariant& v) {\
+            auto c = static_cast<COMPONENTTYPE*>(component(id)); if(!c) qDebug() << "Cannot write property " << NAME << ", component not found with id " << id; else c->SETTER(v.value<VARIANTTYPE>());\
+        };\
+        addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), getter, setter));\
+    }
+
+    /**
+     * Macro to create and register a PropertyAccessor for a getter/setter pair of a component. Also a QVariantMap with 
+     * attributes for the property are passed.
+     * Parameter NAME: String name of parameter. Used to access this later.
+     * Parameter VARIANTTYPE or class name parameter value. Has to be registered with qRegisterMetaType.
+     * Parameter COMPONENTTYPE: Class name of component
+     * Parameter GETTER: method name of getter on component. Method has return value of type VARIANTTYPE and no parameters.
+     * Parameter SETTER: method name of getter on component. Method has void return value and a single paremeter of type VARIANTTYPE
+     * Parameter ATTRIBS a QVariantMap with attributes that are stored in the property accessor and can be used by property browser.
+     */
+#define QTE_ADD_PROPERTY_WITH_ATTRIBS(NAME, VARIANTTYPE, COMPONENTTYPE, GETTER, SETTER, ATTRIBS) \
+    {    auto getter = [this](QtEntity::EntityId id) -> QVariant {\
+            auto c = static_cast<COMPONENTTYPE*>(component(id)); return(c) ? QVariant::fromValue(c->GETTER()) : QVariant();\
+        };\
+        auto setter = [this](QtEntity::EntityId id, const QVariant& v) {\
+            auto c = static_cast<COMPONENTTYPE*>(component(id)); if(!c) qDebug() << "Cannot write property " << NAME << ", component not found with id " << id; else c->SETTER(v.value<VARIANTTYPE>());\
+        };\
+        addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), getter, setter, ATTRIBS));\
+    }
+
+/**
+     * Macro to create and register a PropertyAccessor for a getter/setter pair of an entity system.
+     * Expects a setter and getter pair of methods in the entity system, getter expecting a single entity id argument, setter two args,
+     * an entity id and a QVariant.
+     * Parameter NAME: String name of parameter. Used to access this later.
+     * Parameter VARIANTTYPE or class name parameter value. Has to be registered with qRegisterMetaType.
+     * Parameter GETTER: method name of getter on entity system. Method has return value of type QVariant and an entity id as input
+     * Parameter SETTER: method name of getter on component. Method has void return value and two args, EntityId and QVariant.
+     */
+#define QTE_ADD_SYSTEM_PROPERTY(NAME, VARIANTTYPE, GETTER, SETTER) \
+    {   addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), std::bind(GETTER, this, std::placeholders::_1),\
+        std::bind(SETTER, this, std::placeholders::_1, std::placeholders::_2)));\
+    }
+
+    /**
+     * Macro to create and register a PropertyAccessor for a getter/setter pair of an entity system.
+     * Expects a setter and getter pair of methods in the entity system, getter expecting a single entity id argument, setter two args,
+     * an entity id and a QVariant.
+     * Parameter NAME: String name of parameter. Used to access this later.
+     * Parameter VARIANTTYPE or class name parameter value. Has to be registered with qRegisterMetaType.
+     * Parameter GETTER: method name of getter on entity system. Method has return value of type QVariant and an entity id as input
+     * Parameter SETTER: method name of getter on component. Method has void return value and two args, EntityId and QVariant.
+     * Parameter ATTRIBS a QVariantMap with attributes that are stored in the property accessor and can be used by property browser.
+     */
+#define QTE_ADD_SYSTEM_PROPERTY_WITH_ATTRIBS(NAME, VARIANTTYPE, GETTER, SETTER, ATTRIBS) \
+    {   addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), std::bind(GETTER, this, std::placeholders::_1),\
+        std::bind(SETTER, this, std::placeholders::_1, std::placeholders::_2)), ATTRIBS);\
+    }
+    
+
+
+    /**
+     * PropertyAccessor is used by entity systems to register properties of their components.
+     * They give read and write access to properties of components and hold additional
+     * attributes for that property in a variant map.
+     */
+    class QTENTITY_EXPORT PropertyAccessor
+    {
+    public:
+
+        /** Method pointer for getting a property value from a component*/
+        typedef std::function<QVariant(EntityId)> Getter;
+
+        /** Method pointer for setting a property value on a component*/
+        typedef std::function<void(EntityId, const QVariant&)> Setter;
+
+        PropertyAccessor()
+            : _name("")
+            , _variantType(0)
+            , _getter(nullptr)
+            , _setter(nullptr)
+        {
+        }
+
+        /**
+         * @param name String identifier of property
+         * @param variantType Qt Meta type id of property value
+         * @param getter std::Function pointer to getter method
+         * @param setter std::Function pointer to setter method
+         * @param attributes A QVariantMap which is stored in property accessor. Can be used to provide property attributes to QPropertyBrowser
+         */
+        PropertyAccessor(const QString& name, int variantType, Getter getter, Setter setter, const QVariantMap& attributes = QVariantMap())
+            : _name(name)
+            , _variantType(variantType)
+            , _getter(getter)
+            , _setter(setter)
+            , _attributes(attributes)
+        {
+        }
+
+        /**
+         * Name of parameter
+         */
+        QString name() const { return _name; }
+
+        /**
+         * Fetches parameter value from component with given id
+         */
+        QVariant read(EntityId id) const { assert(_getter); return _getter(id); }
+
+        /**
+         *  Calls setter method with parameter val, writing to component identified by id
+        */
+        bool write(EntityId id, const QVariant& val) { if(!_setter) return false; _setter(id, val); return true; }
+
+        /**
+         * Fetch parameter attributes map
+         */
+        const QVariantMap& attributes() const { return _attributes; }
+        
+        /**
+         * Returns if property accessor has a valid getter 
+         */
+        bool hasGetter() const { return _getter != nullptr; }
+        
+        /**
+         * Returns if property accessor has a valid setter 
+         */
+        bool hasSetter() const { return _setter != nullptr; }
+
+        /**
+         * QVariant type of parameter
+         */
+        int variantType() const { return _variantType; }
+
+    private:
+        QString _name;
+        int _variantType;
+        Getter _getter;
+        Setter _setter;
+        QVariantMap _attributes;
+    };
+
+
+}

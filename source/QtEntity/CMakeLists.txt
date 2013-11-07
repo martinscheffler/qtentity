@@ -15,6 +15,7 @@ set(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/EntitySystem
   ${HEADER_PATH}/PooledEntitySystem
   ${HEADER_PATH}/PrefabSystem
+  ${HEADER_PATH}/PropertyAccessor
   ${HEADER_PATH}/ReaderWriterJSON
   ${HEADER_PATH}/SimpleEntitySystem
   ${HEADER_PATH}/VecUtils
