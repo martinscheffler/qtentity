@@ -68,7 +68,7 @@ private slots:
         size_t count = _ts->count();   
         QVariantMap m; m["myint"] = 12345;
         _ts->createComponent(999, m);
-        QScriptValue ret = _engine.evaluate("var prop = EM.Testing.property('myint'); prop.read(999);");
+        QScriptValue ret = _engine.evaluate("var prop = EM.Testing.property('myint'); prop.read(999)");
         if(_engine.hasUncaughtException())
         {
             qDebug() << "Script error: " << _engine.uncaughtException().toString();

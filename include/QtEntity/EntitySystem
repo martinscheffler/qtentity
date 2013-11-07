@@ -132,7 +132,7 @@ namespace QtEntity
     {
         Q_OBJECT
 
-        QVector<PropertyAccessor> _properties;
+        QVector<const PropertyAccessor*> _properties;
         EntityManager* _entityManager;
 
     public:
@@ -208,14 +208,9 @@ namespace QtEntity
         int propertyCount() const;
 
         /**
-         * Return a property accessor by index
-         */
-        PropertyAccessor property(int idx);
-
-        /**
          * Return a const proeprty accessor by index
          */
-        const PropertyAccessor property(int idx) const;
+        const PropertyAccessor* property(int idx) const;
           
 
         /**
@@ -236,7 +231,7 @@ namespace QtEntity
         /**
          * Add a property accessor to system
          */
-        void addProperty(const PropertyAccessor& a);
+        void addProperty(const PropertyAccessor* a);
 
         
     };
@@ -254,7 +249,7 @@ namespace QtEntity
         for(int i = 0; i < es->propertyCount(); ++i)
         {
             auto prop = es->property(i);
-            m[prop.name()] = prop.read(eid);
+            m[prop->name()] = prop->read(eid);
         }
         return m;
     }
@@ -270,9 +265,9 @@ namespace QtEntity
         for(int i = 0; i < es->propertyCount(); ++i)
         {
             auto prop = es->property(i);
-            if(!prop.attributes().empty())
+            if(!prop->attributes().empty())
             {
-                m[prop.name()] = prop.attributes();
+                m[prop->name()] = prop->attributes();
             }
         }
         return m;
@@ -290,12 +285,12 @@ namespace QtEntity
         for(int i = 0; i < es->propertyCount(); ++i)
         {
             auto prop = es->property(i);
-            if(m.contains(prop.name())) 
+            if(m.contains(prop->name())) 
             {
-                bool success = prop.write(eid, m[prop.name()]);
+                bool success = prop->write(eid, m[prop->name()]);
                 if(!success)
                 {
-                    qWarning() << "Could not set property. Name is: " << prop.name();
+                    qWarning() << "Could not set property. Name is: " << prop->name();
                 }
             }
         }

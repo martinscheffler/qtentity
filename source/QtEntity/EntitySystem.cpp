@@ -90,19 +90,13 @@ namespace QtEntity
     }
     
 
-    PropertyAccessor EntitySystem::property(int idx) 
+    const PropertyAccessor* EntitySystem::property(int idx) const 
     { 
         return _properties.at(idx); 
     }
 
 
-    const PropertyAccessor EntitySystem::property(int idx) const 
-    { 
-        return _properties.at(idx); 
-    }
-
-
-    void EntitySystem::addProperty(const PropertyAccessor& a) 
+    void EntitySystem::addProperty(const PropertyAccessor* a) 
     { 
         _properties.push_back(a); 
     }

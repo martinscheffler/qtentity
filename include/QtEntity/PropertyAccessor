@@ -16,10 +16,13 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+#include <QtEntity/Export>
+#include <QtEntity/DataTypes>
 #include <functional>
 #include <assert.h>
 #include <QString>
 #include <QVariantMap>
+#include <QObject>
 
 namespace QtEntity
 {
@@ -70,7 +73,7 @@ namespace QtEntity
         auto setter = [this](QtEntity::EntityId id, const QVariant& v) {\
             auto c = static_cast<COMPONENTTYPE*>(component(id)); if(!c) qDebug() << "Cannot write property " << NAME << ", component not found with id " << id; else c->SETTER(v.value<VARIANTTYPE>());\
         };\
-        addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), getter, setter));\
+        addProperty(new QtEntity::PropertyAccessor(this, NAME, qMetaTypeId<VARIANTTYPE>(), getter, setter));\
     }
 
     /**
@@ -90,7 +93,7 @@ namespace QtEntity
         auto setter = [this](QtEntity::EntityId id, const QVariant& v) {\
             auto c = static_cast<COMPONENTTYPE*>(component(id)); if(!c) qDebug() << "Cannot write property " << NAME << ", component not found with id " << id; else c->SETTER(v.value<VARIANTTYPE>());\
         };\
-        addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), getter, setter, ATTRIBS));\
+        addProperty(new QtEntity::PropertyAccessor(this, NAME, qMetaTypeId<VARIANTTYPE>(), getter, setter, ATTRIBS));\
     }
 
 /**
@@ -103,7 +106,7 @@ namespace QtEntity
      * Parameter SETTER: method name of getter on component. Method has void return value and two args, EntityId and QVariant.
      */
 #define QTE_ADD_SYSTEM_PROPERTY(NAME, VARIANTTYPE, GETTER, SETTER) \
-    {   addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), std::bind(GETTER, this, std::placeholders::_1),\
+    {   addProperty(new QtEntity::PropertyAccessor(this, NAME, qMetaTypeId<VARIANTTYPE>(), std::bind(GETTER, this, std::placeholders::_1),\
         std::bind(SETTER, this, std::placeholders::_1, std::placeholders::_2)));\
     }
 
@@ -118,7 +121,7 @@ namespace QtEntity
      * Parameter ATTRIBS a QVariantMap with attributes that are stored in the property accessor and can be used by property browser.
      */
 #define QTE_ADD_SYSTEM_PROPERTY_WITH_ATTRIBS(NAME, VARIANTTYPE, GETTER, SETTER, ATTRIBS) \
-    {   addProperty(QtEntity::PropertyAccessor(NAME, qMetaTypeId<VARIANTTYPE>(), std::bind(GETTER, this, std::placeholders::_1),\
+    {   addProperty(new QtEntity::PropertyAccessor(this, NAME, qMetaTypeId<VARIANTTYPE>(), std::bind(GETTER, this, std::placeholders::_1),\
         std::bind(SETTER, this, std::placeholders::_1, std::placeholders::_2)), ATTRIBS);\
     }
     
@@ -129,8 +132,10 @@ namespace QtEntity
      * They give read and write access to properties of components and hold additional
      * attributes for that property in a variant map.
      */
-    class QTENTITY_EXPORT PropertyAccessor
+    class QTENTITY_EXPORT PropertyAccessor : public QObject
     {
+        Q_OBJECT
+
     public:
 
         /** Method pointer for getting a property value from a component*/
@@ -139,14 +144,6 @@ namespace QtEntity
         /** Method pointer for setting a property value on a component*/
         typedef std::function<void(EntityId, const QVariant&)> Setter;
 
-        PropertyAccessor()
-            : _name("")
-            , _variantType(0)
-            , _getter(nullptr)
-            , _setter(nullptr)
-        {
-        }
-
         /**
          * @param name String identifier of property
          * @param variantType Qt Meta type id of property value
@@ -154,49 +151,42 @@ namespace QtEntity
          * @param setter std::Function pointer to setter method
          * @param attributes A QVariantMap which is stored in property accessor. Can be used to provide property attributes to QPropertyBrowser
          */
-        PropertyAccessor(const QString& name, int variantType, Getter getter, Setter setter, const QVariantMap& attributes = QVariantMap())
-            : _name(name)
-            , _variantType(variantType)
-            , _getter(getter)
-            , _setter(setter)
-            , _attributes(attributes)
-        {
-        }
+        PropertyAccessor(QObject* parent, const QString& name, int variantType, Getter getter, Setter setter, const QVariantMap& attributes = QVariantMap());
 
         /**
          * Name of parameter
          */
-        QString name() const { return _name; }
+        QString name() const;
 
         /**
          * Fetches parameter value from component with given id
          */
-        QVariant read(EntityId id) const { assert(_getter); return _getter(id); }
+        QVariant read(EntityId id) const;
 
         /**
          *  Calls setter method with parameter val, writing to component identified by id
         */
-        bool write(EntityId id, const QVariant& val) { if(!_setter) return false; _setter(id, val); return true; }
+        bool write(EntityId id, const QVariant& val) const;
 
         /**
          * Fetch parameter attributes map
          */
-        const QVariantMap& attributes() const { return _attributes; }
+        const QVariantMap& attributes() const;
         
         /**
          * Returns if property accessor has a valid getter 
          */
-        bool hasGetter() const { return _getter != nullptr; }
+        bool hasGetter() const;
         
         /**
          * Returns if property accessor has a valid setter 
          */
-        bool hasSetter() const { return _setter != nullptr; }
+        bool hasSetter() const;
 
         /**
          * QVariant type of parameter
          */
-        int variantType() const { return _variantType; }
+        int variantType() const;
 
     private:
         QString _name;
@@ -205,6 +195,4 @@ namespace QtEntity
         Setter _setter;
         QVariantMap _attributes;
     };
-
-
 }

@@ -25,12 +25,14 @@ set(LIB_SOURCES
   ${SOURCE_PATH}/EntityManager.cpp
   ${SOURCE_PATH}/EntitySystem.cpp
   ${SOURCE_PATH}/PrefabSystem.cpp
+  ${SOURCE_PATH}/PropertyAccessor.cpp
   ${SOURCE_PATH}/ReaderWriterJSON.cpp
 )
 
 set(MOC_INPUT
    ${HEADER_PATH}/EntityManager
    ${HEADER_PATH}/EntitySystem
+   ${HEADER_PATH}/PropertyAccessor
 )
 
 QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})

@@ -117,17 +117,17 @@ namespace QtEntity
                             {
                                 auto prop = es->property(i);
 
-                                QString n = prop.name();
+                                QString n = prop->name();
                                 // don't update parameters in prefab parameter list
-                                if(prefab->parameters().contains(prop.name()) || prop.name() == "objectName")
+                                if(prefab->parameters().contains(n) || n == "objectName")
                                 {
                                     continue;
                                 }
-                                QVariant current = prop.read(k->first);
-                                QVariantMap::iterator newval = newvals.find(prop.name());
+                                QVariant current = prop->read(k->first);
+                                QVariantMap::iterator newval = newvals.find(n);
                                 if(newval != newvals.end() && newval.value() != current)
                                 {
-                                    prop.write(k->first, newval.value());
+                                    prop->write(k->first, newval.value());
                                 }
                             }
                         }

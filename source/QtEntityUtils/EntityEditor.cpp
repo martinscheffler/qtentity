@@ -163,10 +163,10 @@ namespace QtEntityUtils
             {
                 auto prop = es->property(i);
                 QVariantMap param;
-                param["__value__"] = prop.read(eid);
-                param["__type__"] = prop.variantType();
-                param["__attributes__"] = prop.attributes();
-                component[prop.name()] = param;
+                param["__value__"] = prop->read(eid);
+                param["__type__"] = prop->variantType();
+                param["__attributes__"] = prop->attributes();
+                component[prop->name()] = param;
             }
             components[es->componentName()] = component;
         }
@@ -183,23 +183,23 @@ namespace QtEntityUtils
             qDebug() << "Could not apply entity data, no entity system of type " << componenttype;
             return;
         }
-        QtEntity::PropertyAccessor prop;
+        const QtEntity::PropertyAccessor* prop;
 
         for(int j = 0; j < es->propertyCount(); ++j)
         {
-            if(es->property(j).name() == propertyname)
+            if(es->property(j)->name() == propertyname)
             {
                 prop = es->property(j);
                 break;
             }
         }
 
-        if(!prop.hasSetter())
+        if(!prop->hasSetter())
         {
             qDebug() << "No property named " << propertyname << " on object of type " << es->componentName();
             return;
         }
-        prop.write(eid, value);        
+        prop->write(eid, value);        
     }
 
 

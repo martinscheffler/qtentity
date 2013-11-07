@@ -34,11 +34,11 @@ namespace QtEntity
         for(int i = 0; i < count; ++i)
         {
             auto prop = es.property(i);
-            QString name = prop.name();
+            QString name = prop->name();
 
             if(name != "objectName")
             {
-                QVariant val = prop.read(id);
+                QVariant val = prop->read(id);
                 ret.insert(name, variantToJson(val));
             }
         }
@@ -136,11 +136,11 @@ namespace QtEntity
         for(int i = 0; i < es->propertyCount(); ++i)
         {
             auto prop = es->property(i);
-            QString propname = prop.name();
+            QString propname = prop->name();
             auto j = json.find(propname);
             if(j != json.end())
             {
-                params[propname] = jsonToVariant(prop.variantType(), j.value());
+                params[propname] = jsonToVariant(prop->variantType(), j.value());
             }
         }
 

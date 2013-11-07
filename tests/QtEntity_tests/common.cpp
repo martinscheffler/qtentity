@@ -24,17 +24,17 @@ Q_INVOKABLE quint32 EntitySystemPrototype::count() const
 }
 
 
-QtEntity::PropertyAccessor EntitySystemPrototype::property(const QString& name) const
+const QtEntity::PropertyAccessor* EntitySystemPrototype::property(const QString& name) const
 {
     QtEntity::EntitySystem *es = qscriptvalue_cast<QtEntity::EntitySystem*>(thisObject());
     for(int i = 0; i < es->propertyCount(); ++i)
     {
-        QtEntity::PropertyAccessor a = es->property(i);
-        if(a.name() == name)
+        const QtEntity::PropertyAccessor* a = es->property(i);
+        if(a->name() == name)
         {
             return a;
         }
     }
-    QtEntity::PropertyAccessor p;
-    return p;
+    return nullptr;
+    
 }
