@@ -1,7 +1,4 @@
 #include <QtTest/QtTest>
-#include <QtGui/QVector2D>
-#include <QtGui/QVector3D>
-#include <QtGui/QVector4D>
 #include <QtGui/QColor>
 #include <QtEntity/EntityManager>
 #include <QtEntity/ReaderWriterJSON>
@@ -33,7 +30,7 @@ private slots:
 
         Testing* dh; em.createComponent(1, dh);
         dh->setMyInt(666);
-        dh->setMyVec3(QVector3D(-1,0,354));        
+        dh->setMyVec3(Vec3d(-1,0,354));        
 
         QJsonObject obj = ReaderWriterJSON::componentToJson(*ts, 1);
         QJsonDocument doc(obj);

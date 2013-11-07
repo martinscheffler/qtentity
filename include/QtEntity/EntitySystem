@@ -308,7 +308,7 @@ namespace QtEntity
      * Entity systems are responsible for storing and managing components.
      * Each entity system instance holds components of a specific type.
      */
-    class EntitySystem : public QObject
+    class QTENTITY_EXPORT EntitySystem : public QObject
     {
         Q_OBJECT
 
@@ -317,8 +317,8 @@ namespace QtEntity
 
     public:
 
-        QTENTITY_EXPORT EntitySystem(ClassTypeId cid, EntityManager* em);
-        QTENTITY_EXPORT virtual ~EntitySystem();
+        EntitySystem(ClassTypeId cid, EntityManager* em);
+        virtual ~EntitySystem();
         
         /**
          * Fetch entity manager this system is assigned to
@@ -359,7 +359,7 @@ namespace QtEntity
         /**
          * Return class name of component type stored in this entity system
          */
-        QTENTITY_EXPORT QString componentName() const;
+        QString componentName() const;
 
         /**
          * @return number of components
@@ -374,17 +374,17 @@ namespace QtEntity
         /**
          * Return number of properties
          */
-        QTENTITY_EXPORT int propertyCount() const;
+        int propertyCount() const;
 
         /**
          * Return a property accessor by index
          */
-        QTENTITY_EXPORT PropertyAccessor property(int idx);
+        PropertyAccessor property(int idx);
 
         /**
          * Return a const proeprty accessor by index
          */
-        QTENTITY_EXPORT const PropertyAccessor property(int idx) const;
+        const PropertyAccessor property(int idx) const;
           
 
         /**
@@ -405,7 +405,7 @@ namespace QtEntity
         /**
          * Add a property accessor to system
          */
-        QTENTITY_EXPORT void addProperty(const PropertyAccessor& a);
+        void addProperty(const PropertyAccessor& a);
 
         
     };

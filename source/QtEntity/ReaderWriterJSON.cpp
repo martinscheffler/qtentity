@@ -18,14 +18,12 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtEntity/EntityManager>
 #include <QtEntity/EntitySystem>
+#include <QtEntity/VecUtils>
 #include <QColor>
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QMetaProperty>
-#include <QVector2D>
-#include <QVector3D>
-#include <QVector4D>
 
 namespace QtEntity
 {
@@ -101,20 +99,20 @@ namespace QtEntity
             QColor c = variant.value<QColor>();
             return QString("%1,%2,%3,%4").arg(c.red()).arg(c.green()).arg(c.blue()).arg(c.alpha());
         }
-		else if(t == qMetaTypeId<QVector2D>())
+		else if(t == qMetaTypeId<Vec2d>())
 		{
-            QVector2D v2 = variant.value<QVector2D>();
-            return QString("%1,%2").arg(v2.x()).arg(v2.y());
+            Vec2d v2 = variant.value<Vec2d>();
+            return QString("%1,%2").arg(x(v2)).arg(y(v2));
         }
-        else if(t == qMetaTypeId<QVector3D>())
+        else if(t == qMetaTypeId<Vec4d>())
 		{
-            QVector3D v3 = variant.value<QVector3D>();
-            return QString("%1,%2,%3").arg(v3.x()).arg(v3.y()).arg(v3.z());
+            Vec3d v3 = variant.value<Vec3d>();
+            return QString("%1,%2,%3").arg(x(v3)).arg(y(v3)).arg(z(v3));
         }
-        else if(t == qMetaTypeId<QVector4D>())
+        else if(t == qMetaTypeId<Vec4d>())
 		{
-            QVector4D v4 = variant.value<QVector4D>();
-            return QString("%1,%2,%3,%4").arg(v4.x()).arg(v4.y()).arg(v4.z()).arg(v4.w());        
+            Vec4d v4 = variant.value<Vec4d>();
+            return QString("%1,%2,%3,%4").arg(x(v4)).arg(y(v4)).arg(z(v4)).arg(w(v4));        
         }
 
         // unhandled variant types go to Qt provided method
@@ -204,38 +202,38 @@ namespace QtEntity
             str >> a;
             return QColor(r,g,b,a);
         }
-		else if(t == qMetaTypeId<QVector2D>())
+		else if(t == qMetaTypeId<Vec2d>())
 		{
             QString in = val.toString();
             QTextStream str(&in);
             QChar delim;
-            float x,y;
+            double x,y;
             str >> x; str >> delim;
             str >> y;            
-            return QVector2D(x,y);
+            return QVariant::fromValue(Vec2d(x,y));
         }
-        else if(t == qMetaTypeId<QVector3D>())
+        else if(t == qMetaTypeId<Vec3d>())
 		{
             QString in = val.toString();
             QTextStream str(&in);
             QChar delim;
-            float x,y,z;
+            double x,y,z;
             str >> x; str >> delim;
             str >> y; str >> delim;
             str >> z;            
-            return QVector3D(x,y,z);
+            return QVariant::fromValue(Vec3d(x,y,z));
         }
-        else if(t == qMetaTypeId<QVector4D>())
+        else if(t == qMetaTypeId<Vec4d>())
 		{
             QString in = val.toString();
             QTextStream str(&in);
             QChar delim;
-            float x,y,z,w;
+            double x,y,z,w;
             str >> x; str >> delim;
             str >> y; str >> delim;
             str >> z; str >> delim;
             str >> w;            
-            return QVector4D(x,y,z,w); 
+            return QVariant::fromValue(Vec4d(x,y,z,w)); 
         }
 
         // unhandled variant types go to Qt provided method

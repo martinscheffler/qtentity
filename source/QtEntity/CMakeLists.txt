@@ -17,6 +17,7 @@ set(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/PrefabSystem
   ${HEADER_PATH}/ReaderWriterJSON
   ${HEADER_PATH}/SimpleEntitySystem
+  ${HEADER_PATH}/VecUtils
 )
 
 set(LIB_SOURCES

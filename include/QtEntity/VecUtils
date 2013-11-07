@@ -1,0 +1,155 @@
+#pragma once
+
+/*
+Copyright (c) 2013 Martin Scheffler
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial 
+portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+#include <QtEntity/DataTypes>
+#include <QDebug>
+
+
+  
+inline QDebug operator<<(QDebug dbg, const QtEntity::Vec2f &vec) 
+{
+    dbg << std::get<0>(vec) << " " << std::get<1>(vec);  return dbg; 
+}
+
+inline QDebug operator<<(QDebug dbg, const QtEntity::Vec2d &vec) 
+{
+    dbg << std::get<0>(vec) << " " << std::get<1>(vec);  return dbg; 
+}
+
+inline QDebug operator<<(QDebug dbg, const QtEntity::Vec3f &vec) 
+{
+    dbg << std::get<0>(vec) << " " << std::get<1>(vec) << " " << std::get<2>(vec);  return dbg; 
+}
+
+inline QDebug operator<<(QDebug dbg, const QtEntity::Vec3d &vec) 
+{
+    dbg << std::get<0>(vec) << " " << std::get<1>(vec) << " " << std::get<2>(vec);  return dbg; 
+}
+
+inline QDebug operator<<(QDebug dbg, const QtEntity::Vec4f &vec) 
+{
+    dbg << std::get<0>(vec) << " " << std::get<1>(vec) << " " << std::get<2>(vec) << " " << std::get<3>(vec);  return dbg; 
+}
+
+inline QDebug operator<<(QDebug dbg, const QtEntity::Vec4d &vec) 
+{
+    dbg << std::get<0>(vec) << " " << std::get<1>(vec) << " " << std::get<2>(vec) << " " << std::get<3>(vec);  return dbg; 
+}
+
+namespace QtEntity
+{
+    inline double length(const Vec2f& v) 
+    {
+        return sqrt( std::get<0>(v)*std::get<0>(v) + std::get<1>(v)*std::get<1>(v) );
+    }
+
+    inline double length(const Vec2d& v) 
+    {
+        return sqrt( std::get<0>(v)*std::get<0>(v) + std::get<1>(v)*std::get<1>(v) );
+    }
+
+    inline double length(const Vec3f& v) 
+    {
+        return sqrt( std::get<0>(v)*std::get<0>(v) + std::get<1>(v)*std::get<1>(v) + std::get<2>(v)*std::get<2>(v) );
+    }
+
+    inline double length(const Vec3d& v) 
+    {
+        return sqrt( std::get<0>(v)*std::get<0>(v) + std::get<1>(v)*std::get<1>(v) + std::get<2>(v)*std::get<2>(v) );
+    }
+
+
+    inline const float& x(const Vec2f& v) { return std::get<0>(v); }
+    inline const float& y(const Vec2f& v) { return std::get<1>(v); }
+    inline void setX(Vec2f& v, float x) { std::get<0>(v) = x; }
+    inline void setY(Vec2f& v, float y) { std::get<1>(v) = y; }
+
+    inline const double& x(const Vec2d& v) { return std::get<0>(v); }
+    inline const double& y(const Vec2d& v) { return std::get<1>(v); }
+    inline void setX(Vec2d& v, double x) { std::get<0>(v) = x; }
+    inline void setY(Vec2d& v, double y) { std::get<1>(v) = y; }
+
+    inline const float& x(const Vec3f& v) { return std::get<0>(v); }
+    inline const float& y(const Vec3f& v) { return std::get<1>(v); }
+    inline const float& z(const Vec3f& v) { return std::get<2>(v); }
+    inline void setX(Vec3f& v, float x) { std::get<0>(v) = x; }
+    inline void setY(Vec3f& v, float y) { std::get<1>(v) = y; }
+    inline void setZ(Vec3f& v, float z) { std::get<2>(v) = z; }
+
+    inline const double& x(const Vec3d& v) { return std::get<0>(v); }
+    inline const double& y(const Vec3d& v) { return std::get<1>(v); }
+    inline const double& z(const Vec3d& v) { return std::get<2>(v); }
+    inline void setX(Vec3d& v, double x) { std::get<0>(v) = x; }
+    inline void setY(Vec3d& v, double y) { std::get<1>(v) = y; }
+    inline void setZ(Vec3d& v, double z) { std::get<2>(v) = z; }
+
+    inline const float& x(const Vec4f& v) { return std::get<0>(v); }
+    inline const float& y(const Vec4f& v) { return std::get<1>(v); }
+    inline const float& z(const Vec4f& v) { return std::get<2>(v); }
+    inline const float& w(const Vec4f& v) { return std::get<3>(v); }
+    inline void setX(Vec4f& v, float x) { std::get<0>(v) = x; }
+    inline void setY(Vec4f& v, float y) { std::get<1>(v) = y; }
+    inline void setZ(Vec4f& v, float z) { std::get<2>(v) = z; }
+    inline void setW(Vec4f& v, float w) { std::get<3>(v) = w; }
+
+    inline const double& x(const Vec4d& v) { return std::get<0>(v); }
+    inline const double& y(const Vec4d& v) { return std::get<1>(v); }
+    inline const double& z(const Vec4d& v) { return std::get<2>(v); }
+    inline const double& w(const Vec4d& v) { return std::get<3>(v); }
+    inline void setX(Vec4d& v, double x) { std::get<0>(v) = x; }
+    inline void setY(Vec4d& v, double y) { std::get<1>(v) = y; }
+    inline void setZ(Vec4d& v, double z) { std::get<2>(v) = z; }
+    inline void setW(Vec4d& v, double w) { std::get<3>(v) = w; }
+    
+    inline void multInPlace(Vec2f& v, double val) { setX(v, x(v) * val); setY(v, y(v) * val); }
+    inline void multInPlace(Vec2d& v, double val) { setX(v, x(v) * val); setY(v, y(v) * val); }
+    inline void multInPlace(Vec3f& v, double val) { setX(v, x(v) * val); setY(v, y(v) * val); setZ(v, z(v) * val);}
+    inline void multInPlace(Vec3d& v, double val) { setX(v, x(v) * val); setY(v, y(v) * val); setZ(v, z(v) * val);}
+
+    inline Vec2f mult(const Vec2f& v, double val) { Vec2f r(v); multInPlace(r, val); return r; }
+    inline Vec2d mult(const Vec2d& v, double val) { Vec2d r(v); multInPlace(r, val); return r; }
+    inline Vec3f mult(const Vec3f& v, double val) { Vec3f r(v); multInPlace(r, val); return r; }
+    inline Vec3d mult(const Vec3d& v, double val) { Vec3d r(v); multInPlace(r, val); return r; }
+
+    inline void addInPlace(Vec2f& v, const Vec2f& a) { setX(v, x(v) + x(a)); setY(v, y(v) + y(a)); }
+    inline void addInPlace(Vec2d& v, const Vec2d& a) { setX(v, x(v) + x(a)); setY(v, y(v) + y(a)); }
+    inline void addInPlace(Vec3f& v, const Vec3f& a) { setX(v, x(v) + x(a)); setY(v, y(v) + y(a)); setZ(v, z(v) + z(a)); }
+    inline void addInPlace(Vec3d& v, const Vec3d& a) { setX(v, x(v) + x(a)); setY(v, y(v) + y(a)); setZ(v, z(v) + z(a)); }
+    
+    inline Vec2f add(const Vec2f& v, const Vec2f& a) { Vec2f r(v); addInPlace(r, a); return r; }
+    inline Vec2d add(const Vec2d& v, const Vec2d& a) { Vec2d r(v); addInPlace(r, a); return r; }
+    inline Vec3f add(const Vec3f& v, const Vec3f& a) { Vec3f r(v); addInPlace(r, a); return r; }
+    inline Vec3d add(const Vec3d& v, const Vec3d& a) { Vec3d r(v); addInPlace(r, a); return r; }
+
+    inline void subInPlace(Vec2f& v, const Vec2f& a) { setX(v, x(v) - x(a)); setY(v, y(v) - y(a)); }
+    inline void subInPlace(Vec2d& v, const Vec2d& a) { setX(v, x(v) - x(a)); setY(v, y(v) - y(a)); }
+    inline void subInPlace(Vec3f& v, const Vec3f& a) { setX(v, x(v) - x(a)); setY(v, y(v) - y(a)); setZ(v, z(v) - z(a)); }
+    inline void subInPlace(Vec3d& v, const Vec3d& a) { setX(v, x(v) - x(a)); setY(v, y(v) - y(a)); setZ(v, z(v) - z(a)); }
+
+    inline Vec2f sub(const Vec2f& v, const Vec2f& a) { Vec2f r(v); subInPlace(r, a); return r; }
+    inline Vec2d sub(const Vec2d& v, const Vec2d& a) { Vec2d r(v); subInPlace(r, a); return r; }
+    inline Vec3f sub(const Vec3f& v, const Vec3f& a) { Vec3f r(v); subInPlace(r, a); return r; }
+    inline Vec3d sub(const Vec3d& v, const Vec3d& a) { Vec3d r(v); subInPlace(r, a); return r; }
+    
+    inline double normalize(Vec2f& v) { double l = length(v); if (l > 0.0) { double inv = 1.0/l; std::get<0>(v) *= inv; std::get<1>(v) *= inv;} return l; }
+    inline double normalize(Vec2d& v) { double l = length(v); if (l > 0.0) { double inv = 1.0/l; std::get<0>(v) *= inv; std::get<1>(v) *= inv;} return l; }
+    inline double normalize(Vec3f& v) { double l = length(v); if (l > 0.0) { double inv = 1.0/l; std::get<0>(v) *= inv; std::get<1>(v) *= inv; std::get<2>(v) *= inv;} return l; }
+    inline double normalize(Vec3d& v) { double l = length(v); if (l > 0.0) { double inv = 1.0/l; std::get<0>(v) *= inv; std::get<1>(v) *= inv; std::get<2>(v) *= inv;} return l; }
+        
+}
+

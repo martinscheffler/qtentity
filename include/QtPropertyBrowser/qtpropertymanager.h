@@ -46,7 +46,7 @@
 #include <QtPropertyBrowser/qtpropertybrowser.h>
 #include <QLineEdit>
 #include <QFontDatabase>
-#include <QVector3D>
+#include <QtEntity/DataTypes>
 
 #if QT_VERSION >= 0x040400
 QT_BEGIN_NAMESPACE
@@ -434,34 +434,34 @@ private:
 
 
 
-class QtVector3DPropertyManagerPrivate;
+class QtVec3DPropertyManagerPrivate;
 
-class QTPROPERTYBROWSER_EXPORT QtVector3DPropertyManager : public QtAbstractPropertyManager
+class QTPROPERTYBROWSER_EXPORT QtVec3DPropertyManager : public QtAbstractPropertyManager
 {
     Q_OBJECT
 public:
-    QtVector3DPropertyManager(QObject *parent = 0);
-    ~QtVector3DPropertyManager();
+    QtVec3DPropertyManager(QObject *parent = 0);
+    ~QtVec3DPropertyManager();
 
     QtDoublePropertyManager *subDoublePropertyManager() const;
 
-    QVector3D value(const QtProperty *property) const;
+    QtEntity::Vec3d value(const QtProperty *property) const;
     int decimals(const QtProperty *property) const;
 
 public slots:
-    void setValue(QtProperty *property, const QVector3D &val);
+    void setValue(QtProperty *property, const QtEntity::Vec3d &val);
     void setDecimals(QtProperty *property, int prec);
 signals:
-    void valueChanged(QtProperty *property, const QVector3D &val);
+    void valueChanged(QtProperty *property, const QtEntity::Vec3d &val);
     void decimalsChanged(QtProperty *property, int prec);
 protected:
     QString valueText(const QtProperty *property) const;
     virtual void initializeProperty(QtProperty *property);
     virtual void uninitializeProperty(QtProperty *property);
 private:
-    QtVector3DPropertyManagerPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QtVector3DPropertyManager)
-    Q_DISABLE_COPY(QtVector3DPropertyManager)
+    QtVec3DPropertyManagerPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QtVec3DPropertyManager)
+    Q_DISABLE_COPY(QtVec3DPropertyManager)
     Q_PRIVATE_SLOT(d_func(), void slotDoubleChanged(QtProperty *, double))
     Q_PRIVATE_SLOT(d_func(), void slotPropertyDestroyed(QtProperty *))
 };
@@ -910,18 +910,18 @@ public:
 
 
 
-// QtVector3DPropertyManager
+// QtVec3DPropertyManager
 
-class QtVector3DPropertyManagerPrivate
+class QtVec3DPropertyManagerPrivate
 {
-    QtVector3DPropertyManager *q_ptr;
-    Q_DECLARE_PUBLIC(QtVector3DPropertyManager)
+    QtVec3DPropertyManager *q_ptr;
+    Q_DECLARE_PUBLIC(QtVec3DPropertyManager)
 public:
 
     struct Data
     {
         Data() : decimals(2) {}
-        QVector3D val;
+        QtEntity::Vec3d val;
         int decimals;
     };
 
