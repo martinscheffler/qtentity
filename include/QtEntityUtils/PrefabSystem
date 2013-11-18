@@ -1,0 +1,110 @@
+#pragma once
+
+/*
+Copyright (c) 2013 Martin Scheffler
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial 
+portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+#include <QtEntityUtils/Export>
+#include <QtEntity/SimpleEntitySystem>
+#include <QVariantMap>
+#include <QStringList>
+#include <QSharedPointer>
+
+namespace QtEntityUtils
+{    
+
+    class Prefab
+    {        
+    public:
+
+        Prefab(const QString& path, const QVariantMap& components, const QStringList& parameters);
+
+        const QString& path() const { return _path; }
+
+        void setComponents(const QVariantMap& v) { _components = v; }
+        const QVariantMap& components() const { return _components; }
+
+        void setParameters(const QStringList& v) { _parameters = v; }
+        const QStringList& parameters() const { return _parameters; }
+
+    private:
+
+        QString _path;
+        QVariantMap _components;
+        QStringList _parameters;
+
+    };
+
+    class PrefabSystem;
+
+    class QTENTITYUTILS_EXPORT PrefabInstance : public QtEntity::Component
+    {
+        friend class PrefabSystem;
+
+        DECLARE_COMPONENT_TYPE(QTENTITYUTILS_EXPORT)
+
+    public:
+
+        PrefabInstance();
+        ~PrefabInstance();
+        const Prefab* prefab() const { return _prefab.data(); }
+
+    private:
+
+        QSharedPointer<Prefab> _prefab;
+
+    };
+
+
+    class QTENTITY_EXPORT PrefabSystem : public QtEntity::SimpleEntitySystem<PrefabInstance>
+    {
+        
+    public:
+        typedef SimpleEntitySystem<PrefabInstance> BaseClass;
+
+        PrefabSystem(QtEntity::EntityManager* em);
+        ~PrefabSystem();
+
+        //bool saveEntityAsPrefab(EntityId entity, const QString& path, const QVariantMap& properties) const;
+
+        /**
+         * @brief adds a new prefab, identified by full system path
+         * @param path Identifies the prefab
+         * @param components A map from <component class name> => [<param name> => <param value>]
+         * @param parameters A list of parameter names to make editable.
+         *                   Parameter names have the form "<component class name>::<param name>"
+         */
+        void addPrefab(const QString& path, const QVariantMap& components, const QStringList& parameters = QStringList());
+
+        /**
+         * @brief update an existing prefab
+         *
+         * @param path identifies the prefab
+         * @param components The new component parameters
+         * @param updateInstances if true, iterate through all instances of prefab and update them
+         */
+        void updatePrefab(const QString& path, const QVariantMap& components, bool updateInstances);
+
+        virtual QtEntity::Component* createComponent(QtEntity::EntityId id, const QVariantMap& properties = QVariantMap()) override;
+
+    private:
+
+        void createPrefabComponents(QtEntity::EntityId id, Prefab* prefab) const;
+
+        typedef QMap<QString, QSharedPointer<Prefab> > Prefabs;
+        Prefabs _prefabs;
+    };
+
+}

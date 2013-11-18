@@ -98,6 +98,6 @@ public:
 
     Q_INVOKABLE bool createComponent(QtEntity::EntityId id, const QVariantMap& params);
     Q_INVOKABLE quint32 count() const;
-    Q_INVOKABLE const QtEntity::PropertyAccessor* property(const QString& name) const;
+    //Q_INVOKABLE const QtEntity::PropertyAccessor* property(const QString& name) const;
 
 };

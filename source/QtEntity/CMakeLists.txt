@@ -14,9 +14,7 @@ set(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/EntityManager
   ${HEADER_PATH}/EntitySystem
   ${HEADER_PATH}/PooledEntitySystem
-  ${HEADER_PATH}/PrefabSystem
   ${HEADER_PATH}/PropertyAccessor
-  ${HEADER_PATH}/ReaderWriterJSON
   ${HEADER_PATH}/SimpleEntitySystem
   ${HEADER_PATH}/VecUtils
 )
@@ -24,9 +22,7 @@ set(LIB_PUBLIC_HEADERS
 set(LIB_SOURCES
   ${SOURCE_PATH}/EntityManager.cpp
   ${SOURCE_PATH}/EntitySystem.cpp
-  ${SOURCE_PATH}/PrefabSystem.cpp
   ${SOURCE_PATH}/PropertyAccessor.cpp
-  ${SOURCE_PATH}/ReaderWriterJSON.cpp
 )
 
 set(MOC_INPUT

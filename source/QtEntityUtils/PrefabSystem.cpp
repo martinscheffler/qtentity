@@ -14,13 +14,13 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include <QtEntity/PrefabSystem>
+#include <QtEntityUtils/PrefabSystem>
 
 #include <QtEntity/EntityManager>
 #include <QtEntity/PropertyAccessor>
 #include <QMetaProperty>
 
-namespace QtEntity
+namespace QtEntityUtils
 {
 
     
@@ -110,7 +110,7 @@ namespace QtEntity
                         PrefabInstance* pi = static_cast<PrefabInstance*>(k->second);
                         if(pi->prefab() == prefab)
                         {
-                            Component* component = es->component(k->first);
+                            QtEntity::Component* component = es->component(k->first);
                             Q_ASSERT(component);
                             if(!component) continue;
 
@@ -164,7 +164,7 @@ namespace QtEntity
     }
 
 
-    void PrefabSystem::createPrefabComponents(EntityId id, Prefab* prefab) const
+    void PrefabSystem::createPrefabComponents(QtEntity::EntityId id, Prefab* prefab) const
     {
         const QVariantMap& c = prefab->components();
         for(auto i = c.begin(); i != c.end(); ++i)
@@ -180,7 +180,7 @@ namespace QtEntity
     }
 
 
-    Component* PrefabSystem::createComponent(EntityId id, const QVariantMap& properties)
+    QtEntity::Component* PrefabSystem::createComponent(QtEntity::EntityId id, const QVariantMap& properties)
     {
         QString path = properties["path"].toString();
         Prefabs::const_iterator i = _prefabs.find(path);
@@ -189,7 +189,7 @@ namespace QtEntity
             return nullptr;
         }
         
-        Component* o = SimpleEntitySystem::createComponent(id, properties);
+        QtEntity::Component* o = SimpleEntitySystem::createComponent(id, properties);
         static_cast<PrefabInstance*>(o)->_prefab = *i;
         createPrefabComponents(id, i.value().data());        
         return o;

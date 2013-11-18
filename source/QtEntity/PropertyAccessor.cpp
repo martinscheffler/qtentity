@@ -27,7 +27,8 @@ namespace QtEntity
         , _setter(setter)
         , _attributes(attributes)
     {
-    }
+        setObjectName(name);
+    }    
 
 
     QString PropertyAccessor::name() const 

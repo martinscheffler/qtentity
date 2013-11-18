@@ -1,10 +1,11 @@
 #include <QtTest/QtTest>
 #include <QtCore/QObject>
-#include <QtEntity/PrefabSystem>
+#include <QtEntityUtils/PrefabSystem>
 #include <QtEntity/EntityManager>
 #include "common.h"
 
 using namespace QtEntity;
+using namespace QtEntityUtils;
 
 
 class PrefabSystemTest: public QObject

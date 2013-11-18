@@ -28,10 +28,10 @@ public:
     ScriptingTest()
     {
         _ts = new TestingSystem(&_em);
-         QScriptValue objectValue = _engine.newQObject(&_em);
+        QScriptValue objectValue = _engine.newQObject(&_em);
         _engine.globalObject().setProperty("EM", objectValue);
         qScriptRegisterMetaType(&_engine, entityIdToScriptValue, entityIdFromScriptValue);
-
+        
         EntitySystemPrototype* esProto = new EntitySystemPrototype();
         _engine.setDefaultPrototype(qMetaTypeId<QtEntity::EntitySystem*>(), _engine.newQObject(esProto));
     }
@@ -68,7 +68,7 @@ private slots:
         size_t count = _ts->count();   
         QVariantMap m; m["myint"] = 12345;
         _ts->createComponent(999, m);
-        QScriptValue ret = _engine.evaluate("var prop = EM.Testing.property('myint'); prop.read(999)");
+        QScriptValue ret = _engine.evaluate("var prop = EM.Testing.myint; myint.read(999)");
         if(_engine.hasUncaughtException())
         {
             qDebug() << "Script error: " << _engine.uncaughtException().toString();

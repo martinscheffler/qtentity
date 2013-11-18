@@ -17,14 +17,14 @@ bool EntitySystemPrototype::createComponent(QtEntity::EntityId id, const QVarian
 }
 
 
-Q_INVOKABLE quint32 EntitySystemPrototype::count() const
+quint32 EntitySystemPrototype::count() const
 {
     QtEntity::EntitySystem *es = qscriptvalue_cast<QtEntity::EntitySystem*>(thisObject());
     return (quint32)es->count();
 }
 
 
-const QtEntity::PropertyAccessor* EntitySystemPrototype::property(const QString& name) const
+/*const QtEntity::PropertyAccessor* EntitySystemPrototype::property(const QString& name) const
 {
     QtEntity::EntitySystem *es = qscriptvalue_cast<QtEntity::EntitySystem*>(thisObject());
     for(int i = 0; i < es->propertyCount(); ++i)
@@ -37,4 +37,4 @@ const QtEntity::PropertyAccessor* EntitySystemPrototype::property(const QString&
     }
     return nullptr;
     
-}
+}*/
