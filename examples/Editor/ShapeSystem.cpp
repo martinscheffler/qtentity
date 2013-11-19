@@ -43,14 +43,6 @@ ShapeSystem::ShapeSystem(QtEntity::EntityManager* em, Renderer* renderer)
     : BaseClass(em)
     , _renderer(renderer)
 {
-    QTE_ADD_PROPERTY("position", QPoint, Shape, position, setPosition);
-
-    QVariantMap r;
-    r["filter"] = "SVG files (*.svg)";    
-
-    QTE_ADD_PROPERTY_WITH_ATTRIBS("path", QString, Shape, path, setPath, r);
-    QTE_ADD_PROPERTY("zIndex", int, Shape, zIndex, setZIndex);
-    QTE_ADD_PROPERTY("subTex", QRect, Shape, subTex, setSubtex);
 }
 
 
@@ -62,3 +54,40 @@ QtEntity::Component* ShapeSystem::createComponent(QtEntity::EntityId id, const Q
     return shp;
 }
 
+QVariantMap ShapeSystem::propertyValues(QtEntity::EntityId eid)
+{
+    QVariantMap m;
+    Shape* s;
+    if(component(eid, s))
+    {
+        m["position"] = s->position();
+        m["path"] = s->path();
+        m["zIndex"] = s->zIndex();
+        m["subTex"] = s->subTex();
+    }
+    return m;
+    
+}
+
+
+QVariantMap ShapeSystem::propertyAttributes()
+{
+    QVariantMap path;
+    path["filter"] = "SVG files (*.svg)";  
+    QVariantMap r;
+    r["path"] = path;
+    return r;
+}
+
+
+void ShapeSystem::applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m)
+{
+    Shape* s;
+    if(component(eid, s))
+    {
+        if(m.contains("position")) s->setPosition(m["position"].toPoint());
+        if(m.contains("path")) s->setPath(m["path"].toString());
+        if(m.contains("zIndex")) s->setZIndex(m["zIndex"].toInt());
+        if(m.contains("subTex")) s->setSubtex(m["subTex"].toRect());
+    }
+}

@@ -38,12 +38,12 @@ namespace QtEntityUtils
     public:
         EntityEditor();
 
-        static QVariantMap fetchEntityData(const QtEntity::EntityManager& em, QtEntity::EntityId);
+        static void fetchEntityData(const QtEntity::EntityManager& em, QtEntity::EntityId, QVariantMap& components, QVariantMap& attributes);
         static void applyEntityData(QtEntity::EntityManager& em, QtEntity::EntityId eid, const QVariantMap& values);
 
     public slots:
 
-        void displayEntity(QtEntity::EntityId id, const QVariant& data);
+        void displayEntity(QtEntity::EntityId id, const QVariantMap& data, const QVariantMap& attributes);
         void clear();
 
     protected slots:

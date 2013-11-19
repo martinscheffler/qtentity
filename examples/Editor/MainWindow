@@ -31,7 +31,7 @@ protected slots:
 
 signals:
 
-    void selectedEntityChanged(QtEntity::EntityId id, const QVariant& data);
+    void selectedEntityChanged(QtEntity::EntityId id, const QVariantMap& data, const QVariantMap& attributes);
 
 private:
 

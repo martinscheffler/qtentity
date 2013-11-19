@@ -51,60 +51,48 @@ namespace QtEntityUtils
     }
 
 
-    void EntityEditor::displayEntity(QtEntity::EntityId id, const QVariant& data)
+    void EntityEditor::displayEntity(QtEntity::EntityId id, const QVariantMap& data, const QVariantMap& attributes)
     {
         // changing property editors triggers signals which cause the component to be updated in the game.
         // ignore these signals while initially creating the property editors
         _ignorePropertyChanges = true;
         _entityId = id;
-        clear();
-
-        if(!data.canConvert<QVariantMap>()) return;
+        clear();        
         
-        QVariantMap components = data.toMap();
-        for(auto i = components.begin(); i != components.end(); ++i)
+        for(auto i = data.begin(); i != data.end(); ++i)
         {
             QString componenttype = i.key();
             QVariant component = i.value();
+            QVariantMap attrs = attributes.value(componenttype, QVariantMap()).toMap();
 
             QtProperty* item = _propertyManager->addProperty(QtVariantPropertyManager::groupTypeId(), componenttype);
             _editor->addProperty(item);
             
-            if(!component.canConvert<QVariantMap>()) continue;
             QVariantMap props = component.toMap();
             for(auto j = props.begin(); j != props.end(); ++j)
             {
-                QString propname = j.key();
-                QVariantMap propvals = j.value().toMap();
+                QString name = j.key();
+                QVariant val = j.value();
 
-                QVariant propval = propvals["__value__"];
-                int typeval = propvals["__type__"].toInt();
-                QVariantMap attribsval = propvals["__attributes__"].toMap();
-
-               
-                // qvariant has no float type :(
-
-                if(typeval == (int)QMetaType::Float)
-                {
-                    typeval = QVariant::Double;
-                }
-
-                QtVariantProperty* propitem = _propertyManager->addProperty(typeval, propname);
+                QtVariantProperty* propitem = _propertyManager->addProperty(val.type(), name);
 				if(propitem)
 				{
-					propitem->setValue(propval);
+					propitem->setValue(val);
 
-					// fetch property attributes
-                    for(auto k = attribsval.begin(); k != attribsval.end(); ++k)
+                    if(attrs.find(name) != attrs.end())
                     {
-                        propitem->setAttribute(k.key(), k.value());                        
-                    }					
-
+                        QVariantMap a = attrs[name].toMap();
+                        // fetch property attributes
+                        for(auto k = a.begin(); k != a.end(); ++k)
+                        {
+                            propitem->setAttribute(k.key(), k.value());                        
+                        }	
+                    }
 					item->addSubProperty(propitem);
 				}
 				else
 				{
-					qDebug() << "Could not create property editor for property " << propname;
+					qDebug() << "Could not create property editor for property " << name;
 				}                
             }
         }
@@ -119,28 +107,15 @@ namespace QtEntityUtils
     }
 
 
-    QVariantMap EntityEditor::fetchEntityData(const QtEntity::EntityManager& em, QtEntity::EntityId eid)
+    void EntityEditor::fetchEntityData(const QtEntity::EntityManager& em, QtEntity::EntityId eid, QVariantMap& components, QVariantMap& attributes)
     {
-        QVariantMap components;
         for(auto i = em.begin(); i != em.end(); ++i)
         {
             QtEntity::EntitySystem* es = i->second;
             if(!es->component(eid)) continue;
-                
-            QVariantMap component;
-            for(int i = 0; i < es->propertyCount(); ++i)
-            {
-                auto prop = es->property(i);
-                QVariantMap param;
-                param["__value__"] = prop->read(eid);
-                param["__type__"] = prop->variantType();
-                param["__attributes__"] = prop->attributes();
-                component[prop->name()] = param;
-            }
-            components[es->componentName()] = component;
+            components[es->componentName()] = es->propertyValues(eid);
+            attributes[es->componentName()] = es->propertyAttributes();            
         }
-       
-        return components;
     }
 
 

@@ -127,13 +127,15 @@ void MainWindow::entitySelectionChanged()
     auto items = _entities->selectedItems();
     if(items.empty())
     {
-        emit selectedEntityChanged(0, 0);
+        QVariantMap empty;
+        emit selectedEntityChanged(0, empty, empty);
     }
     else
     {
         QtEntity::EntityId selected = items.front()->data(Qt::UserRole).toUInt();
-        QVariantMap props = QtEntityUtils::EntityEditor::fetchEntityData(_game->entityManager(), selected);
-        emit selectedEntityChanged(selected, props);
+        QVariantMap props, attributes;
+        QtEntityUtils::EntityEditor::fetchEntityData(_game->entityManager(), selected, props, attributes);
+        emit selectedEntityChanged(selected, props, attributes);
     }
 }
 

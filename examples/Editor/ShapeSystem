@@ -56,6 +56,10 @@ public:
     ShapeSystem(QtEntity::EntityManager* em, Renderer* renderer);
 
     virtual QtEntity::Component* createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;
+        
+    virtual QVariantMap propertyValues(QtEntity::EntityId eid) override;
+    virtual QVariantMap propertyAttributes() override;
+    virtual void applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m) override;
 
 private:
     Renderer* _renderer;
