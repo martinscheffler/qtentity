@@ -6,7 +6,6 @@
 #include <osgViewer/ViewerEventHandlers>
 #include <osgGA/TrackballManipulator>
 #include "ActorSystem"
-#include <QVector3D>
 
 Game::Game(QObject* parent)
     : QObject(parent)

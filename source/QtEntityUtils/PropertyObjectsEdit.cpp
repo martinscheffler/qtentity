@@ -78,6 +78,7 @@ namespace QtEntityUtils
             }
             
             QtVariantProperty* propitem = _propertyManager->addProperty(usertype, name);
+            Q_ASSERT(propitem);
             item->addSubProperty(propitem);
             propitem->setValue(val);
 

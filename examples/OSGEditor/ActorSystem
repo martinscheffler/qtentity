@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtEntity/PooledEntitySystem>
-#include <QVector3D>
+#include <QtEntity/DataTypes>
 #include <osg/Group>
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
@@ -32,8 +32,8 @@ public:
      **/
     QString name() const  { return _name; }
 
-    void setPosition(const QVector3D& p);
-    QVector3D position() const;
+    void setPosition(const QtEntity::Vec3d& p);
+    QtEntity::Vec3d position() const;
 
     void setShapes(const QVariantList& v);
     QVariantList shapes() const  { return _shapes; }
