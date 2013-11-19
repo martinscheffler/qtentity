@@ -73,7 +73,7 @@ namespace QtEntityUtils
                 QString name = j.key();
                 QVariant val = j.value();
 
-                QtVariantProperty* propitem = _propertyManager->addProperty(val.type(), name);
+                QtVariantProperty* propitem = _propertyManager->addProperty(val.userType(), name);
 				if(propitem)
 				{
 					propitem->setValue(val);
