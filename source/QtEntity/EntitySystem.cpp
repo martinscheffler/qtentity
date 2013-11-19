@@ -17,7 +17,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtEntity/EntitySystem>
 
 #include <QtEntity/EntityManager>
-#include <QtEntity/PropertyAccessor>
 #include <unordered_map>
 
 namespace QtEntity
@@ -85,65 +84,4 @@ namespace QtEntity
         return ComponentRegistry::className(componentType()); 
     }
 
-
-    int EntitySystem::propertyCount() const 
-    { 
-        return _properties.size(); 
-    }
-    
-
-    const PropertyAccessor* EntitySystem::property(int idx) const 
-    { 
-        return _properties.at(idx); 
-    }
-
-
-    void EntitySystem::addProperty(const PropertyAccessor* a) 
-    { 
-        _properties.push_back(a); 
-    }
-
-
-    QVariantMap EntitySystem::propertyValues(EntityId eid)
-    {
-        QVariantMap m;
-        for(int i = 0; i < this->propertyCount(); ++i)
-        {
-            auto prop = this->property(i);
-            m[prop->name()] = prop->read(eid);
-        }
-        return m;
-    }
-
-
-    QVariantMap EntitySystem::propertyAttributes()
-    {
-        QVariantMap m;
-        for(int i = 0; i < this->propertyCount(); ++i)
-        {
-            auto prop = this->property(i);
-            if(!prop->attributes().empty())
-            {
-                m[prop->name()] = prop->attributes();
-            }
-        }
-        return m;
-    }
-
-
-    void EntitySystem::applyPropertyValues(EntityId eid, const QVariantMap& m)
-    {
-        for(int i = 0; i < this->propertyCount(); ++i)
-        {
-            auto prop = this->property(i);
-            if(m.contains(prop->name())) 
-            {
-                bool success = prop->write(eid, m[prop->name()]);
-                if(!success)
-                {
-                    qWarning() << "Could not set property. Name is: " << prop->name();
-                }
-            }
-        }
-    }
 }

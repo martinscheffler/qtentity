@@ -25,4 +25,8 @@ public:
     BulletSystem(QtEntity::EntityManager* em);
 
     void step(int frameNumber, int totalTime, int delta);
+
+    virtual QVariantMap propertyValues(QtEntity::EntityId eid) override;
+    virtual void applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m) override;
+    
 };

@@ -1,7 +1,6 @@
 #include "EnemySystem"
 
 #include "ShapeSystem"
-#include <QtEntity/PropertyAccessor>
 #include <QtEntity/EntityManager>
 
 IMPLEMENT_COMPONENT_TYPE(Enemy)
@@ -9,7 +8,28 @@ IMPLEMENT_COMPONENT_TYPE(Enemy)
 EnemySystem::EnemySystem(QtEntity::EntityManager* em)
    : BaseClass(em)
 {
-    QTE_ADD_PROPERTY("lifetime", int, Enemy, lifetime, setLifetime);  
+}
+
+
+QVariantMap EnemySystem::propertyValues(QtEntity::EntityId eid)
+{
+    QVariantMap m;
+    Enemy* e;
+    if(component(eid, e))
+    {
+        m["lifetime"] = e->lifetime();
+    }
+    return m;    
+}
+
+
+void EnemySystem::applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m)
+{
+    Enemy* e;
+    if(component(eid, e))
+    {
+        if(m.contains("lifetime")) e->setLifetime(m["lifetime"].toInt());
+    }
 }
 
 

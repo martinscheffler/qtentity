@@ -149,7 +149,6 @@ namespace QtEntity
 
     // fwd declaration
     class EntityManager;
-    class PropertyAccessor;
 
     /**
      * Entity system base class.
@@ -160,7 +159,6 @@ namespace QtEntity
     {
         Q_OBJECT
 
-        QVector<const PropertyAccessor*> _properties;
         EntityManager* _entityManager;
 
     public:
@@ -229,36 +227,26 @@ namespace QtEntity
          * Clear all components
          */
         virtual void clear() = 0;
-
-        /**
-         * Return number of properties
-         */
-        int propertyCount() const;
-
-        /**
-         * Return a const property accessor by index
-         */
-        const PropertyAccessor* property(int idx) const;
-          
+  
         /**
          * Fetch a map containing property names => values for a specific component
          * @param eid ID of component entity to fetch from
          * @return A map from property names to QVariant values
          */
-        virtual QVariantMap propertyValues(EntityId eid);
+        virtual QVariantMap propertyValues(EntityId eid) { return QVariantMap(); }
 
         /**
          * Fetch all property attributes for an entity system.
          * @return A map from property names to property attributes map
          */
-        virtual QVariantMap propertyAttributes();
+        virtual QVariantMap propertyAttributes() { return QVariantMap(); }
 
         /**
          * Assign multiple property values to a specified component
          * @param eid ID identifying component
          * @param m A map from property name => value
          */
-        virtual void applyPropertyValues(EntityId eid, const QVariantMap& m);
+        virtual void applyPropertyValues(EntityId eid, const QVariantMap& m) {}
 
         /**
          * pend() and pbegin() implementations have to return EntitySystem::Iterator instances.
@@ -273,13 +261,6 @@ namespace QtEntity
         virtual PIterator pbegin() = 0;
         virtual PIterator pend() = 0;
     
-    protected:
-
-        /**
-         * Add a property accessor to system
-         */
-        void addProperty(const PropertyAccessor* a);
-        
     };
 
     

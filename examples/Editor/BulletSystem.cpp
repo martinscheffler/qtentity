@@ -2,16 +2,34 @@
 #include "ShapeSystem"
 
 #include <QtEntity/EntityManager>
-#include <QtEntity/PropertyAccessor>
 
 IMPLEMENT_COMPONENT_TYPE(Bullet)
 
 BulletSystem::BulletSystem(QtEntity::EntityManager* em)
    : BaseClass(em)
 {
-    QTE_ADD_PROPERTY("movement", QPoint, Bullet, movement, setMovement);
 }
 
+QVariantMap BulletSystem::propertyValues(QtEntity::EntityId eid)
+{
+    QVariantMap m;
+    Bullet* b;
+    if(component(eid, b))
+    {
+        m["movement"] = b->movement();
+    }
+    return m;    
+}
+
+
+void BulletSystem::applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m)
+{
+    Bullet* b;
+    if(component(eid, b))
+    {
+        if(m.contains("movement")) b->setMovement(m["movement"].toPoint());
+    }
+}
 
 void BulletSystem::step(int frameNumber, int totalTime, int delta)
 {

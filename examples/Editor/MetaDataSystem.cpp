@@ -1,7 +1,5 @@
 #include "MetaDataSystem"
 
-#include <QtEntity/PropertyAccessor>
-
 IMPLEMENT_COMPONENT_TYPE(MetaData)
 
 
@@ -35,8 +33,30 @@ void MetaData::setAdditionalInfo(const QString& info)
 MetaDataSystem::MetaDataSystem(QtEntity::EntityManager* em)
     : BaseClass(em)
 {
-    QTE_ADD_PROPERTY("name", QString, MetaData, name, setName);
-    QTE_ADD_PROPERTY("additionalInfo", QString, MetaData, additionalInfo, setAdditionalInfo);
+}
+
+
+QVariantMap MetaDataSystem::propertyValues(QtEntity::EntityId eid)
+{
+    QVariantMap m;
+    MetaData* e;
+    if(component(eid, e))
+    {
+        m["name"] = e->name();
+        m["additionalInfo"] = e->additionalInfo();
+    }
+    return m;    
+}
+
+
+void MetaDataSystem::applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m)
+{
+    MetaData* e;
+    if(component(eid, e))
+    {
+        if(m.contains("name")) e->setName(m["name"].toString());
+        if(m.contains("additionalInfo")) e->setAdditionalInfo(m["additionalInfo"].toString());
+    }
 }
 
 

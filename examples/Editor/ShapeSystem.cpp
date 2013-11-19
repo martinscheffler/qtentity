@@ -1,6 +1,5 @@
 #include "ShapeSystem"
 
-#include <QtEntity/PropertyAccessor>
 
 IMPLEMENT_COMPONENT_TYPE(Shape)
 
@@ -61,9 +60,9 @@ QVariantMap ShapeSystem::propertyValues(QtEntity::EntityId eid)
     if(component(eid, s))
     {
         m["position"] = s->position();
-        m["path"] = s->path();
-        m["zIndex"] = s->zIndex();
-        m["subTex"] = s->subTex();
+        m["path"]     = s->path();
+        m["zIndex"]   = s->zIndex();
+        m["subTex"]   = s->subTex();
     }
     return m;
     
@@ -86,8 +85,8 @@ void ShapeSystem::applyPropertyValues(QtEntity::EntityId eid, const QVariantMap&
     if(component(eid, s))
     {
         if(m.contains("position")) s->setPosition(m["position"].toPoint());
-        if(m.contains("path")) s->setPath(m["path"].toString());
-        if(m.contains("zIndex")) s->setZIndex(m["zIndex"].toInt());
-        if(m.contains("subTex")) s->setSubtex(m["subTex"].toRect());
+        if(m.contains("path"))     s->setPath(m["path"].toString());
+        if(m.contains("zIndex"))   s->setZIndex(m["zIndex"].toInt());
+        if(m.contains("subTex"))   s->setSubtex(m["subTex"].toRect());
     }
 }

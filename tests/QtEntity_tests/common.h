@@ -2,7 +2,6 @@
 
 #include <QtEntity/EntityManager>
 #include <QtEntity/SimpleEntitySystem>
-#include <QtEntity/PropertyAccessor>
 #include <QtEntity/DataTypes>
 #include <QtCore/QObject>
 #include <QtGui/QColor>
@@ -77,15 +76,39 @@ public:
     TestingSystem(QtEntity::EntityManager* em)
         : SimpleEntitySystem<Testing>(em)
     {
-        QTE_ADD_PROPERTY("myint", int, Testing, myInt, setMyInt);        
-        QTE_ADD_PROPERTY("myvec2", Vec2d, Testing, myVec2, setMyVec2);
-        QTE_ADD_PROPERTY("myvec3", Vec3d, Testing, myVec3, setMyVec3);
-        QTE_ADD_PROPERTY("myvec4", Vec4d, Testing, myVec4, setMyVec4);
-        QTE_ADD_PROPERTY("mycolor", QColor, Testing, myColor, setMyColor);
-        QTE_ADD_PROPERTY("myobjects", QVariantList, Testing, myObjects, setMyObjects);
-
         QtEntity::registerMetaTypes();
     }
+
+    virtual QVariantMap propertyValues(QtEntity::EntityId eid) override
+    {
+        QVariantMap m;
+        Testing* t;
+        if(component(eid, t))
+        {
+            m["myint"]     = t->myInt();
+            m["myvec2"]    = QVariant::fromValue(t->myVec2());
+            m["myvec3"]    = QVariant::fromValue(t->myVec3());
+            m["myvec4"]    = QVariant::fromValue(t->myVec4());
+            m["mycolor"]   = t->myColor();
+            m["myobjects"] = t->myObjects();
+        }
+        return m;    
+    }
+
+    virtual void applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m) override
+    {
+        Testing* t;
+        if(component(eid, t))
+        {
+            if(m.contains("myint"))     t->setMyInt(m["myint"].toInt());
+            if(m.contains("myvec2"))    t->setMyVec2(m["myvec2"].value<QtEntity::Vec2d>());
+            if(m.contains("myvec3"))    t->setMyVec3(m["myvec3"].value<QtEntity::Vec3d>());
+            if(m.contains("myvec4"))    t->setMyVec4(m["myvec4"].value<QtEntity::Vec4d>());
+            if(m.contains("mycolor"))   t->setMyColor(m["mycolor"].value<QColor>());
+            if(m.contains("myobjects")) t->setMyObjects(m["myobjects"].toList());
+        }
+    }
+    
 };
 
 
@@ -94,11 +117,8 @@ class EntitySystemPrototype : public QObject, public QScriptable
     Q_OBJECT
 public:
     EntitySystemPrototype(QObject *parent = 0);
-
-
+    
     Q_INVOKABLE bool createComponent(QtEntity::EntityId id, const QVariantMap& params);
     Q_INVOKABLE bool destroyComponent(QtEntity::EntityId id);
     Q_INVOKABLE quint32 count() const;
-    //Q_INVOKABLE const QtEntity::PropertyAccessor* property(const QString& name) const;
-
 };

@@ -2,14 +2,34 @@
 #include "ShapeSystem"
 
 #include <QtEntity/EntityManager>
-#include <QtEntity/PropertyAccessor>
 
 IMPLEMENT_COMPONENT_TYPE(Damage)
 
 DamageSystem::DamageSystem(QtEntity::EntityManager* em)
     : BaseClass(em)
 {
-    QTE_ADD_PROPERTY("energy", int, Damage, energy, setEnergy);
+}
+
+
+QVariantMap DamageSystem::propertyValues(QtEntity::EntityId eid)
+{
+    QVariantMap m;
+    Damage* d;
+    if(component(eid, d))
+    {
+        m["energy"] = d->energy();
+    }
+    return m;    
+}
+
+
+void DamageSystem::applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m)
+{
+    Damage* d;
+    if(component(eid, d))
+    {
+        if(m.contains("energy")) d->setEnergy(m["energy"].toInt());
+    }
 }
 
 

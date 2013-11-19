@@ -1,6 +1,5 @@
 #include "ActorSystem"
 
-#include <QtEntity/PropertyAccessor>
 #include <osg/Geode>
 #include <QStringList>
 
@@ -80,11 +79,38 @@ void Actor::setShapes(const QVariantList& shapes)
 ActorSystem::ActorSystem(QtEntity::EntityManager* em, osg::Group* rootnode)
     : BaseClass(em)
     , _rootNode(rootnode)
-{
+{   
+}
 
-    QTE_ADD_PROPERTY("name", QString, Actor, name, setName);
-    QTE_ADD_PROPERTY("position", QVector3D, Actor, position, setPosition);
-    
+
+QVariantMap ActorSystem::propertyValues(QtEntity::EntityId eid)
+{
+    QVariantMap m;
+    Actor* a;
+    if(component(eid, a))
+    {
+        m["name"]     = a->name();
+        m["position"] = a->position();
+        m["shapes"]   = a->shapes();
+    }
+    return m;    
+}
+
+
+void ActorSystem::applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m)
+{
+    Actor* a;
+    if(component(eid, a))
+    {
+        if(m.contains("name"))     a->setName(m["name"].toString());
+        if(m.contains("position")) a->setPosition(m["position"].value<QVector3D>());
+        if(m.contains("shapes"))   a->setShapes(m["shapes"].toList());
+    }
+}
+
+
+QVariantMap ActorSystem::propertyAttributes()
+{
     QVariantMap box, sphere, radius, center, halflengths, color;
     radius["__value__"] = 1.0f;
     radius["__type__"] =  qMetaTypeId<float>();
@@ -111,7 +137,10 @@ ActorSystem::ActorSystem(QtEntity::EntityManager* em, osg::Group* rootnode)
     
     QVariantMap attribs;
     attribs["classes"] = classes;
-    QTE_ADD_PROPERTY_WITH_ATTRIBS("shapes", QVariantList, Actor, shapes, setShapes, attribs);
+
+    QVariantMap shapes;
+    shapes["shapes"] = attribs;
+    return shapes;
 }
 
 

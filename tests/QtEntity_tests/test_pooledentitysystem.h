@@ -15,8 +15,28 @@ public:
     TestingSystemPooled(EntityManager* em, size_t capacity = 0, size_t chunkSize = 4)
         : PooledEntitySystem<Testing>(em, capacity, chunkSize)
     {
-        QTE_ADD_PROPERTY("myint", int, Testing, myInt, setMyInt);
-        QTE_ADD_PROPERTY("myvec2", Vec2d, Testing, myVec2, setMyVec2);
+    }
+
+    virtual QVariantMap propertyValues(QtEntity::EntityId eid) override
+    {
+        QVariantMap m;
+        Testing* t;
+        if(component(eid, t))
+        {
+            m["myint"]     = t->myInt();
+            m["myvec2"]    = QVariant::fromValue(t->myVec2());           
+        }
+        return m;    
+    }
+
+    virtual void applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m) override
+    {
+        Testing* t;
+        if(component(eid, t))
+        {
+            if(m.contains("myint"))     t->setMyInt(m["myint"].toInt());
+            if(m.contains("myvec2"))    t->setMyVec2(m["myvec2"].value<QtEntity::Vec2d>());            
+        }
     }
 };
 

@@ -64,6 +64,10 @@ public:
     // override to emit signal for removing entity list entry
     virtual bool destroyComponent(QtEntity::EntityId id) override;
 
+    virtual QVariantMap propertyValues(QtEntity::EntityId eid) override;
+    virtual void applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m) override;
+    virtual QVariantMap propertyAttributes() override;
+
 signals:
 
     void entityAdded(QtEntity::EntityId id, QString name);

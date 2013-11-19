@@ -17,7 +17,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtEntityUtils/PrefabSystem>
 
 #include <QtEntity/EntityManager>
-#include <QtEntity/PropertyAccessor>
 #include <QMetaProperty>
 
 namespace QtEntityUtils
@@ -65,8 +64,9 @@ namespace QtEntityUtils
 
     void PrefabSystem::updatePrefab(const QString& path, const QVariantMap& newcomponents, bool updateInstances)
     {
+        // TODO re-implement
         // fetch prefab by path
-        Prefab* prefab;
+        /*Prefab* prefab;
         {
             auto i = _prefabs.find(path);
             if(i == _prefabs.end())
@@ -159,7 +159,7 @@ namespace QtEntityUtils
         }
 
         // finally update prefab in prefab store
-        prefab->setComponents(newcomponents);
+        prefab->setComponents(newcomponents);*/
 
     }
 
