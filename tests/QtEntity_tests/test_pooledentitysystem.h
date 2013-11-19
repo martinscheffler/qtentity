@@ -17,7 +17,7 @@ public:
     {
     }
 
-    virtual QVariantMap propertyValues(QtEntity::EntityId eid) override
+    virtual QVariantMap properties(QtEntity::EntityId eid) override
     {
         QVariantMap m;
         Testing* t;
@@ -29,7 +29,7 @@ public:
         return m;    
     }
 
-    virtual void applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m) override
+    virtual void setProperties(QtEntity::EntityId eid, const QVariantMap& m) override
     {
         Testing* t;
         if(component(eid, t))

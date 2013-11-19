@@ -11,7 +11,7 @@ EnemySystem::EnemySystem(QtEntity::EntityManager* em)
 }
 
 
-QVariantMap EnemySystem::propertyValues(QtEntity::EntityId eid)
+QVariantMap EnemySystem::properties(QtEntity::EntityId eid)
 {
     QVariantMap m;
     Enemy* e;
@@ -23,7 +23,7 @@ QVariantMap EnemySystem::propertyValues(QtEntity::EntityId eid)
 }
 
 
-void EnemySystem::applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m)
+void EnemySystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
 {
     Enemy* e;
     if(component(eid, e))

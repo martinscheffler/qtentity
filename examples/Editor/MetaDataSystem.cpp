@@ -36,7 +36,7 @@ MetaDataSystem::MetaDataSystem(QtEntity::EntityManager* em)
 }
 
 
-QVariantMap MetaDataSystem::propertyValues(QtEntity::EntityId eid)
+QVariantMap MetaDataSystem::properties(QtEntity::EntityId eid)
 {
     QVariantMap m;
     MetaData* e;
@@ -49,7 +49,7 @@ QVariantMap MetaDataSystem::propertyValues(QtEntity::EntityId eid)
 }
 
 
-void MetaDataSystem::applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m)
+void MetaDataSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
 {
     MetaData* e;
     if(component(eid, e))

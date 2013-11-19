@@ -53,7 +53,7 @@ QtEntity::Component* ShapeSystem::createComponent(QtEntity::EntityId id, const Q
     return shp;
 }
 
-QVariantMap ShapeSystem::propertyValues(QtEntity::EntityId eid)
+QVariantMap ShapeSystem::properties(QtEntity::EntityId eid)
 {
     QVariantMap m;
     Shape* s;
@@ -79,7 +79,7 @@ QVariantMap ShapeSystem::propertyAttributes()
 }
 
 
-void ShapeSystem::applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m)
+void ShapeSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
 {
     Shape* s;
     if(component(eid, s))

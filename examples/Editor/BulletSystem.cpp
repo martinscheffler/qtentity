@@ -10,7 +10,7 @@ BulletSystem::BulletSystem(QtEntity::EntityManager* em)
 {
 }
 
-QVariantMap BulletSystem::propertyValues(QtEntity::EntityId eid)
+QVariantMap BulletSystem::properties(QtEntity::EntityId eid)
 {
     QVariantMap m;
     Bullet* b;
@@ -22,7 +22,7 @@ QVariantMap BulletSystem::propertyValues(QtEntity::EntityId eid)
 }
 
 
-void BulletSystem::applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m)
+void BulletSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
 {
     Bullet* b;
     if(component(eid, b))

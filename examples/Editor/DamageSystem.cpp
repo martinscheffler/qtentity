@@ -11,7 +11,7 @@ DamageSystem::DamageSystem(QtEntity::EntityManager* em)
 }
 
 
-QVariantMap DamageSystem::propertyValues(QtEntity::EntityId eid)
+QVariantMap DamageSystem::properties(QtEntity::EntityId eid)
 {
     QVariantMap m;
     Damage* d;
@@ -23,7 +23,7 @@ QVariantMap DamageSystem::propertyValues(QtEntity::EntityId eid)
 }
 
 
-void DamageSystem::applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m)
+void DamageSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
 {
     Damage* d;
     if(component(eid, d))

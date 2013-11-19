@@ -64,9 +64,8 @@ namespace QtEntityUtils
 
     void PrefabSystem::updatePrefab(const QString& path, const QVariantMap& newcomponents, bool updateInstances)
     {
-        // TODO re-implement
         // fetch prefab by path
-        /*Prefab* prefab;
+        Prefab* prefab;
         {
             auto i = _prefabs.find(path);
             if(i == _prefabs.end())
@@ -103,34 +102,32 @@ namespace QtEntityUtils
                 {
                     // component exists in component map and in prefab. Update prefab.
                     QVariantMap newvals = newcomponents[j.key()].toMap();
-
+                    
                     // find all prefab instances and update the components
                     for(auto k = this->begin(); k != this->end(); ++k)
                     {
                         PrefabInstance* pi = static_cast<PrefabInstance*>(k->second);
                         if(pi->prefab() == prefab)
                         {
-                            QtEntity::Component* component = es->component(k->first);
-                            Q_ASSERT(component);
-                            if(!component) continue;
-
-                            for(int i = 0; i < es->propertyCount(); ++i)
+                            QVariantMap data = es->properties(k->first);
+                            for(auto i = newvals.begin(); i != newvals.end(); ++i)
                             {
-                                auto prop = es->property(i);
+                                data[i.key()] = i.value();
+                            }
 
-                                QString n = prop->name();
-                                // don't update parameters in prefab parameter list
-                                if(prefab->parameters().contains(n) || n == "objectName")
+                            auto i = data.begin();
+                            while(i != data.end())
+                            {
+                                if(prefab->parameters().contains(i.key()) || i.key() == "objectName")
                                 {
-                                    continue;
+                                    i = data.erase(i);
                                 }
-                                QVariant current = prop->read(k->first);
-                                QVariantMap::iterator newval = newvals.find(n);
-                                if(newval != newvals.end() && newval.value() != current)
+                                else
                                 {
-                                    prop->write(k->first, newval.value());
+                                    ++i;
                                 }
                             }
+                            es->setProperties(k->first, data);
                         }
                     }
                 }
@@ -159,7 +156,7 @@ namespace QtEntityUtils
         }
 
         // finally update prefab in prefab store
-        prefab->setComponents(newcomponents);*/
+        prefab->setComponents(newcomponents);
 
     }
 

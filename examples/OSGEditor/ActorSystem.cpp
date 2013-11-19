@@ -83,7 +83,7 @@ ActorSystem::ActorSystem(QtEntity::EntityManager* em, osg::Group* rootnode)
 }
 
 
-QVariantMap ActorSystem::propertyValues(QtEntity::EntityId eid)
+QVariantMap ActorSystem::properties(QtEntity::EntityId eid)
 {
     QVariantMap m;
     Actor* a;
@@ -97,7 +97,7 @@ QVariantMap ActorSystem::propertyValues(QtEntity::EntityId eid)
 }
 
 
-void ActorSystem::applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m)
+void ActorSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
 {
     Actor* a;
     if(component(eid, a))

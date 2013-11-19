@@ -104,7 +104,7 @@ namespace QtEntity
 
             // store
             _components[id] = component;
-            this->applyPropertyValues(id, properties);
+            this->setProperties(id, properties);
             return component;       
         }
 

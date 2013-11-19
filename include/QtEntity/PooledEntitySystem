@@ -170,7 +170,7 @@ namespace QtEntity
             
             if(!properties.empty())
             {
-                this->applyPropertyValues(id, properties);
+                this->setProperties(id, properties);
             }
 
             return &obj->_component;

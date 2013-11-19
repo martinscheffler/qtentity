@@ -26,7 +26,7 @@ public:
 
     void step(int frameNumber, int totalTime, int delta);
 
-    virtual QVariantMap propertyValues(QtEntity::EntityId eid) override;
-    virtual void applyPropertyValues(QtEntity::EntityId eid, const QVariantMap& m) override;
+    virtual QVariantMap properties(QtEntity::EntityId eid) override;
+    virtual void setProperties(QtEntity::EntityId eid, const QVariantMap& m) override;
     
 };
