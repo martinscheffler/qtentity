@@ -38,8 +38,8 @@ namespace QtEntityUtils
     public:
         EntityEditor();
 
-        static QVariant fetchEntityData(const QtEntity::EntityManager& em, QtEntity::EntityId);
-        static void applyEntityData(QtEntity::EntityManager& em, QtEntity::EntityId eid, const QString& componenttype, const QString& propertyname, const QVariant& value);
+        static QVariantMap fetchEntityData(const QtEntity::EntityManager& em, QtEntity::EntityId);
+        static void applyEntityData(QtEntity::EntityManager& em, QtEntity::EntityId eid, const QVariantMap& values);
 
     public slots:
 
@@ -52,7 +52,7 @@ namespace QtEntityUtils
 
     signals:
 
-        void entityDataChanged(QtEntity::EntityId id, const QString& componenttype, const QString& propertyname, const QVariant& value);
+        void entityDataChanged(QtEntity::EntityId id, const QVariantMap& values);
 
     private:
 

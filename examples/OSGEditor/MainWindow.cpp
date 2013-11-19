@@ -109,20 +109,21 @@ void MainWindow::entitySelectionChanged()
     auto items = _entities->selectedItems();
     if(items.empty())
     {
-        emit selectedEntityChanged(0, 0);
+        QVariantMap empty;
+        emit selectedEntityChanged(0, empty);
     }
     else
     {
         QtEntity::EntityId selected = items.front()->data(Qt::UserRole).toUInt();
-        QVariant props = QtEntityUtils::EntityEditor::fetchEntityData(_game->entityManager(), selected);
+        QVariantMap props = QtEntityUtils::EntityEditor::fetchEntityData(_game->entityManager(), selected);
         emit selectedEntityChanged(selected, props);
     }
 }
 
 
-void MainWindow::changeEntityData(QtEntity::EntityId id, const QString& componenttype, const QString& propertyname, const QVariant& value)
+void MainWindow::changeEntityData(QtEntity::EntityId id, const QVariantMap& values)
 {
-    QtEntityUtils::EntityEditor::applyEntityData(_game->entityManager(), id, componenttype, propertyname, value);
+    QtEntityUtils::EntityEditor::applyEntityData(_game->entityManager(), id, values);
 
     //re-send changed component properties to editor
     entitySelectionChanged();

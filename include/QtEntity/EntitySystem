@@ -236,10 +236,29 @@ namespace QtEntity
         int propertyCount() const;
 
         /**
-         * Return a const proeprty accessor by index
+         * Return a const property accessor by index
          */
         const PropertyAccessor* property(int idx) const;
           
+        /**
+         * Fetch a map containing property names => values for a specific component
+         * @param eid ID of component entity to fetch from
+         * @return A map from property names to QVariant values
+         */
+        virtual QVariantMap propertyValues(EntityId eid);
+
+        /**
+         * Fetch all property attributes for an entity system.
+         * @return A map from property names to property attributes map
+         */
+        virtual QVariantMap propertyAttributes();
+
+        /**
+         * Assign multiple property values to a specified component
+         * @param eid ID identifying component
+         * @param m A map from property name => value
+         */
+        virtual void applyPropertyValues(EntityId eid, const QVariantMap& m);
 
         /**
          * pend() and pbegin() implementations have to return EntitySystem::Iterator instances.
@@ -260,32 +279,8 @@ namespace QtEntity
          * Add a property accessor to system
          */
         void addProperty(const PropertyAccessor* a);
-
         
     };
 
-    /**
-     * Helper function for fetching a map containing property names => values
-     * from an entity system for a specific component
-     * @param es Entity system to fetch from
-     * @param eid ID of component entity to fetch from
-     * @return A map from property names to QVariant values
-     */
-    QVariantMap QTENTITY_EXPORT propertyValues(EntitySystem* es, EntityId eid);
-
-    /**
-     * Helper function to fetch all property attributes for an entity system.
-     * @param es Entity system to fetch from
-     * @return A map from property names to property attributes map
-     */
-    QVariantMap QTENTITY_EXPORT propertyAttributes(EntitySystem* es);
-
-    /**
-     * Helper function to assign multiple property values to a specified component
-     * in the given system
-     * @param es Entity system holding component
-     * @param eid ID identifying component
-     * @param m A map from property name => value
-     */
-    void QTENTITY_EXPORT applyPropertyValues(EntitySystem* es, EntityId eid, const QVariantMap& m);
+    
 }

@@ -104,24 +104,24 @@ namespace QtEntity
     }
 
 
-    QVariantMap propertyValues(EntitySystem* es, EntityId eid)
+    QVariantMap EntitySystem::propertyValues(EntityId eid)
     {
         QVariantMap m;
-        for(int i = 0; i < es->propertyCount(); ++i)
+        for(int i = 0; i < this->propertyCount(); ++i)
         {
-            auto prop = es->property(i);
+            auto prop = this->property(i);
             m[prop->name()] = prop->read(eid);
         }
         return m;
     }
 
 
-    QVariantMap propertyAttributes(EntitySystem* es)
+    QVariantMap EntitySystem::propertyAttributes()
     {
         QVariantMap m;
-        for(int i = 0; i < es->propertyCount(); ++i)
+        for(int i = 0; i < this->propertyCount(); ++i)
         {
-            auto prop = es->property(i);
+            auto prop = this->property(i);
             if(!prop->attributes().empty())
             {
                 m[prop->name()] = prop->attributes();
@@ -131,11 +131,11 @@ namespace QtEntity
     }
 
 
-    void applyPropertyValues(EntitySystem* es, EntityId eid, const QVariantMap& m)
+    void EntitySystem::applyPropertyValues(EntityId eid, const QVariantMap& m)
     {
-        for(int i = 0; i < es->propertyCount(); ++i)
+        for(int i = 0; i < this->propertyCount(); ++i)
         {
-            auto prop = es->property(i);
+            auto prop = this->property(i);
             if(m.contains(prop->name())) 
             {
                 bool success = prop->write(eid, m[prop->name()]);

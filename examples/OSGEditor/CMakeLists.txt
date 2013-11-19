@@ -36,7 +36,7 @@ QT5_WRAP_UI(LIB_SOURCES
         MainWindow.ui
 )
 
-
+source_group("Header Files" FILES ${LIB_PUBLIC_HEADERS})
 add_executable(${APP_NAME} ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} ${MOC_SOURCES} ${RCC_SOURCES})
 
 target_link_libraries(${APP_NAME} QtEntity QtEntityUtils ${OPENSCENEGRAPH_LIBRARIES})

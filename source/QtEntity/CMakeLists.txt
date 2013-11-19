@@ -33,6 +33,8 @@ set(MOC_INPUT
 
 QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})
 
+source_group("Header Files" FILES ${LIB_PUBLIC_HEADERS})
+
 add_library( ${LIB_NAME} ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} ${MOC_SOURCES} )
 
 #widgets is needed for QColor and other data types:

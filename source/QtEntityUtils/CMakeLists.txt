@@ -40,6 +40,8 @@ QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})
 
 QT5_WRAP_UI(LIB_SOURCES PropertyObjectsEdit.ui)
 
+source_group("Header Files" FILES ${LIB_PUBLIC_HEADERS})
+
 add_library(${LIB_NAME} ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} ${MOC_SOURCES})
 
 target_link_libraries(${LIB_NAME} QtEntity QtPropertyBrowser)

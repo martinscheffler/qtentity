@@ -26,7 +26,7 @@ protected slots:
     void entityChanged(QtEntity::EntityId id, QString name, QString additionalInfo);
     void entityRemoved(QtEntity::EntityId id);
     void entitySelectionChanged();
-    void changeEntityData(QtEntity::EntityId id, const QString& componenttype, const QString& propertyname, const QVariant& value);
+    void changeEntityData(QtEntity::EntityId id, const QVariantMap& values);
     void stepGame();
 
 signals:

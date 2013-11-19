@@ -38,6 +38,7 @@ set(MOC_INPUT
    ${HEADER_PATH}/MetaDataSystem
 )
 
+
 QT5_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})
 QT5_WRAP_UI(LIB_SOURCES
         MainWindow.ui
@@ -47,6 +48,7 @@ QT5_ADD_RESOURCES(RCC_SOURCES
     resources.qrc
 )
 
+source_group("Header Files" FILES ${LIB_PUBLIC_HEADERS})
 add_executable(${APP_NAME} ${LIB_PUBLIC_HEADERS} ${LIB_SOURCES} ${MOC_SOURCES} ${RCC_SOURCES})
 
 target_link_libraries(${APP_NAME} QtEntity QtEntityUtils)
