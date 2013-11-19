@@ -17,51 +17,17 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include <QtEntity/Export>
+#include <QtEntity/ComponentIterator>
+#include <QtEntity/ComponentRegistry>
 #include <QtEntity/DataTypes>
 #include <QVariantMap>
 #include <QDebug>
 
 namespace QtEntity
 {
-    /**
-     * Empty macro to use when no exporter macro is needed
-     */
-#define NOEXP
-
-    /**
-     * Macro to use in class declaration of QtEntity::Component subclasses.B
-     * Adds a static class type id and a dynamic, virtual type id method.
-     * Parameter EXMACRO can be used to pass name of export macro for windows DLLs.
-     * Use NOEXP as parameter if methods don't need to be exported or the whole
-     * component class is exported
-     */
-#define DECLARE_COMPONENT_TYPE(EXPMACRO)\
-    public:\
-        EXPMACRO static QtEntity::ClassTypeId classTypeId();\
-        EXPMACRO virtual QtEntity::ClassTypeId typeId() const override;\
-    private:\
-        static QtEntity::ClassTypeId _typeId;
-    /**
-     * Global methods assigning class type ids
-     */
-
-    /**
-     * Macro for implementing the component types of a component.
-     * Call this in the cpp of a component.
-     * Use parameter TYPE to pass in class name of the component
-     */
-#define IMPLEMENT_COMPONENT_TYPE(TYPE)\
-    QtEntity::ClassTypeId TYPE::_typeId = QtEntity::ComponentRegistry::registerComponent(#TYPE);\
-    QtEntity::ClassTypeId TYPE::classTypeId(void) { return TYPE::_typeId; }\
-    QtEntity::ClassTypeId TYPE::typeId(void) const { return _typeId; }
-
-    namespace ComponentRegistry
-    {
-        QTENTITY_EXPORT ClassTypeId registerComponent(const QString& classname);
-        QTENTITY_EXPORT ClassTypeId classTypeId(const QString& classname);
-        QTENTITY_EXPORT QString className(ClassTypeId typeId);
-    }
-
+ 
+     // fwd declaration
+    class EntityManager;
 
     /**
      * Base class for all QtEntity components.
@@ -78,77 +44,6 @@ namespace QtEntity
         virtual QtEntity::ClassTypeId typeId() const = 0;
     };
 
-
-
-    /**
-     * Abstract iterator interface for implementing forward iterators.
-     * Used in EntitySystem::Iterator for wrapping other iterators in a polymorphic interface.
-     */
-    class VIterator
-    {
-    public:
-        virtual ~VIterator() {}
-        virtual VIterator* clone() = 0;            
-        virtual Component* object() = 0;
-        virtual bool equal(VIterator* other) = 0;
-        virtual void increment() = 0;
-    };
-
-
-     /**
-        * Convenience template for implementing VIterator interface with a concrete Iterator class.
-        * U is the type of the concrete iterator.
-        */
-    template <typename U>
-    class VIteratorImpl : public VIterator
-    {
-        U _iter;
-    public:
-        VIteratorImpl(const U& it) :_iter(it) {}
-        virtual VIterator* clone() { return new VIteratorImpl<U>(_iter); }
-        virtual EntityId id() { return _iter->first; }
-        virtual Component* object() { return _iter->second; }
-        virtual bool equal(VIterator* other) { return _iter == static_cast<VIteratorImpl<U>*>(other)->_iter; }
-        virtual void increment() { ++_iter; }
-    };
-
-    /**
-        * @brief The Iterator class for iterating through all components of an EntitySystem.
-        * Uses a VIterator heap object for accessing the concrete underlying iterator.
-        */
-    class PIterator : public std::iterator<std::forward_iterator_tag, Component*> 
-    {
-    public:
-        PIterator(VIterator* vit) : _viter(vit) {}
-        PIterator(const PIterator& other) : _viter(other._viter->clone()) {}
-        ~PIterator() { delete _viter; }
-        PIterator operator=(const PIterator& other) { delete _viter; _viter = other._viter->clone(); return *this;  }
-        bool operator!=(const PIterator& other) { return !(_viter->equal(other._viter)); }
-        Component* operator*() { return _viter->object(); }
-        Component* operator->() { return _viter->object(); }
-        friend bool operator==(const PIterator &lhs, const PIterator& rhs) { return lhs._viter->equal(rhs._viter); }
-        PIterator& operator++()
-        {
-            _viter->increment();
-            return *this;
-        }
-
-        PIterator operator++(int)
-        {
-            PIterator tmp(*this);
-            ++(*this);
-            return tmp;
-        }
-            
-    private:
-            
-        VIterator* _viter;
-            
-    };
-
-
-    // fwd declaration
-    class EntityManager;
 
     /**
      * Entity system base class.

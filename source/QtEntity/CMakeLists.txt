@@ -10,9 +10,11 @@ set(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/QtEntity)
 set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(LIB_PUBLIC_HEADERS
+  ${HEADER_PATH}/ComponentRegistry
   ${HEADER_PATH}/DataTypes
   ${HEADER_PATH}/EntityManager
   ${HEADER_PATH}/EntitySystem
+  ${HEADER_PATH}/ComponentIterator
   ${HEADER_PATH}/PooledEntitySystem
   ${HEADER_PATH}/SimpleEntitySystem
   ${HEADER_PATH}/VecUtils

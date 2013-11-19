@@ -78,9 +78,10 @@ namespace QtEntity
         EntitySystem* system(ClassTypeId ctype) const;
 
         /**
-         * @brief Add an entity system to the entity manager.
+         * @brief Adds an entity system to the entity manager.
          * The entity manager takes ownership of the system, it is
          * deleted when entity manager is deleted.
+         * Don't call this directly, this is called in EntitySystem constructor
          * @throw runtime_error if entity system already in manager
          */
         void addSystem(ClassTypeId cid, EntitySystem* es);
@@ -216,6 +217,9 @@ namespace QtEntity
         EntitySystemStore::iterator begin() { return _systems.begin(); }
         EntitySystemStore::iterator end() { return _systems.end(); }
 
+        /**
+         * const iterators for entity systems
+         */
         EntitySystemStore::const_iterator begin() const { return _systems.begin(); }
         EntitySystemStore::const_iterator end() const { return _systems.end(); }
 

@@ -22,6 +22,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace QtEntity
 {
+
 	EntityManager::EntityManager(QObject* parent)
 		: QObject(parent)
         , _entityCounter(1)

@@ -1,0 +1,96 @@
+#pragma once
+
+/*
+Copyright (c) 2013 Martin Scheffler
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial 
+portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+#include <QtEntity/Export>
+#include <QtEntity/ComponentRegistry>
+#include <QtEntity/DataTypes>
+#include <QVariantMap>
+#include <QDebug>
+
+namespace QtEntity
+{
+ 
+    // fwd declaration
+    class Component;
+
+    /**
+     * Abstract iterator interface for implementing forward iterators.
+     * Used in EntitySystem::Iterator for wrapping other iterators in a polymorphic interface.
+     */
+    class VIterator
+    {
+    public:
+        virtual ~VIterator() {}
+        virtual VIterator* clone() = 0;            
+        virtual Component* object() = 0;
+        virtual bool equal(VIterator* other) = 0;
+        virtual void increment() = 0;
+    };
+
+
+     /**
+        * Convenience template for implementing VIterator interface with a concrete Iterator class.
+        * U is the type of the concrete iterator.
+        */
+    template <typename U>
+    class VIteratorImpl : public VIterator
+    {
+        U _iter;
+    public:
+        VIteratorImpl(const U& it) :_iter(it) {}
+        virtual VIterator* clone() { return new VIteratorImpl<U>(_iter); }
+        virtual EntityId id() { return _iter->first; }
+        virtual Component* object() { return _iter->second; }
+        virtual bool equal(VIterator* other) { return _iter == static_cast<VIteratorImpl<U>*>(other)->_iter; }
+        virtual void increment() { ++_iter; }
+    };
+
+    /**
+        * @brief The Iterator class for iterating through all components of an EntitySystem.
+        * Uses a VIterator heap object for accessing the concrete underlying iterator.
+        */
+    class PIterator : public std::iterator<std::forward_iterator_tag, Component*> 
+    {
+    public:
+        PIterator(VIterator* vit) : _viter(vit) {}
+        PIterator(const PIterator& other) : _viter(other._viter->clone()) {}
+        ~PIterator() { delete _viter; }
+        PIterator operator=(const PIterator& other) { delete _viter; _viter = other._viter->clone(); return *this;  }
+        bool operator!=(const PIterator& other) { return !(_viter->equal(other._viter)); }
+        Component* operator*() { return _viter->object(); }
+        Component* operator->() { return _viter->object(); }
+        friend bool operator==(const PIterator &lhs, const PIterator& rhs) { return lhs._viter->equal(rhs._viter); }
+        PIterator& operator++()
+        {
+            _viter->increment();
+            return *this;
+        }
+
+        PIterator operator++(int)
+        {
+            PIterator tmp(*this);
+            ++(*this);
+            return tmp;
+        }
+            
+    private:
+            
+        VIterator* _viter;
+            
+    };
+}
