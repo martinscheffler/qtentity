@@ -38,8 +38,7 @@ public:
 
 
 private slots:
-
-
+    
     void testCreateEntity()
     {
         QtEntity::EntityId count = _em.createEntityId();       
@@ -63,17 +62,52 @@ private slots:
         QCOMPARE(_ts->count(), count + 1);
     }
 
+    void testDestroyComponent()
+    {        
+        size_t count = _ts->count();       
+        _engine.evaluate("EM.Testing.createComponent(668, {myint:999});");
+        if(_engine.hasUncaughtException())
+        {
+            qDebug() << "Script error: " << _engine.uncaughtException().toString();
+        }
+        _engine.evaluate("EM.Testing.destroyComponent(668, {myint:999});");
+        if(_engine.hasUncaughtException())
+        {
+            qDebug() << "Script error: " << _engine.uncaughtException().toString();
+        }
+        QCOMPARE(_ts->count(), count);
+    }
+
     void testGetProperty()
     {        
         size_t count = _ts->count();   
         QVariantMap m; m["myint"] = 12345;
         _ts->createComponent(999, m);
-        QScriptValue ret = _engine.evaluate("var prop = EM.Testing.myint; myint.read(999)");
+        QScriptValue ret = _engine.evaluate("var prop = EM.Testing.myint; prop.read(999)");
         if(_engine.hasUncaughtException())
         {
             qDebug() << "Script error: " << _engine.uncaughtException().toString();
         }
         QCOMPARE(ret.toInt32(), 12345);
+    }
+
+    void testSetProperty()
+    {        
+        size_t count = _ts->count();   
+        QVariantMap m; m["myint"] = 12345;
+        _ts->createComponent(998, m);
+        QScriptValue ret = _engine.evaluate("var prop = EM.Testing.myint; prop.write(998, 6789)");
+        if(_engine.hasUncaughtException())
+        {
+            qDebug() << "Script error: " << _engine.uncaughtException().toString();
+        }
+
+        QScriptValue ret2 = _engine.evaluate("var prop = EM.Testing.myint; prop.read(998)");
+        if(_engine.hasUncaughtException())
+        {
+            qDebug() << "Script error: " << _engine.uncaughtException().toString();
+        }
+        QCOMPARE(ret2.toInt32(), 6789);
     }
 };
 

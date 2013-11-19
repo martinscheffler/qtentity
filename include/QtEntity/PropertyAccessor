@@ -131,12 +131,12 @@ namespace QtEntity
         /**
          * Fetches parameter value from component with given id
          */
-        Q_INVOKABLE QVariant read(EntityId id) const;
+        Q_INVOKABLE QVariant read(QtEntity::EntityId id) const;
 
         /**
          *  Calls setter method with parameter val, writing to component identified by id
         */
-        Q_INVOKABLE bool write(EntityId id, const QVariant& val) const;
+        Q_INVOKABLE bool write(QtEntity::EntityId id, const QVariant& val) const;
 
         /**
          * Fetch parameter attributes map
