@@ -114,6 +114,40 @@ void ActorSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
 
 QVariantMap ActorSystem::propertyAttributes()
 {
+    /*{
+        shapes : {
+          classes : {
+            Box : {
+              Center : {
+                __value__ : Vec3d(0,0,0),
+                __type__ : qMetaTypeId<QtEntity::Vec3d>()                
+              },
+              Color : {
+                __value__ : QColor(255,0,0,255),
+                __type__ : qMetaTypeId<QColor>() 
+              },
+              HalfLengths : {
+                __value__ : Vec3d(0.5f,0.5f,0.5f),
+                __type__ : qMetaTypeId<QtEntity::Vec3d>()                
+              }
+            },
+            Sphere : {
+              Center : {
+                __value__ : Vec3d(0,0,0),
+                __type__ : qMetaTypeId<QtEntity::Vec3d>(),
+                
+              },
+              Color : {
+                __value__ : QColor(255,0,0,255),
+                __type__ : qMetaTypeId<QColor>() 
+              },
+              Radius : {
+                __value__ : 1.0,
+                __type__ : qMetaTypeId<float>() 
+              }
+        }
+    }
+    */
     QVariantMap box, sphere, radius, center, halflengths, color;
     radius["__value__"] = 1.0f;
     radius["__type__"] =  qMetaTypeId<float>();
