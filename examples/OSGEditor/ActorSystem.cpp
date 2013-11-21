@@ -145,7 +145,9 @@ QVariantMap ActorSystem::propertyAttributes()
                 __value__ : 1.0,
                 __type__ : qMetaTypeId<float>() 
               }
-        }
+            }
+         }
+      }
     }
     */
     QVariantMap box, sphere, radius, center, halflengths, color;
