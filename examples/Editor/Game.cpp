@@ -24,7 +24,7 @@ Game::Game(Renderer* renderer)
     , _playerid(0)
 {
 
-    _renderer->createShape(QPixmap(":/assets/space.jpg"), QPointF(0,0), -10);
+    _renderer->createShape(":/assets/space.jpg", QRect(0, 0, 640,480), QPointF(0,0), -10);
 
 }
 

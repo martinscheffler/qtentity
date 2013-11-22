@@ -18,9 +18,8 @@ void Shape::buildShape()
     {
         _renderer->destroyShape(_handle);
     }
-    QPixmap pic(_path);
-    QPixmap p = pic.copy(_subtex);
-    _handle = _renderer->createShape(p, _position, _zindex);
+
+    _handle = _renderer->createShape(_path, _subtex, _position, _zindex);
 }
 
 

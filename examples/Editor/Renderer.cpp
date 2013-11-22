@@ -1,54 +1,27 @@
 #include "Renderer"
-#include <QGraphicsView>
-#include <QHBoxLayout>
-#include <QGraphicsPixmapItem>
-#include <QQuickItem>
-#include <QQuickView>
-#include <QQmlComponent>
-#include <QQmlProperty>
 
+#include <QHBoxLayout>
+#include <QtGlobal>
 
 #if 0
 // Use graphics View based renderer
-class RendererImpl : public QGraphicsView
+
+#include <QPixmap>
+#include <QGraphicsView>
+#include <QGraphicsPixmapItem>
+
+
+class RendererImpl : public QObject
 {
 public:
 
+    RendererImpl(QObject* parent)
+        : QObject(parent)
+    {
+    }
+
+    QGraphicsView _view;
     QGraphicsScene _scene;
-
-    RendererImpl(QWidget* parent)
-        : QGraphicsView(parent)
-    {
-        setScene(&_scene);
-        _scene.setSceneRect(0, 0, 640, 480);
-        setFocusPolicy(Qt::NoFocus);
-    }
-
-    // create a shape with given texture and transform, returns an identifier
-    RenderHandle createShape(const QPixmap& pic, const QPointF& pos, int zindex)
-    {
-        QGraphicsPixmapItem* item = _scene.addPixmap(pic);
-        item->setPos(pos);
-        item->setZValue(zindex);
-        return reinterpret_cast<RenderHandle>(item);
-    }
-
-
-    void destroyShape(RenderHandle handle)
-    {
-        QGraphicsPixmapItem* item = reinterpret_cast<QGraphicsPixmapItem*>(handle);
-        _scene.removeItem(item);
-        delete item;
-    }
-
-
-    void updateShape(RenderHandle handle, const QPointF& pos, int zindex)
-    {
-        QGraphicsPixmapItem* item = reinterpret_cast<QGraphicsPixmapItem*>(handle);
-        item->setPos(pos);
-        item->setZValue(zindex);
-    }
-
 };
 
 
@@ -57,33 +30,51 @@ Renderer::Renderer(QWidget* parent)
 {
 
     _impl = new RendererImpl(this);
+    _impl->_view.setScene(&_impl->_scene);
+    _impl->_scene.setSceneRect(0, 0, 640, 480);
+    setFocusPolicy(Qt::NoFocus);
     QHBoxLayout* layout = new QHBoxLayout();
     setLayout(layout);
-    layout->addWidget(_impl);
+    layout->addWidget(&_impl->_view);
 }
 
 
 // create a shape with given texture and transform, returns an identifier
-RenderHandle Renderer::createShape(const QPixmap& pic, const QPointF& pos, int zindex)
+RenderHandle Renderer::createShape(const QString& path, const QRect& rect, const QPointF& pos, int zindex)
 {
-    return _impl->createShape(pic, pos, zindex);
+    QPixmap pic(path);
+    QPixmap p = pic.copy(rect);
+    QGraphicsPixmapItem* item = _impl->_scene.addPixmap(p);
+    item->setPos(pos);
+    item->setZValue(zindex);
+    return reinterpret_cast<RenderHandle>(item);
 }
 
 
 // destroy shape previously created with createShape
-void Renderer::destroyShape(RenderHandle idx)
+void Renderer::destroyShape(RenderHandle handle)
 {
-    _impl->destroyShape(idx);
+    QGraphicsPixmapItem* item = reinterpret_cast<QGraphicsPixmapItem*>(handle);
+    _impl->_scene.removeItem(item);
+    delete item;
 }
 
 
 // update transform of shape previously created with createShape
-void Renderer::updateShape(RenderHandle idx, const QPointF& pos, int zindex)
+void Renderer::updateShape(RenderHandle handle, const QPointF& pos, int zindex)
 {
-    _impl->updateShape(idx, pos, zindex);
+    QGraphicsPixmapItem* item = reinterpret_cast<QGraphicsPixmapItem*>(handle);
+    item->setPos(pos);
+    item->setZValue(zindex);
 }
 
 #else
+
+#include <QQuickItem>
+#include <QQuickView>
+#include <QQmlComponent>
+#include <QQmlProperty>
+
 // Use Qml based renderer
 
 class RendererImpl : public QObject
@@ -119,15 +110,26 @@ Renderer::Renderer(QWidget* parent)
 
 
 // create a shape with given texture and transform, returns an identifier
-RenderHandle Renderer::createShape(const QPixmap& pic, const QPointF& pos, int zindex)
+RenderHandle Renderer::createShape(const QString& path, const QRect& rect, const QPointF& pos, int zindex)
 {
-    
+
     QObject *object = _impl->_shapeComponent->create();
     QQmlProperty::write(object, "x", pos.x());
     QQmlProperty::write(object, "y", pos.y());
     QQmlProperty::write(object, "z", zindex);
-    QQuickItem* item = qobject_cast<QQuickItem*>(object); 
+    QQmlProperty::write(object, "width", rect.width());
+    QQmlProperty::write(object, "height", rect.height());
+
+    Q_ASSERT(object->children().size() == 1);
+    QObject* img = object->children().front();
+    Q_ASSERT(img);
+    QQmlProperty::write(img, "source", "qrc" + path);
+    QQmlProperty::write(img, "x", rect.x() * -1);
+    QQmlProperty::write(img, "y", rect.y() * -1);
+
+    QQuickItem* item = qobject_cast<QQuickItem*>(object);
     item->setParentItem(_impl->_view->rootObject());
+
     return reinterpret_cast<RenderHandle>(object);
 }
 
@@ -148,4 +150,5 @@ void Renderer::updateShape(RenderHandle handle, const QPointF& pos, int zindex)
     QQmlProperty::write(object, "y", pos.y());
     QQmlProperty::write(object, "z", zindex);
 }
+
 #endif

@@ -13,7 +13,7 @@ public:
     Renderer(QWidget* parent);
 
     // create a shape with given texture and position, returns an identifier
-    RenderHandle createShape(const QPixmap& pic, const QPointF& pos, int zindex);
+    RenderHandle createShape(const QString& path, const QRect& rect, const QPointF& pos, int zindex);
 
     // destroy shape previously created with createShape
     void destroyShape(RenderHandle identifier);

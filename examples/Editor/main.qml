@@ -3,9 +3,9 @@ import QtQuick 2.1
 Rectangle {
     id: rectangle
     color: "red"
-    width: 640
-    height: 400
-	z : -100
+    width: 140
+    height: 100
+    z : 2
 
     Text {
         id: text
