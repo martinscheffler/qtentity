@@ -4,5 +4,6 @@
         <file>space.jpg</file>
         <file>main.qml</file>
         <file>shape.qml</file>
+        <file>GalaxyUno.jpg</file>
     </qresource>
 </RCC>

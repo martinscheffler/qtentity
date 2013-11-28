@@ -56,7 +56,6 @@ private:
     ShapeSystem* _shapesys;
 
     QtEntity::EntityId _playerid;
-
 };
 
 

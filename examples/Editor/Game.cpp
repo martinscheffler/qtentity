@@ -24,7 +24,7 @@ Game::Game(Renderer* renderer)
     , _playerid(0)
 {
 
-    _renderer->createShape(":/assets/space.jpg", QRect(0, 0, 640,480), QPointF(0,0), -10);
+    //_background = _renderer->createShape(":/assets/GalaxyUno.jpg", QPoint(0,0), QRect(0, 0, 480,600), -10);
 
 }
 
@@ -72,17 +72,15 @@ void Game::createPlayer()
 
     {
         Shape* shape;
-        /*QVariantMap m;
-        m["position"] = QPoint(300, 380);
+
+        QVariantMap m;
+        int w = 106;
+        int h = 90;
+        m["position"] = QPoint(400 - w / 2, 600 - h);
         m["path"] = ":/assets/spaceArt.svg";
-        m["subTex"] = QRect(374,360,106,90);
-        m["zIndex"] = 10;*/
-        _entityManager.createComponent(_playerid, shape, {
-           {"position", QPoint(300, 380)},
-           {"path", ":/assets/spaceArt.svg"},
-           {"subTex", QRect(374,360,106,90)},
-           {"zIndex", 10},
-        });
+        m["subTex"] = QRect(374,360,w,h);
+        m["zIndex"] = 10;
+        _entityManager.createComponent(_playerid, shape, m);
     }
     {
         MetaData* metadata;

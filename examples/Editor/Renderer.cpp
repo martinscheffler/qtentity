@@ -97,8 +97,8 @@ Renderer::Renderer(QWidget* parent)
     _impl = new RendererImpl(this);
     _impl->_view = new QQuickView();
     QWidget *container = QWidget::createWindowContainer(_impl->_view, this);
-    container->setMinimumSize(640, 400);
-    container->setMaximumSize(800, 600);
+    container->setMinimumSize(480, 600);
+    container->setMaximumSize(480, 600);
     container->setFocusPolicy(Qt::TabFocus);
     _impl->_view->setSource(QUrl("qrc:/assets/main.qml"));
     setLayout(new QHBoxLayout());
@@ -106,31 +106,24 @@ Renderer::Renderer(QWidget* parent)
     
     _impl->_shapeComponent = new QQmlComponent(_impl->_view->engine(), QUrl("qrc:/assets/shape.qml"), QQmlComponent::PreferSynchronous);
 
+    if (_impl->_shapeComponent->isError())
+    {
+        qWarning() << _impl->_shapeComponent->errors();
+    }
 }
 
 
 // create a shape with given texture and transform, returns an identifier
-RenderHandle Renderer::createShape(const QString& path, const QRect& rect, const QPointF& pos, int zindex)
+RenderHandle Renderer::createShape(const QString& path, const QPoint& pos, const QRect& rect, int zindex)
 {
 
     QObject *object = _impl->_shapeComponent->create();
-    QQmlProperty::write(object, "x", pos.x());
-    QQmlProperty::write(object, "y", pos.y());
-    QQmlProperty::write(object, "z", zindex);
-    QQmlProperty::write(object, "width", rect.width());
-    QQmlProperty::write(object, "height", rect.height());
-
-    Q_ASSERT(object->children().size() == 1);
-    QObject* img = object->children().front();
-    Q_ASSERT(img);
-    QQmlProperty::write(img, "source", "qrc" + path);
-    QQmlProperty::write(img, "x", rect.x() * -1);
-    QQmlProperty::write(img, "y", rect.y() * -1);
-
-    QQuickItem* item = qobject_cast<QQuickItem*>(object);
-    item->setParentItem(_impl->_view->rootObject());
-
-    return reinterpret_cast<RenderHandle>(object);
+    Q_ASSERT(object);
+    QQmlProperty::write(object, "path", "qrc" + path);
+    RenderHandle handle = reinterpret_cast<RenderHandle>(object);
+    qobject_cast<QQuickItem*>(object)->setParentItem(_impl->_view->rootObject());
+    updateShape(handle, pos, rect, zindex);
+    return handle;
 }
 
 
@@ -143,12 +136,16 @@ void Renderer::destroyShape(RenderHandle handle)
 
 
 // update transform of shape previously created with createShape
-void Renderer::updateShape(RenderHandle handle, const QPointF& pos, int zindex)
+void Renderer::updateShape(RenderHandle handle, const QPoint& pos, const QRect& rect, int zindex)
 {
    QObject* object = reinterpret_cast<QObject*>(handle);
    QQmlProperty::write(object, "x", pos.x());
-    QQmlProperty::write(object, "y", pos.y());
-    QQmlProperty::write(object, "z", zindex);
+   QQmlProperty::write(object, "y", pos.y());
+   QQmlProperty::write(object, "z", zindex);
+   QQmlProperty::write(object, "clipX", rect.x());
+   QQmlProperty::write(object, "clipY", rect.y());
+   QQmlProperty::write(object, "width", rect.width());
+   QQmlProperty::write(object, "height", rect.height());
 }
 
 #endif

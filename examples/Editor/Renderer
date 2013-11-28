@@ -13,13 +13,13 @@ public:
     Renderer(QWidget* parent);
 
     // create a shape with given texture and position, returns an identifier
-    RenderHandle createShape(const QString& path, const QRect& rect, const QPointF& pos, int zindex);
+    RenderHandle createShape(const QString& path, const QPoint& pos, const QRect& rect, int zindex);
 
     // destroy shape previously created with createShape
     void destroyShape(RenderHandle identifier);
 
     // update transform of shape previously created with createShape
-    void updateShape(RenderHandle identifier, const QPointF& pos, int zindex);
+    void updateShape(RenderHandle identifier, const QPoint& pos, const QRect& rect, int zindex);
 
 private:
     RendererImpl* _impl;

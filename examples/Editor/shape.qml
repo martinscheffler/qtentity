@@ -1,24 +1,33 @@
 import QtQuick 2.1
 
 Rectangle {
-    id: rectangle1
+    id: rectangle
     x: 0
     y: 0
     width: 106
     height: 90
-    transformOrigin: Item.BottomLeft
+    color: "#00000000"
+    transformOrigin: Item.TopLeft
     smooth: false
     clip : true
     z: 1
+    property int clipX : 640
+    property int clipY : 640
+
+    property string path : "";
+
     Image {
-        x: -374
-        y: -360
+        id : texture
+        x: -parent.clipX
+        y: -parent.clipY
         smooth : false
         width: sourceSize.width
         height: sourceSize.height
         fillMode: Image.Tile
-        source: "spaceArt.svg"
+        source: parent.path
 
     }
+
+
 }
 

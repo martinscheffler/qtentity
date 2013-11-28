@@ -19,21 +19,21 @@ void Shape::buildShape()
         _renderer->destroyShape(_handle);
     }
 
-    _handle = _renderer->createShape(_path, _subtex, _position, _zindex);
+    _handle = _renderer->createShape(_path, _position, _subtex, _zindex);
 }
 
 
 void Shape::setPosition(const QPoint& p)
 {
     _position = p;
-    if(_renderer) _renderer->updateShape(_handle, _position, _zindex);
+    if(_renderer) _renderer->updateShape(_handle, _position, _subtex, _zindex);
 }
 
 
 void Shape::setZIndex(int i)
 {
     _zindex = i;
-    if(_renderer) _renderer->updateShape(_handle, _position, _zindex);
+    if(_renderer) _renderer->updateShape(_handle, _position, _subtex, _zindex);
 }
 
 
