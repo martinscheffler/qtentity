@@ -72,12 +72,17 @@ void Game::createPlayer()
 
     {
         Shape* shape;
-        QVariantMap m;
+        /*QVariantMap m;
         m["position"] = QPoint(300, 380);
         m["path"] = ":/assets/spaceArt.svg";
         m["subTex"] = QRect(374,360,106,90);
-        m["zIndex"] = 10;
-        _entityManager.createComponent(_playerid, shape, m);
+        m["zIndex"] = 10;*/
+        _entityManager.createComponent(_playerid, shape, {
+           {"position", QPoint(300, 380)},
+           {"path", ":/assets/spaceArt.svg"},
+           {"subTex", QRect(374,360,106,90)},
+           {"zIndex", 10},
+        });
     }
     {
         MetaData* metadata;
