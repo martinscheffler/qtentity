@@ -21,6 +21,8 @@ public:
     // update transform of shape previously created with createShape
     void updateShape(RenderHandle identifier, const QPoint& pos, const QRect& rect, int zindex);
 
+    // install event handler receiving events from view
+    void installRendererEventFilter(QObject*);
 private:
     RendererImpl* _impl;
 };

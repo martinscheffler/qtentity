@@ -17,12 +17,16 @@ MainWindow::MainWindow()
     _renderer = new Renderer(_rendererPos);
     _rendererPos->layout()->addWidget(_renderer);
 
+
     QtEntityUtils::EntityEditor* editor = new QtEntityUtils::EntityEditor();
     connect(this, &MainWindow::selectedEntityChanged, editor, &QtEntityUtils::EntityEditor::displayEntity);
     connect(editor, &QtEntityUtils::EntityEditor::entityDataChanged, this, &MainWindow::changeEntityData);
     centralWidget()->layout()->addWidget(editor);
 
     _game = new Game(_renderer);
+
+    // make main window get input events when game area is focused
+    _renderer->installRendererEventFilter(this);
 
     // connect signals of meta data system to entity list
     MetaDataSystem* ms = static_cast<MetaDataSystem*>(_game->entityManager().system(MetaData::classTypeId()));
@@ -60,6 +64,21 @@ void MainWindow::keyPressEvent ( QKeyEvent * event )
 void MainWindow::keyReleaseEvent ( QKeyEvent * event )
 {
     _game->keyReleaseEvent(event);
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if(event->type() == QEvent::KeyPress)
+    {
+        keyPressEvent(static_cast<QKeyEvent*>(event));
+        return true;
+    }
+    else if(event->type() == QEvent::KeyRelease)
+    {
+        keyReleaseEvent(static_cast<QKeyEvent*>(event));
+        return true;
+    }
+    return false;
 }
 
 MainWindow::~MainWindow()

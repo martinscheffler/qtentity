@@ -10,10 +10,31 @@
 #include <QTime>
 #include <QThread>
 
+#define PLAYERWIDTH 110
+#define PLAYERHEIGHT 90
+#define GAMEHEIGHT 600
+#define GAMEWIDTH 480
+#define PLAYERSPEED 10
+
+void setBit(unsigned int& mask, Game::KeyBit bit, bool val)
+{
+    if(val)
+    {
+        mask |= bit;
+    }
+    else
+    {
+        mask &= ~bit;
+    }
+}
+
+bool bitIsSet(unsigned int mask, Game::KeyBit bit)
+{
+    return (mask & bit) != 0;
+}
+
 Game::Game(Renderer* renderer)
-    : _leftpressed(false)
-    , _rightpressed(false)
-    , _spacepressed(false)
+    : _keyBits(0)
     , _renderer(renderer)
     , _isRunning(false)
     , _bulletsys(new BulletSystem(&_entityManager))
@@ -74,11 +95,9 @@ void Game::createPlayer()
         Shape* shape;
 
         QVariantMap m;
-        int w = 106;
-        int h = 90;
-        m["position"] = QPoint(400 - w / 2, 600 - h);
+        m["position"] = QPoint(GAMEWIDTH / 2 - PLAYERWIDTH / 2, 600 - PLAYERHEIGHT);
         m["path"] = ":/assets/spaceArt.svg";
-        m["subTex"] = QRect(374,360,w,h);
+        m["subTex"] = QRect(374,360,PLAYERWIDTH,PLAYERHEIGHT);
         m["zIndex"] = 10;
         _entityManager.createComponent(_playerid, shape, m);
     }
@@ -143,16 +162,24 @@ void Game::step(int frameNumber, int totalTime, int delta)
     Shape* player;
     _entityManager.component(_playerid, player);
     QPoint pos = player->position();
-    if(_leftpressed)
+    if(bitIsSet(_keyBits, LEFT_PRESSED))
     {
-        int newpos = int(pos.x() - 5);
-        pos.setX(std::max(-40, newpos));
+        pos.setX(std::max(-PLAYERWIDTH / 2, pos.x() - PLAYERSPEED));
         player->setPosition(pos);
     }
-    if(_rightpressed)
+    if(bitIsSet(_keyBits, RIGHT_PRESSED))
     {
-        int newpos = int(pos.x() + 5);
-        pos.setX(std::min(590, newpos));
+        pos.setX(std::min(GAMEWIDTH - PLAYERWIDTH / 2, pos.x() + PLAYERSPEED));
+        player->setPosition(pos);
+    }
+    if(bitIsSet(_keyBits, DOWN_PRESSED))
+    {
+        pos.setY(std::min(GAMEHEIGHT - PLAYERHEIGHT / 2, pos.y() + PLAYERSPEED));
+        player->setPosition(pos);
+    }
+    if(bitIsSet(_keyBits, UP_PRESSED))
+    {
+        pos.setY(std::max(-PLAYERHEIGHT / 2, pos.y() - PLAYERSPEED));
         player->setPosition(pos);
     }
 }
@@ -162,9 +189,11 @@ void Game::keyPressEvent ( QKeyEvent * event )
 {
     switch(event->key())
     {
-    case Qt::Key_Left:  _leftpressed  = true;break;
-    case Qt::Key_Right: _rightpressed = true; break;
-    case Qt::Key_Space: _spacepressed = true; break;
+    case Qt::Key_Left:  setBit(_keyBits, KeyBit::LEFT_PRESSED, true);  break;
+    case Qt::Key_Right: setBit(_keyBits, KeyBit::RIGHT_PRESSED, true); break;
+    case Qt::Key_Up:    setBit(_keyBits, KeyBit::UP_PRESSED, true);    break;
+    case Qt::Key_Down:  setBit(_keyBits, KeyBit::DOWN_PRESSED, true);  break;
+    case Qt::Key_Space: setBit(_keyBits, KeyBit::SPACE_PRESSED, true); break;
     }
 }
 
@@ -172,9 +201,11 @@ void Game::keyReleaseEvent ( QKeyEvent * event )
 {
     switch(event->key())
     {
-    case Qt::Key_Left:  _leftpressed  = false;break;
-    case Qt::Key_Right: _rightpressed = false; break;
-    case Qt::Key_Space: _spacepressed = false; break;
+    case Qt::Key_Left:  setBit(_keyBits, KeyBit::LEFT_PRESSED, false);  break;
+    case Qt::Key_Right: setBit(_keyBits, KeyBit::RIGHT_PRESSED, false); break;
+    case Qt::Key_Up:    setBit(_keyBits, KeyBit::UP_PRESSED, false);    break;
+    case Qt::Key_Down:  setBit(_keyBits, KeyBit::DOWN_PRESSED, false);  break;
+    case Qt::Key_Space: setBit(_keyBits, KeyBit::SPACE_PRESSED, false); break;
     }
 }
 

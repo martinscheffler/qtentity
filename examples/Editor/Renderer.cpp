@@ -96,6 +96,7 @@ Renderer::Renderer(QWidget* parent)
 {
     _impl = new RendererImpl(this);
     _impl->_view = new QQuickView();
+
     QWidget *container = QWidget::createWindowContainer(_impl->_view, this);
     container->setMinimumSize(480, 600);
     container->setMaximumSize(480, 600);
@@ -112,12 +113,17 @@ Renderer::Renderer(QWidget* parent)
     }
 }
 
+void Renderer::installRendererEventFilter(QObject* o)
+{
+    _impl->_view->installEventFilter(o);
+}
 
 // create a shape with given texture and transform, returns an identifier
 RenderHandle Renderer::createShape(const QString& path, const QPoint& pos, const QRect& rect, int zindex)
 {
 
     QObject *object = _impl->_shapeComponent->create();
+
     Q_ASSERT(object);
     QQmlProperty::write(object, "path", "qrc" + path);
     RenderHandle handle = reinterpret_cast<RenderHandle>(object);
