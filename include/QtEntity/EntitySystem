@@ -22,6 +22,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtEntity/DataTypes>
 #include <QVariantMap>
 #include <QDebug>
+#include <QUrl>
 
 namespace QtEntity
 {
@@ -134,7 +135,9 @@ namespace QtEntity
          * Fetch all property attributes for an entity system.
          * @return A map from property names to property attributes map
          */
-        Q_INVOKABLE virtual QVariantMap propertyAttributes() { return QVariantMap(); }
+        Q_INVOKABLE virtual QVariantMap propertyAttributes() const { return QVariantMap(); }
+
+        Q_INVOKABLE virtual QUrl jsonSchemaUrl() const { return QUrl(); }
 
         /**
          * Assign multiple property values to a specified component

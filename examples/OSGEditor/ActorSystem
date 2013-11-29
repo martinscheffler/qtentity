@@ -66,7 +66,7 @@ public:
 
     virtual QVariantMap properties(QtEntity::EntityId eid) override;
     virtual void setProperties(QtEntity::EntityId eid, const QVariantMap& m) override;
-    virtual QVariantMap propertyAttributes() override;
+    virtual QVariantMap propertyAttributes() const override;
 
 signals:
 

@@ -1,0 +1,40 @@
+{
+    "type":"object",
+    "$schema": "http://json-schema.org/draft-03/schema",
+    "properties":{
+        "path": {
+            "type":"string"
+        },
+        "position": {
+            "type":"object",
+            "properties":{
+                "x": {
+                    "type":"number"
+                },
+                "y": {
+                    "type":"number"
+                }
+            }
+        },
+        "subTex": {
+            "type":"object",
+            "properties":{
+                "h": {
+                    "type":"number"
+                },
+                "w": {
+                    "type":"number"
+                },
+                "x": {
+                    "type":"number"
+                },
+                "y": {
+                    "type":"number"
+                }
+            }
+        },
+        "zIndex": {
+            "type":"number"
+        }
+    }
+}

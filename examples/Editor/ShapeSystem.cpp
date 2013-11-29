@@ -58,7 +58,11 @@ QVariantMap ShapeSystem::properties(QtEntity::EntityId eid)
     Shape* s;
     if(component(eid, s))
     {
-        m["position"] = s->position();
+        QVariantMap pos;
+        pos["x"] = s->position().x();
+        pos["y"] = s->position().y();
+        m["position"] = pos;
+        //m["position"] = s->position();
         m["path"]     = s->path();
         m["zIndex"]   = s->zIndex();
         m["subTex"]   = s->subTex();
@@ -68,8 +72,9 @@ QVariantMap ShapeSystem::properties(QtEntity::EntityId eid)
 }
 
 
-QVariantMap ShapeSystem::propertyAttributes()
+QVariantMap ShapeSystem::propertyAttributes() const
 {
+
     QVariantMap path;
     path["filter"] = "SVG files (*.svg)";  
     QVariantMap r;
@@ -77,6 +82,11 @@ QVariantMap ShapeSystem::propertyAttributes()
     return r;
 }
 
+
+QUrl ShapeSystem::jsonSchemaUrl() const
+{
+    return QUrl("qrc:/schemas/shapesystem.json");
+}
 
 void ShapeSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
 {

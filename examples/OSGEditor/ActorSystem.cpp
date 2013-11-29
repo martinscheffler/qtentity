@@ -115,7 +115,7 @@ void ActorSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
 }
 
 
-QVariantMap ActorSystem::propertyAttributes()
+QVariantMap ActorSystem::propertyAttributes() const
 {
     /*{
         shapes : {

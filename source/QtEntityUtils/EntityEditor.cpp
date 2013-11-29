@@ -113,7 +113,7 @@ namespace QtEntityUtils
             QtEntity::EntitySystem* es = i->second;
             if(!es->component(eid)) continue;
             components[es->componentName()] = es->properties(eid);
-            attributes[es->componentName()] = es->propertyAttributes();            
+            attributes[es->componentName()] = es->propertyAttributes();
         }
     }
 
