@@ -19,14 +19,15 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtEntityUtils/VariantManager>
 #include <QtEntityUtils/VariantFactory>
 
-#include <QtPropertyBrowser/QtTreePropertyBrowser>
-#include <QtPropertyBrowser/QtVariantProperty>
+#include <qttreepropertybrowser.h>
+#include <qtvariantproperty.h>
 #include "ui_PropertyObjectsEdit.h"
 #include <QHBoxLayout>
 #include <QMetaProperty>
 #include <QDebug>
 #include <QComboBox>
 #include <QUuid>
+#include <QDebug>
 
 namespace QtEntityUtils
 {
@@ -78,103 +79,27 @@ namespace QtEntityUtils
             }
             
             QtVariantProperty* propitem = _propertyManager->addProperty(usertype, name);
-            Q_ASSERT(propitem);
-            item->addSubProperty(propitem);
-            propitem->setValue(val);
-
-            if(propvals.contains("__attributes__"))
+            if(propitem)
             {
-                QVariantMap attrs = propvals["__attributes__"].toMap();
-                for(auto j = attrs.begin(); j != attrs.end(); ++j)
+                item->addSubProperty(propitem);
+                propitem->setValue(val);
+
+                if(propvals.contains("__attributes__"))
                 {
-                    propitem->setAttribute(j.key(), j.value());
-                }     
-            }
-        }
-    }
-    
-
-   /* QtEntity::PropertyObjects PropertyObjectEditor::updatePropertyObjectsFromVariantList(const QtEntity::PropertyObjects& in, const QVariantList& varlist)
-    {
-        QtEntity::PropertyObjects ret;
-        
-        foreach(auto i, varlist)
-        {
-            QVariantMap map = i.toMap();
-            if(!map.contains("classname"))
-            {
-                qDebug() << "Error: Property Objects Variant Map contains no classname value! Skipping.";
-                continue;
-            }
-
-            QString classname = map["classname"].toString();
-
-            // when no object name is set then this is a newly created object. Create new object instance and
-            // add to ret value
-            if(!map.contains("objectName") || map["objectName"].toString() == "")
-            {
-                // create a new object name from random string
-                map["objectName"] = QUuid::createUuid().toString();
-
-                const QMetaObject* mo = QtEntity::metaObjectByClassName(classname);
-                if(!mo)
-                {
-                    qDebug() << "Could not instantiate, classname not registered: " << classname;
-                    continue;
-                }
-
-                QObject* obj = mo->newInstance();
-
-                if(obj == nullptr)
-                {
-                    qDebug() << "Could not create object of class " << classname;
-                    continue;
-                }
-
-                for(int j = 0; j < mo->propertyCount(); ++j)
-                {
-                    QMetaProperty prp = mo->property((j));
-                    if(map.contains(prp.name()))
+                    QVariantMap attrs = propvals["__attributes__"].toMap();
+                    for(auto j = attrs.begin(); j != attrs.end(); ++j)
                     {
-                        prp.write(obj, map[prp.name()]);
+                        propitem->setAttribute(j.key(), j.value());
                     }
                 }
-
-                ret.push_back(QtEntity::PropertyObjectPointer(obj));
             }
             else
             {
-                QtEntity::PropertyObjectPointer obj;
-                QString objname = map["objectName"].toString();
-                foreach(auto j, in)
-                {                    
-                    if(j->objectName() == objname)
-                    {
-                        obj = j;
-                        break;
-                    }
-                }
-                if(obj.isNull())
-                {
-                    qDebug() << "Could not update existing object, not found! ObjectName: " << objname;
-                    continue;
-                }
-                const QMetaObject* mo = obj->metaObject();
-                for(int k = 0; k < mo->propertyCount(); ++k)
-                {
-                    QMetaProperty prp = mo->property(k);
-                    QString prpname = prp.name();
-                    if(map.contains(prpname) && map[prpname] != prp.read(obj.data()))
-                    {
-                        prp.write(obj.data(), map[prpname]);
-                    }
-                }
-                ret.push_back(obj);
+                qDebug() << "Could not add property editor, unknown variant type!";
             }
         }
+    }
 
-        return ret;
-    }*/
 
     void PropertyObjectEditor::addObject()
     {

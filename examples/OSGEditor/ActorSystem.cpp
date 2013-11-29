@@ -93,7 +93,10 @@ QVariantMap ActorSystem::properties(QtEntity::EntityId eid)
     if(component(eid, a))
     {
         m["name"]     = a->name();
-        m["position"] = QVariant::fromValue(a->position());
+        QVariantList pos;
+        pos.append(QtEntity::x(a->position()));
+        pos.append(QtEntity::y(a->position()));
+        m["position"] = pos;
         m["shapes"]   = a->shapes();
     }
     return m;    

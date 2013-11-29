@@ -5,6 +5,7 @@ include_directories(
   ${CMAKE_BINARY_DIR}/source/
   ${CMAKE_CURRENT_BINARY_DIR} # for .ui files
   ${OSG_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}/source/QtPropertyBrowser
 )
 
 FIND_PACKAGE(OpenSceneGraph REQUIRED osgDB osgGA osgUtil osgViewer)

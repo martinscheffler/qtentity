@@ -19,7 +19,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtEntityUtils/VariantFactory>
 #include <QtEntityUtils/VariantManager>
 #include <QtEntityUtils/PropertyObjectsEdit>
-#include <QtPropertyBrowser/QtTreePropertyBrowser>
+#include <qttreepropertybrowser.h>
 #include <QtEntity/EntityManager>
 #include <QtEntity/EntitySystem>
 #include <QDate>

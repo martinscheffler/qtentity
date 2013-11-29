@@ -80,7 +80,6 @@ private slots:
 
     void testGetProperty()
     {        
-        size_t count = _ts->count();   
         QVariantMap m; m["myint"] = 12345;
         _ts->createComponent(999, m);
         QScriptValue ret = _engine.evaluate("var props = EM.Testing.properties(999); props.myint;");
@@ -93,7 +92,6 @@ private slots:
 
     void testSetProperty()
     {        
-        size_t count = _ts->count();   
         QVariantMap m; m["myint"] = 12345;
         _ts->createComponent(998, m);
         QScriptValue ret = _engine.evaluate("var props = {myint:6789}; EM.Testing.setProperties(998, props);");
