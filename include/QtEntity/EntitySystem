@@ -137,8 +137,6 @@ namespace QtEntity
          */
         Q_INVOKABLE virtual QVariantMap propertyAttributes() const { return QVariantMap(); }
 
-        Q_INVOKABLE virtual QUrl jsonSchemaUrl() const { return QUrl(); }
-
         /**
          * Assign multiple property values to a specified component
          * @param eid ID identifying component

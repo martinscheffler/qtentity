@@ -34,7 +34,7 @@ namespace QtEntityUtils
     
     int VariantManager::filePathTypeId()
     {
-        return qMetaTypeId<FilePath>();
+        return qMetaTypeId<QtEntityUtils::FilePath>();
     }
 
 
@@ -76,11 +76,11 @@ namespace QtEntityUtils
     {
         if (_filePathValues.contains(property))
         {
-            return _filePathValues[property].value;
+            return QVariant::fromValue(_filePathValues[property].value);
         }
         if (_propertyObjectsValues.contains(property))
         {
-            return _propertyObjectsValues[property].value;
+            return QVariant::fromValue(_propertyObjectsValues[property].value);
         }
         return QtVariantPropertyManager::value(property);
     }
@@ -177,9 +177,7 @@ namespace QtEntityUtils
     {
         if (_filePathValues.contains(property))
         {
-            if (val.type() != QVariant::String && !val.canConvert(QVariant::String))
-                return;
-            QString str = val.value<QString>();
+            QString str = val.value<QtEntityUtils::FilePath>();
             FilePathData d = _filePathValues[property];
             if (d.value == str)
                 return;

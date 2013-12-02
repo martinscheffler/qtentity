@@ -6,7 +6,4 @@
         <file>shape.qml</file>
         <file>GalaxyUno.jpg</file>
     </qresource>
-    <qresource prefix="/schemas">
-        <file>shapesystem.json</file>
-    </qresource>
 </RCC>

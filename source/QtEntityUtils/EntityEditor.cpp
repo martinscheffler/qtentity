@@ -23,6 +23,8 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtEntity/EntityManager>
 #include <QtEntity/EntitySystem>
 #include <QDate>
+#include <QDebug>
+#include <QFile>
 #include <QLocale>
 #include <QHBoxLayout>
 #include <QMetaProperty>
@@ -50,6 +52,51 @@ namespace QtEntityUtils
     }
 
 
+    QtProperty* EntityEditor::addWidgetsRecursively(const QString& name, const QVariant& data, const QVariantMap& attributes)
+    {
+        if(data.type() == QVariant::Map)
+        {
+            QVariantMap props = data.toMap();
+
+            QtProperty* grp = _propertyManager->addProperty(QtVariantPropertyManager::groupTypeId(), name);
+
+            for(auto j = props.begin(); j != props.end(); ++j)
+            {
+                QVariantMap subattribs = attributes[j.key()].toMap();
+
+                auto prop = this->addWidgetsRecursively(j.key(), j.value(), subattribs);
+                if(prop)
+                {
+                    grp->addSubProperty(prop);
+                }
+            }
+            return grp;
+        }
+        else
+        {
+            std::string n = name.toStdString();
+            int t = data.userType();
+            QtVariantProperty* propitem = _propertyManager->addProperty(data.userType(), name);
+            if(propitem)
+            {
+
+                propitem->setValue(data);
+
+                // set property attributes
+                for(auto k = attributes.begin(); k != attributes.end(); ++k)
+                {
+                    propitem->setAttribute(k.key(), k.value());
+                }
+            }
+            else
+            {
+                qDebug() << "Could not create property editor for property " << name;
+            }
+            return propitem;
+        }
+    }
+
+
     void EntityEditor::displayEntity(QtEntity::EntityId id, const QVariantMap& data, const QVariantMap& attributes)
     {
         // changing property editors triggers signals which cause the component to be updated in the game.
@@ -60,39 +107,12 @@ namespace QtEntityUtils
         
         for(auto i = data.begin(); i != data.end(); ++i)
         {
-            QString componenttype = i.key();
-            QVariant component = i.value();
-            QVariantMap attrs = attributes.value(componenttype, QVariantMap()).toMap();
+            QVariantMap attrs = attributes.value(i.key(), QVariantMap()).toMap();
 
-            QtProperty* item = _propertyManager->addProperty(QtVariantPropertyManager::groupTypeId(), componenttype);
-            _editor->addProperty(item);
-            
-            QVariantMap props = component.toMap();
-            for(auto j = props.begin(); j != props.end(); ++j)
+            auto item = this->addWidgetsRecursively(i.key(), i.value(), attrs);
+            if(item)
             {
-                QString name = j.key();
-                QVariant val = j.value();
-
-                QtVariantProperty* propitem = _propertyManager->addProperty(val.userType(), name);
-				if(propitem)
-				{
-					propitem->setValue(val);
-
-                    if(attrs.find(name) != attrs.end())
-                    {
-                        QVariantMap a = attrs[name].toMap();
-                        // fetch property attributes
-                        for(auto k = a.begin(); k != a.end(); ++k)
-                        {
-                            propitem->setAttribute(k.key(), k.value());                        
-                        }	
-                    }
-					item->addSubProperty(propitem);
-				}
-				else
-				{
-					qDebug() << "Could not create property editor for property " << name;
-				}                
+                _editor->addProperty(item);
             }
         }
         _ignorePropertyChanges = false;

@@ -59,7 +59,6 @@ public:
         
     virtual QVariantMap properties(QtEntity::EntityId eid) override;
     virtual QVariantMap propertyAttributes() const override;
-    virtual QUrl jsonSchemaUrl() const override;
     virtual void setProperties(QtEntity::EntityId eid, const QVariantMap& m) override;
 
 private:

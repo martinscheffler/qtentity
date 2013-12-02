@@ -57,7 +57,9 @@ namespace QtEntityUtils
         if (manager->propertyType(property) == VariantManager::filePathTypeId())
         {
             FileEdit *editor = new FileEdit(parent);
-            editor->setFilePath(manager->value(property).toString());
+            QString path = manager->value(property).value<QtEntityUtils::FilePath>();
+            std::string p = path.toStdString();
+            editor->setFilePath(path);
             editor->setFilter(manager->attributeValue(property, QLatin1String("filter")).toString());
             _createdFileEditors[property].append(editor);
             _fileEditorToProperty[editor] = property;

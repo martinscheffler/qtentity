@@ -72,7 +72,7 @@ namespace QtEntityUtils
     private:
 
         struct FilePathData {
-            QString value;
+            QtEntityUtils::FilePath value;
             QString filter;
         };
 

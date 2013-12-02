@@ -63,7 +63,7 @@ QVariantMap ShapeSystem::properties(QtEntity::EntityId eid)
         pos["y"] = s->position().y();
         m["position"] = pos;
         //m["position"] = s->position();
-        m["path"]     = s->path();
+        m["path"]     = QVariant::fromValue(s->path());
         m["zIndex"]   = s->zIndex();
         m["subTex"]   = s->subTex();
     }
@@ -82,11 +82,6 @@ QVariantMap ShapeSystem::propertyAttributes() const
     return r;
 }
 
-
-QUrl ShapeSystem::jsonSchemaUrl() const
-{
-    return QUrl("qrc:/schemas/shapesystem.json");
-}
 
 void ShapeSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
 {
