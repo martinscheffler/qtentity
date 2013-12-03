@@ -5,7 +5,6 @@
 #include <QtEntity/PooledEntitySystem>
 #include <QElapsedTimer>
 #include "common.h"
-#include <QtEntity/VecUtils>
 
 using namespace QtEntity;
 
@@ -23,8 +22,7 @@ public:
         Testing* t;
         if(component(eid, t))
         {
-            m["myint"]     = t->myInt();
-            m["myvec2"]    = QVariant::fromValue(t->myVec2());           
+            m["myint"]     = t->myInt();         
         }
         return m;    
     }
@@ -35,7 +33,6 @@ public:
         if(component(eid, t))
         {
             if(m.contains("myint"))     t->setMyInt(m["myint"].toInt());
-            if(m.contains("myvec2"))    t->setMyVec2(m["myvec2"].value<QtEntity::Vec2d>());            
         }
     }
 };
@@ -130,7 +127,6 @@ private slots:
 
 		QVariantMap m;
 		m["myint"] = 666;
-        m["myvec2"] =  QVariant::fromValue(QtEntity::Vec2d(77.0,88.0));
         Component* c = ts->createComponent(1, m);
 
         Component* c2 = ts->component(1);
@@ -143,9 +139,6 @@ private slots:
         Testing* tr = static_cast<Testing*>(c);
         QVERIFY(tr != nullptr);
         QCOMPARE(tr->myInt(), 666);
-        QCOMPARE(x(tr->myVec2()), 77.0);
-        QCOMPARE(y(tr->myVec2()), 88.0);
-     
 
     }
 

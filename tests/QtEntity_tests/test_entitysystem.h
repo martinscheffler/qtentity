@@ -2,7 +2,6 @@
 #include <QtCore/QObject>
 #include <QtEntity/EntityManager>
 #include <QtEntity/SimpleEntitySystem>
-#include <QtEntity/VecUtils>
 #include "common.h"
 
 using namespace QtEntity;
@@ -20,7 +19,7 @@ private slots:
 
 		QVariantMap m;
 		m["myint"] = 666;
-        m["myvec2"] =  QVariant::fromValue(QtEntity::Vec2d(77.0,88.0));
+
         Component* c = ts->createComponent(1, m);
 
         Component* c2 = ts->component(1);
@@ -33,9 +32,6 @@ private slots:
         Testing* tr = dynamic_cast<Testing*>(c);
         QVERIFY(tr != nullptr);
         QCOMPARE(tr->myInt(), 666);
-        QCOMPARE(x(tr->myVec2()), 77.0);
-        QCOMPARE(y(tr->myVec2()), 88.0);
-     
 
     }
 

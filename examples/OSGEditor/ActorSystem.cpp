@@ -1,10 +1,24 @@
 #include "ActorSystem"
 
-#include <QtEntity/VecUtils>
 #include <osg/Geode>
 #include <QStringList>
 
 IMPLEMENT_COMPONENT_TYPE(Actor);
+
+osg::Vec3 toVec(const QVariant& m)
+{
+    QVariantMap map = m.toMap();
+    return osg::Vec3d(map["x"].toDouble(), map["y"].toDouble(), map["z"].toDouble());
+}
+
+QVariantMap toVariantMap(const osg::Vec3& v)
+{
+    QVariantMap m;
+    m["x"] = v[0];
+    m["y"] = v[1];
+    m["z"] = v[2];
+    return m;
+}
 
 Actor::Actor()
     : _id(0)
@@ -26,16 +40,15 @@ void Actor::setName(const QString& name)
 }
 
 
-void Actor::setPosition(const QtEntity::Vec3d& p)
+void Actor::setPosition(const osg::Vec3d& p)
 {
-    _transform->setPosition(osg::Vec3d(QtEntity::x(p), QtEntity::y(p), QtEntity::z(p)));
+    _transform->setPosition(p);
 }
 
 
-QtEntity::Vec3d Actor::position() const
+osg::Vec3d Actor::position() const
 {
-    const osg::Vec3d& p = _transform->getPosition();
-    return QtEntity::Vec3d(p[0], p[1], p[2]);
+    return _transform->getPosition();
 }
 
 
@@ -60,16 +73,16 @@ void Actor::setShapes(const QVariantList& shapes)
 
         if(classname == "Box")
         {
-            QtEntity::Vec3d hl = val["HalfLengths"].value<QtEntity::Vec3d>();
-            QtEntity::Vec3d c = val["Center"].value<QtEntity::Vec3d>();
-            sd->setShape(new osg::Box(osg::Vec3(x(c), y(c), z(c)), x(hl), y(hl), z(hl)));
+            osg::Vec3 hl = toVec(val["HalfLengths"]);
+            osg::Vec3 c = toVec(val["Center"]);
+            sd->setShape(new osg::Box(c, hl[0],hl[1],hl[2]));
             
         }
         else if(classname == "Sphere")
         {
-            QtEntity::Vec3d c = val["Center"].value<QtEntity::Vec3d>();
+            osg::Vec3 c = toVec(val["Center"]);
             float radius = val["Radius"].toFloat();
-            sd->setShape(new osg::Sphere(osg::Vec3(x(c), y(c), z(c)), radius));
+            sd->setShape(new osg::Sphere(c, radius));
         }
         QColor co = val["Color"].value<QColor>();
         sd->setColor(osg::Vec4(co.redF(), co.greenF(), co.blueF(), co.alphaF()));
@@ -93,10 +106,7 @@ QVariantMap ActorSystem::properties(QtEntity::EntityId eid)
     if(component(eid, a))
     {
         m["name"]     = a->name();
-        QVariantList pos;
-        pos.append(QtEntity::x(a->position()));
-        pos.append(QtEntity::y(a->position()));
-        m["position"] = pos;
+        m["position"] = toVariantMap(a->position());
         m["shapes"]   = a->shapes();
     }
     return m;    
@@ -109,7 +119,7 @@ void ActorSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
     if(component(eid, a))
     {
         if(m.contains("name"))     a->setName(m["name"].toString());
-        if(m.contains("position")) a->setPosition(m["position"].value<QtEntity::Vec3d>());
+        if(m.contains("position")) a->setPosition(toVec(m["position"]));
         if(m.contains("shapes"))   a->setShapes(m["shapes"].toList());
     }
 }
@@ -162,12 +172,12 @@ QVariantMap ActorSystem::propertyAttributes() const
     color["__type__"] =  qMetaTypeId<QColor>();
     sphere["Color"] = color;
 
-    center["__value__"] = QVariant::fromValue(QtEntity::Vec3d(0,0,0));
-    center["__type__"] =  qMetaTypeId<QtEntity::Vec3d>();
+    center["__value__"] = toVariantMap(osg::Vec3(0,0,0));
+    center["__type__"] =  qMetaTypeId<QVariantMap>();
     sphere["Center"] = center;
 
-    halflengths["__value__"] = QVariant::fromValue(QtEntity::Vec3d(0.5f,0.5f,0.5f));
-    halflengths["__type__"] =  qMetaTypeId<QtEntity::Vec3d>();
+    halflengths["__value__"] = toVariantMap(osg::Vec3(0.5f,0.5f,0.5f));
+    halflengths["__type__"] = qMetaTypeId<QVariantMap>();
     box["HalfLengths"] = halflengths;
 
     box["Center"] = center;

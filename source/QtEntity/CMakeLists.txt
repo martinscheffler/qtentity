@@ -17,7 +17,6 @@ set(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/ComponentIterator
   ${HEADER_PATH}/PooledEntitySystem
   ${HEADER_PATH}/SimpleEntitySystem
-  ${HEADER_PATH}/VecUtils
 )
 
 set(LIB_SOURCES
