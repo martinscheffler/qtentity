@@ -1,7 +1,8 @@
 set(LIB_NAME qtentity_tests)
 include_directories(
-  ${CMAKE_SOURCE_DIR}/include/
-  ${CMAKE_BINARY_DIR}/source
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
+  ${CMAKE_CURRENT_BINARY_DIR} # for moc files
+  ${CMAKE_CURRENT_BINARY_DIR}/../../source # for dtentity export header
 )
 
 set(QTENTITY_TESTS_HDR

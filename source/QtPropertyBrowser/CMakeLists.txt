@@ -1,9 +1,9 @@
 set(LIB_NAME QtPropertyBrowser)
 
 include_directories(
-  ${CMAKE_SOURCE_DIR}/include/QtPropertyBrowser
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../include/QtPropertyBrowser
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_BINARY_DIR}/source/
+  ${CMAKE_CURRENT_BINARY_DIR}/../
 )
 set(CMAKE_AUTOMOC TRUE)
 set(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR})

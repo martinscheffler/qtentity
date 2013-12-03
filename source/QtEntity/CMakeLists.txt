@@ -1,12 +1,13 @@
 set(LIB_NAME QtEntity)
 
 include_directories(
-  ${CMAKE_SOURCE_DIR}/include/
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}/../
 )
 
 set(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/QtEntity)
+message(${HEADER_PATH})
 set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(LIB_PUBLIC_HEADERS
