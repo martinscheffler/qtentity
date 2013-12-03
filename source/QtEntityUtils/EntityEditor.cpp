@@ -152,25 +152,30 @@ namespace QtEntityUtils
         }
     }
 
-
-    QString componentNameForProperty(QtTreePropertyBrowser* editor, QtProperty *property)
+    bool findSubProperty(QtProperty *property, QtProperty *toFind)
     {
-        QList<QtBrowserItem *> items = editor-> topLevelItems();
-        foreach(auto item, items)
+        if(toFind == property) return true;
+        foreach(auto prop, property->subProperties())
         {
-            
-            QString tmpname= item->property()->propertyName();
-            foreach(auto prop, item->property()->subProperties())
+            if(findSubProperty(prop, toFind))
             {
-				Q_ASSERT(prop != NULL);
-				QString tmpname2 = prop->propertyName();
-                if(prop == property)
-                {
-                     return item->property()->propertyName();
-                }
+                return true;
             }
         }
-        return "";
+        return false;
+    }
+
+    QtProperty* findComponentProperty(QtTreePropertyBrowser* editor, QtProperty *property)
+    {
+        QList<QtBrowserItem *> items = editor->topLevelItems();
+        foreach(auto item, items)
+        {
+            if(findSubProperty(item->property(), property))
+            {
+                return item->property();
+            }
+        }
+        return nullptr;
     }
 
 
@@ -180,20 +185,24 @@ namespace QtEntityUtils
         // ignore these signals while initially creating the property editors
         if(_ignorePropertyChanges) return;
 
-        QString componentName = componentNameForProperty(_editor, property);
-
-        // only send changes for full components
-        //QtVariantProperty* var = dynamic_cast<QtVariantProperty*>(property);
-        //if(var->propertyType() != QtVariantPropertyManager::groupTypeId()) return;
-
-        
-        if(!componentName.isEmpty())
-        {              
-            QVariantMap prop;
-            prop[property->propertyName()] = val;
-            QVariantMap components;
-            components[componentName] = prop;
-            emit entityDataChanged(_entityId, components);                
+        QtProperty* changedComponent = findComponentProperty(_editor, property);
+        Q_ASSERT(changedComponent);
+        QtProperty* changedProp = nullptr;
+        foreach(auto prop, changedComponent->subProperties())
+        {
+            if(findSubProperty(prop, property))
+            {
+                changedProp = prop;
+            }
         }
+        
+        Q_ASSERT(changedProp);
+
+        QVariantMap prop;
+        prop[changedProp->propertyName()] =  _propertyManager->value(changedProp);
+        QVariantMap components;
+        components[changedComponent->propertyName()] = prop;
+        emit entityDataChanged(_entityId, components);
+
     }
 }

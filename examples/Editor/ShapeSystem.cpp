@@ -8,6 +8,10 @@ Shape::Shape()
     : _renderer(nullptr)
     , _handle(0)    
 {
+    test["x"] = 123;
+    test["y"] = 456.0f;
+    test["z"] = 789.0;
+    test["bla"] = "Hallo Welt";
 }
 
 
@@ -66,6 +70,8 @@ QVariantMap ShapeSystem::properties(QtEntity::EntityId eid)
         m["path"]     = QVariant::fromValue(s->path());
         m["zIndex"]   = s->zIndex();
         m["subTex"]   = s->subTex();
+
+        m["test"] = s->test;
     }
     return m;
     
@@ -92,5 +98,7 @@ void ShapeSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
         if(m.contains("path"))     s->setPath(m["path"].toString());
         if(m.contains("zIndex"))   s->setZIndex(m["zIndex"].toInt());
         if(m.contains("subTex"))   s->setSubtex(m["subTex"].toRect());
+        if(m.contains("test"))     s->test = m["test"].toMap();
+        s->setSubtex(m["subTex"].toRect());
     }
 }

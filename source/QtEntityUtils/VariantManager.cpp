@@ -74,6 +74,16 @@ namespace QtEntityUtils
 
     QVariant VariantManager::value(const QtProperty *property) const
     {
+        if(propertyType(property) == groupTypeId())
+        {
+            QList<QtProperty *> subs = property->subProperties();
+            QVariantMap ret;
+            for(auto i = subs.begin(); i != subs.end(); ++i)
+            {
+                ret[(*i)->propertyName()] = value(*i);
+            }
+            return ret;
+        }
         if (_filePathValues.contains(property))
         {
             return QVariant::fromValue(_filePathValues[property].value);
