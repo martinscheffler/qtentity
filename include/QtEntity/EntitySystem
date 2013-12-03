@@ -66,12 +66,12 @@ namespace QtEntity
          *@param em Entity manager that should hold this system. Class instance is
          *          added to the entity manager. Entity manager takes ownership.
          */
-        QTENTITY_EXPORT EntitySystem(ClassTypeId cid, EntityManager* em);
+        EntitySystem(ClassTypeId cid, EntityManager* em);
 
         /**
          * DTor. Deletes all components.
          */
-        QTENTITY_EXPORT virtual ~EntitySystem();
+        virtual ~EntitySystem();
         
         /**
          * Fetch entity manager this system is assigned to

@@ -53,7 +53,7 @@ namespace QtEntityUtils
     {
         friend class PrefabSystem;
 
-        DECLARE_COMPONENT_TYPE(QTENTITYUTILS_EXPORT)
+        DECLARE_COMPONENT_TYPE(NOEXP)
 
     public:
 
@@ -68,7 +68,7 @@ namespace QtEntityUtils
     };
 
 
-    class QTENTITY_EXPORT PrefabSystem : public QtEntity::SimpleEntitySystem<PrefabInstance>
+    class QTENTITYUTILS_EXPORT PrefabSystem : public QtEntity::SimpleEntitySystem<PrefabInstance>
     {
         
     public:
