@@ -26,6 +26,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class QtVariantPropertyManager;
 class QtTreePropertyBrowser;
 class QtProperty;
+class QtVariantProperty;
 
 namespace QtEntity
 {
@@ -48,6 +49,7 @@ namespace QtEntityUtils
         void displayEntity(QtEntity::EntityId id, const QVariantMap& data, const QVariantMap& attributes);
         void clear();
         void showContextMenu(const QPoint& p);
+        void addListItem(const QString& prototype, QtVariantProperty* prop);
 
     protected slots:
 
@@ -64,7 +66,6 @@ namespace QtEntityUtils
         QtVariantPropertyManager* _propertyManager;
         QtTreePropertyBrowser* _editor;
         bool _ignorePropertyChanges;
-        QAction* _appendListEntry;
         QAction* _removeListEntry;
     };
 }

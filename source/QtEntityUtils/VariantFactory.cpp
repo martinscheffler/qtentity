@@ -52,7 +52,7 @@ namespace QtEntityUtils
         {
             FileEdit *editor = new FileEdit(parent);
             QString path = manager->value(property).value<QtEntityUtils::FilePath>();
-            std::string p = path.toStdString();
+
             editor->setFilePath(path);
             editor->setFilter(manager->attributeValue(property, QLatin1String("filter")).toString());
             _createdFileEditors[property].append(editor);

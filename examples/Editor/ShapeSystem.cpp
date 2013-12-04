@@ -88,6 +88,24 @@ QVariantMap ShapeSystem::propertyAttributes() const
     path["filter"] = "SVG files (*.svg)";  
     QVariantMap r;
     r["path"] = path;
+
+
+    QVariantMap sphere;
+    sphere["Radius"] = 1.0f;
+    sphere["Color"] = QColor(255,0,0,255);
+
+    QVariantMap box;
+    box["Color"] = QColor(255,0,0,255);
+
+    QVariantMap prototypes;
+    prototypes["Box"] = box;
+    prototypes["Sphere"] = sphere;
+
+    QVariantMap attribs;
+    attribs["prototypes"] = prototypes;
+
+    r["testList"] = attribs;
+
     return r;
 }
 
@@ -101,8 +119,11 @@ void ShapeSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
         if(m.contains("path"))     s->setPath(m["path"].toString());
         if(m.contains("zIndex"))   s->setZIndex(m["zIndex"].toInt());
         if(m.contains("subTex"))   s->setSubtex(m["subTex"].toRect());
-        //if(m.contains("test"))     s->test = m["test"].toMap();
-        //if(m.contains("testList"))     s->testList = m["testList"].toList();
+        if(m.contains("test"))     s->test = m["test"].toMap();
+        if(m.contains("testList"))
+        {
+            s->testList = m["testList"].toList();
+        }
         s->setSubtex(m["subTex"].toRect());
     }
 }

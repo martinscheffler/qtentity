@@ -127,68 +127,23 @@ void ActorSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
 
 QVariantMap ActorSystem::propertyAttributes() const
 {
-    /*{
-        shapes : {
-          classes : {
-            Box : {
-              Center : {
-                __value__ : Vec3d(0,0,0),
-                __type__ : qMetaTypeId<QtEntity::Vec3d>()                
-              },
-              Color : {
-                __value__ : QColor(255,0,0,255),
-                __type__ : qMetaTypeId<QColor>() 
-              },
-              HalfLengths : {
-                __value__ : Vec3d(0.5f,0.5f,0.5f),
-                __type__ : qMetaTypeId<QtEntity::Vec3d>()                
-              }
-            },
-            Sphere : {
-              Center : {
-                __value__ : Vec3d(0,0,0),
-                __type__ : qMetaTypeId<QtEntity::Vec3d>(),
-                
-              },
-              Color : {
-                __value__ : QColor(255,0,0,255),
-                __type__ : qMetaTypeId<QColor>() 
-              },
-              Radius : {
-                __value__ : 1.0,
-                __type__ : qMetaTypeId<float>() 
-              }
-            }
-         }
-      }
-    }
-    */
-    QVariantMap box, sphere, radius, center, halflengths, color;
-    radius["__value__"] = 1.0f;
-    radius["__type__"] =  qMetaTypeId<float>();
-    sphere["Radius"] = radius;
 
-    color["__value__"] = QColor(255,0,0,255);
-    color["__type__"] =  qMetaTypeId<QColor>();
-    sphere["Color"] = color;
+    QVariantMap sphere;
+    sphere["Radius"] = 1.0f;
+    sphere["Color"] = QColor(255,0,0,255);
+    sphere["Center"] = toVariantMap(osg::Vec3(0,0,0));
 
-    center["__value__"] = toVariantMap(osg::Vec3(0,0,0));
-    center["__type__"] =  qMetaTypeId<QVariantMap>();
-    sphere["Center"] = center;
+    QVariantMap box;
+    box["HalfLengths"] = toVariantMap(osg::Vec3(0.5f,0.5f,0.5f));
+    box["Color"] = QColor(255,0,0,255);
+    box["Center"] = toVariantMap(osg::Vec3(0,0,0));
 
-    halflengths["__value__"] = toVariantMap(osg::Vec3(0.5f,0.5f,0.5f));
-    halflengths["__type__"] = qMetaTypeId<QVariantMap>();
-    box["HalfLengths"] = halflengths;
-
-    box["Center"] = center;
-    box["Color"] = color;
-
-    QVariantMap classes;
-    classes["Box"] = box;
-    classes["Sphere"] = sphere;
+    QVariantMap prototypes;
+    prototypes["Box"] = box;
+    prototypes["Sphere"] = sphere;
     
     QVariantMap attribs;
-    attribs["classes"] = classes;
+    attribs["prototypes"] = prototypes;
 
     QVariantMap shapes;
     shapes["shapes"] = attribs;

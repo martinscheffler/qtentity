@@ -145,6 +145,12 @@ namespace QtEntityUtils
                 return _filePathValues[property].filter;
             return QVariant();
         }
+        if (_prototypeValues.contains(property) &&
+                attribute == QLatin1String("prototypes"))
+        {
+            return _prototypeValues[property];
+        }
+
         return QtVariantPropertyManager::attributeValue(property, attribute);
     }
 
@@ -175,7 +181,7 @@ namespace QtEntityUtils
             emit propertyChanged(property);
             emit valueChanged(property, str);
             return;
-        }        
+        }
         QtVariantPropertyManager::setValue(property, val);
     }
 
@@ -198,14 +204,24 @@ namespace QtEntityUtils
             }
             return;
         }
+
+        if(_prototypeValues.contains(property) && attribute == QLatin1String("prototypes"))
+        {
+            _prototypeValues[property] = val.toMap();
+            return;
+        }
+
         QtVariantPropertyManager::setAttribute(property, attribute, val);
     }
 
 
     void VariantManager::initializeProperty(QtProperty *property)
     {
-        if (propertyType(property) == filePathTypeId())
+        int t = propertyType(property);
+        if (t == filePathTypeId())
             _filePathValues[property] = FilePathData();
+        if (t == listId())
+            _prototypeValues[property] = QVariantMap();
         QtVariantPropertyManager::initializeProperty(property);
     }
 
@@ -213,6 +229,7 @@ namespace QtEntityUtils
     void VariantManager::uninitializeProperty(QtProperty *property)
     {
         _filePathValues.remove(property);
+        _prototypeValues.remove(property);
         QtVariantPropertyManager::uninitializeProperty(property);
     }
 
