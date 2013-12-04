@@ -12,8 +12,7 @@ Shape::Shape()
     test["y"] = 456.0f;
     test["z"] = 789.0;
     test["bla"] = "Hallo Welt";
-    testList.push_back(122.43);
-    testList.push_back("Hallo Welt");
+
 }
 
 
@@ -100,6 +99,7 @@ QVariantMap ShapeSystem::propertyAttributes() const
     QVariantMap prototypes;
     prototypes["Box"] = box;
     prototypes["Sphere"] = sphere;
+    prototypes["Number"] = 3.1415;
 
     QVariantMap attribs;
     attribs["prototypes"] = prototypes;

@@ -50,6 +50,7 @@ namespace QtEntityUtils
         void clear();
         void showContextMenu(const QPoint& p);
         void addListItem(const QString& prototype, QtVariantProperty* prop);
+        void removeListItem(QtVariantProperty* prop);
 
     protected slots:
 
@@ -66,6 +67,5 @@ namespace QtEntityUtils
         QtVariantPropertyManager* _propertyManager;
         QtTreePropertyBrowser* _editor;
         bool _ignorePropertyChanges;
-        QAction* _removeListEntry;
     };
 }

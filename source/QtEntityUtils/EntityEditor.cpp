@@ -103,8 +103,6 @@ namespace QtEntityUtils
 
         connect(_propertyManager, &VariantManager::valueChanged, this, &EntityEditor::propertyValueChanged);
 
-        _removeListEntry = new QAction("Remove Entry", this);
-
     }
 
     void EntityEditor::showContextMenu(const QPoint& pos)
@@ -137,7 +135,11 @@ namespace QtEntityUtils
         if(parent && parent->valueType() == VariantManager::listId())
         {
             QMenu menu(this);
-            menu.addAction(_removeListEntry);
+            QAction* action = menu.addAction("Remove entry");
+            // connect to lambda
+            connect(action, &QAction::triggered, [this, prop]() {
+                this->removeListItem(prop);
+            });
             menu.exec(_editor->mapToGlobal(pos));
         }
     }
@@ -152,34 +154,47 @@ namespace QtEntityUtils
             qDebug() << "Unexpected: Prototype " << prototype << " not found!";
             return;
         }
-        QtVariantProperty* lst = _propertyManager->addProperty(VariantManager::listId(), QString("%1").arg(prop->subProperties().size()));
 
         //for(auto k = attributes.begin(); k != attributes.end(); ++k)
         //{
         //    lst->setAttribute(k.key(), k.value());
         //}
 
-        _ignorePropertyChanges = true;
-        QVariantMap proto = protos[prototype].toMap();
-        for(auto i = proto.begin(); i != proto.end(); ++i)
-        {
-            QVariantMap attrs;// = attributes.value(i.key(), QVariantMap()).toMap();
 
-            auto item = this->addWidgetsRecursively(i.key(), i.value(), attrs);
-            if(item)
-            {
-                lst->addSubProperty(item);
-            }
-        }
+        QVariantMap proto = protos[prototype].toMap();
+        QVariantMap attrs;
+
+        _ignorePropertyChanges = true;
+        auto item = this->addWidgetsRecursively(prototype, proto, attrs);
+        prop->addSubProperty(item);
+
         _ignorePropertyChanges = false;
-        prop->addSubProperty(lst);
 
         // send changed value to entity system
         propertyValueChanged(prop, prop->value());
 
     }
 
-    QtProperty* EntityEditor::addWidgetsRecursively(const QString& name, const QVariant& data, const QVariantMap& attributes)
+
+    void EntityEditor::removeListItem(QtVariantProperty* prop)
+    {
+        _ignorePropertyChanges = true;
+        QtVariantProperty* parent = dynamic_cast<QtVariantProperty*>(
+                findParentProperty(_editor, prop));
+        Q_ASSERT(parent);
+        parent->removeSubProperty(prop);
+        delete prop;
+
+        _ignorePropertyChanges = false;
+
+        // send changed value to entity system
+        propertyValueChanged(parent, parent->value());
+    }
+
+
+    QtProperty* EntityEditor::addWidgetsRecursively(const QString& name,
+                                                    const QVariant& data,
+                                                    const QVariantMap& attributes)
     {
         if(data.type() == QVariant::Map)
         {
@@ -209,12 +224,12 @@ namespace QtEntityUtils
             {
                 lst->setAttribute(k.key(), k.value());
             }
-            int count = 0;
+
             for(auto j = items.begin(); j != items.end(); ++j)
             {
                 QVariantMap subattribs;// = attributes[j.key()].toMap();
 
-                auto prop = this->addWidgetsRecursively(QString("%1").arg(count++), *j, subattribs);
+                auto prop = this->addWidgetsRecursively("", *j, subattribs);
                 if(prop)
                 {
                     lst->addSubProperty(prop);
