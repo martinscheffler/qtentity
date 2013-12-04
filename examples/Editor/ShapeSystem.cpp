@@ -12,6 +12,8 @@ Shape::Shape()
     test["y"] = 456.0f;
     test["z"] = 789.0;
     test["bla"] = "Hallo Welt";
+    testList.push_back(122.43);
+    testList.push_back("Hallo Welt");
 }
 
 
@@ -72,6 +74,7 @@ QVariantMap ShapeSystem::properties(QtEntity::EntityId eid)
         m["subTex"]   = s->subTex();
 
         m["test"] = s->test;
+        m["testList"] = s->testList;
     }
     return m;
     
@@ -98,7 +101,8 @@ void ShapeSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
         if(m.contains("path"))     s->setPath(m["path"].toString());
         if(m.contains("zIndex"))   s->setZIndex(m["zIndex"].toInt());
         if(m.contains("subTex"))   s->setSubtex(m["subTex"].toRect());
-        if(m.contains("test"))     s->test = m["test"].toMap();
+        //if(m.contains("test"))     s->test = m["test"].toMap();
+        //if(m.contains("testList"))     s->testList = m["testList"].toList();
         s->setSubtex(m["subTex"].toRect());
     }
 }

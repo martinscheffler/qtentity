@@ -16,39 +16,119 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtEntityUtils/EntityEditor>
 
-#include <QtEntityUtils/VariantFactory>
-#include <QtEntityUtils/VariantManager>
-#include <QtEntityUtils/PropertyObjectsEdit>
-#include <qttreepropertybrowser.h>
 #include <QtEntity/EntityManager>
 #include <QtEntity/EntitySystem>
+#include <QtEntityUtils/VariantFactory>
+#include <QtEntityUtils/VariantManager>
 #include <QDate>
 #include <QDebug>
 #include <QFile>
 #include <QLocale>
 #include <QHBoxLayout>
+#include <QMenu>
 #include <QMetaProperty>
 #include <QUuid>
-#include <QDebug>
+#include <qttreepropertybrowser.h>
+
 
 namespace QtEntityUtils
 {
+    bool findSubProperty(QtProperty *property, QtProperty *toFind)
+    {
+        if(toFind == property) return true;
+        foreach(auto prop, property->subProperties())
+        {
+            if(findSubProperty(prop, toFind))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    QtProperty* findComponentProperty(QtTreePropertyBrowser* editor, QtProperty *property)
+    {
+        QList<QtBrowserItem *> items = editor->topLevelItems();
+        foreach(auto item, items)
+        {
+            if(findSubProperty(item->property(), property))
+            {
+                return item->property();
+            }
+        }
+        return nullptr;
+    }
+
+    QtProperty* findParentPropertyRec(const QtProperty* property, QtProperty* tree)
+    {
+        QList<QtProperty *> items = tree->subProperties();
+        foreach(auto item, items)
+        {
+            if(item == property) return tree;
+            QtProperty* parent = findParentPropertyRec(property, item);
+            if(parent) return parent;
+        }
+        return nullptr;
+    }
+
+    QtProperty* findParentProperty(QtTreePropertyBrowser* editor, const QtProperty *property)
+    {
+        QList<QtBrowserItem *> items = editor->topLevelItems();
+        foreach(auto item, items)
+        {
+            if(item->property() == property) return nullptr;
+            QtProperty* parent = findParentPropertyRec(property, item->property());
+            if(parent) return parent;
+        }
+        return nullptr;
+    }
+
     EntityEditor::EntityEditor()
         : _entityId(0)
         , _propertyManager(new VariantManager(this))
-        , _editor(new QtTreePropertyBrowser())
+        , _editor(new QtTreePropertyBrowser(this))
         , _ignorePropertyChanges(false)
     {
 
         QtVariantEditorFactory* variantFactory = new VariantFactory();
 
         _editor->setFactoryForManager(_propertyManager, variantFactory);
-        _editor->setPropertiesWithoutValueMarked(true);
+        _editor->setPropertiesWithoutValueMarked(false);
         _editor->setRootIsDecorated(false);
+        _editor->setContextMenuPolicy(Qt::CustomContextMenu);
+        connect(_editor, &QWidget::customContextMenuRequested, this, &EntityEditor::showContextMenu);
+
         setLayout(new QHBoxLayout());
         layout()->addWidget(_editor);
 
         connect(_propertyManager, &VariantManager::valueChanged, this, &EntityEditor::propertyValueChanged);
+
+        _appendListEntry = new QAction("Add Entry", this);
+        _removeListEntry = new QAction("Remove Entry", this);
+
+    }
+
+    void EntityEditor::showContextMenu(const QPoint& pos)
+    {
+        QtVariantProperty* prop = dynamic_cast<QtVariantProperty*>(_editor->propertyAt(pos));
+        if(!prop)
+        {
+            return;
+        }
+
+        if(prop->valueType() == VariantManager::listId())
+        {
+            QMenu menu(this);
+            menu.addAction(_appendListEntry);
+            menu.exec(_editor->mapToGlobal(pos));
+        }
+        QtVariantProperty* parent = dynamic_cast<QtVariantProperty*>(findParentProperty(_editor, prop));
+        if(parent && parent->valueType() == VariantManager::listId())
+        {
+            QMenu menu(this);
+            menu.addAction(_removeListEntry);
+            menu.exec(_editor->mapToGlobal(pos));
+        }
     }
 
 
@@ -72,10 +152,27 @@ namespace QtEntityUtils
             }
             return grp;
         }
+        else if(data.type() == QVariant::List)
+        {
+            QVariantList items = data.toList();
+
+            QtProperty* grp = _propertyManager->addProperty(VariantManager::listId(), name);
+
+            int count = 0;
+            for(auto j = items.begin(); j != items.end(); ++j)
+            {
+                QVariantMap subattribs;// = attributes[j.key()].toMap();
+
+                auto prop = this->addWidgetsRecursively(QString("%1").arg(count++), *j, subattribs);
+                if(prop)
+                {
+                    grp->addSubProperty(prop);
+                }
+            }
+            return grp;
+        }
         else
         {
-            std::string n = name.toStdString();
-            int t = data.userType();
             QtVariantProperty* propitem = _propertyManager->addProperty(data.userType(), name);
             if(propitem)
             {
@@ -151,33 +248,6 @@ namespace QtEntityUtils
             es->setProperties(eid, values.value(componenttype).toMap());               
         }
     }
-
-    bool findSubProperty(QtProperty *property, QtProperty *toFind)
-    {
-        if(toFind == property) return true;
-        foreach(auto prop, property->subProperties())
-        {
-            if(findSubProperty(prop, toFind))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    QtProperty* findComponentProperty(QtTreePropertyBrowser* editor, QtProperty *property)
-    {
-        QList<QtBrowserItem *> items = editor->topLevelItems();
-        foreach(auto item, items)
-        {
-            if(findSubProperty(item->property(), property))
-            {
-                return item->property();
-            }
-        }
-        return nullptr;
-    }
-
 
     void EntityEditor::propertyValueChanged(QtProperty *property, const QVariant &val)
     {

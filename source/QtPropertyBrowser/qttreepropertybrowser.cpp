@@ -72,6 +72,7 @@ public:
         { return q_ptr->createEditor(property, parent); }
     QtProperty *indexToProperty(const QModelIndex &index) const;
     QTreeWidgetItem *indexToItem(const QModelIndex &index) const;
+    QtProperty* propertyAt(const QPoint& p);
     QtBrowserItem *indexToBrowserItem(const QModelIndex &index) const;
     bool lastColumn(int column) const;
     void disableItem(QTreeWidgetItem *item) const;
@@ -676,6 +677,16 @@ void QtTreePropertyBrowserPrivate::editItem(QtBrowserItem *browserItem)
     }
 }
 
+QtProperty* QtTreePropertyBrowserPrivate::propertyAt(const QPoint& p)
+{
+    QPoint local = m_treeWidget->viewport()->mapFromParent(p);
+    QTreeWidgetItem* item = m_treeWidget->itemAt(local);
+    if(item)
+    {
+        return m_itemToIndex[item]->property();
+    }
+    return NULL;
+}
 /*!
     \class QtTreePropertyBrowser
     \internal
@@ -1034,6 +1045,11 @@ void QtTreePropertyBrowser::itemChanged(QtBrowserItem *item)
 void QtTreePropertyBrowser::editItem(QtBrowserItem *item)
 {
     d_ptr->editItem(item);
+}
+
+QtProperty* QtTreePropertyBrowser::propertyAt(const QPoint& p)
+{
+    return d_ptr->propertyAt(p);
 }
 
 QT_END_NAMESPACE

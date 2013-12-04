@@ -17,7 +17,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtEntityUtils/VariantFactory>
 
 #include <QtEntityUtils/FileEdit>
-#include <QtEntityUtils/PropertyObjectsEdit>
+#include <QtEntityUtils/ListEdit>
 #include <QtEntityUtils/VariantManager>
 #include <QMetaProperty>
 
@@ -31,13 +31,7 @@ namespace QtEntityUtils
             QListIterator<FileEdit *> it(editors);
             while (it.hasNext())
                 delete it.next();
-        }
-        {
-            QList<PropertyObjectsEdit *> editors = _propertyObjectsEditorToProperty.keys();
-            QListIterator<PropertyObjectsEdit *> it(editors);
-            while (it.hasNext())
-                delete it.next();
-        }
+        }        
     }
 
 
@@ -64,22 +58,22 @@ namespace QtEntityUtils
             _createdFileEditors[property].append(editor);
             _fileEditorToProperty[editor] = property;
 
-            connect(editor, &FileEdit::filePathChanged, this, &VariantFactory::slotSetValue);
-            connect(editor, &PropertyObjectsEdit::destroyed, this, &VariantFactory::slotEditorDestroyed);
+            connect(editor, &FileEdit::filePathChanged, this, &VariantFactory::slotSetFilePathValue);
+            connect(editor, &FileEdit::destroyed, this, &VariantFactory::slotEditorDestroyed);
             return editor;
         }
-        if (manager->propertyType(property) == VariantManager::variantListId())
+        if (manager->propertyType(property) == VariantManager::listId())
         {
-            PropertyObjectsEdit *editor = new PropertyObjectsEdit(parent);
+            ListEdit *editor = new ListEdit(parent);
 
-            editor->setClasses(manager->attributeValue(property, QLatin1String("classes")).toMap());
-            editor->setValue( manager->value(property).value<QVariantList>());
+            //editor->setClasses(manager->attributeValue(property, QLatin1String("prototypes")).toMap());
+            //editor->setValue( manager->value(property).value<QVariantList>());
             
-            _createdPropertyObjectsEditors[property].append(editor);
-            _propertyObjectsEditorToProperty[editor] = property;
+            _createdListEditors[property].append(editor);
+            _listEditorToProperty[editor] = property;
 
-            connect(editor, &PropertyObjectsEdit::objectsChanged, this, &VariantFactory::slotSetObjectsValue);
-            connect(editor, &PropertyObjectsEdit::destroyed, this, &VariantFactory::slotEditorDestroyed);
+            connect(editor, &ListEdit::listChanged, this, &VariantFactory::slotSetListValue);
+            connect(editor, &ListEdit::destroyed, this, &VariantFactory::slotEditorDestroyed);
             return editor;
         }
         return QtVariantEditorFactory::createEditor(manager, property, parent);
@@ -109,12 +103,6 @@ namespace QtEntityUtils
                 itEditor.next()->setFilePath(value.toString());
         }
 
-        {
-            QList<PropertyObjectsEdit *> editors = _createdPropertyObjectsEditors[property];
-            QListIterator<PropertyObjectsEdit *> itEditor(editors);
-            while (itEditor.hasNext())
-                itEditor.next()->setValue(value.value<QVariantList>());
-        }
     }
 
 
@@ -131,21 +119,10 @@ namespace QtEntityUtils
             QListIterator<FileEdit *> itEditor(editors);
             while (itEditor.hasNext())
                 itEditor.next()->setFilter(value.toString());
-        }
-        if (_createdPropertyObjectsEditors.contains(property))
-        {
-            if (attribute != QLatin1String("classes"))
-                return;
-
-            QList<PropertyObjectsEdit *> editors = _createdPropertyObjectsEditors[property];
-            QListIterator<PropertyObjectsEdit *> itEditor(editors);
-            while (itEditor.hasNext())
-                itEditor.next()->setClasses(value.toMap());
-
-        }
+        }       
     }
 
-    void VariantFactory::slotSetValue(const QString &value)
+    void VariantFactory::slotSetFilePathValue(const QString &value)
     {
         QObject *object = sender();
 
@@ -165,19 +142,19 @@ namespace QtEntityUtils
     }
 
 
-    void VariantFactory::slotSetObjectsValue(const QVariantList& value)
+    void VariantFactory::slotSetListValue(const QVariantList &value)
     {
         QObject *object = sender();
 
-        QMap<PropertyObjectsEdit *, QtProperty *>::ConstIterator itEditor =
-                    _propertyObjectsEditorToProperty.constBegin();
-        while (itEditor != _propertyObjectsEditorToProperty.constEnd()) {
+        QMap<ListEdit *, QtProperty *>::ConstIterator itEditor =
+                    _listEditorToProperty.constBegin();
+        while (itEditor != _listEditorToProperty.constEnd()) {
             if (itEditor.key() == object) {
                 QtProperty *property = itEditor.value();
                 QtVariantPropertyManager *manager = propertyManager(property);
                 if (!manager)
                     return;
-                manager->setValue(property, QVariant::fromValue(value));
+                manager->setValue(property, value);
                 return;
             }
             itEditor++;
@@ -203,24 +180,5 @@ namespace QtEntityUtils
                 itEditor++;
             }
         }
-
-        {
-            QMap<PropertyObjectsEdit *, QtProperty *>::ConstIterator itEditor =
-                        _propertyObjectsEditorToProperty.constBegin();
-            while (itEditor != _propertyObjectsEditorToProperty.constEnd()) {
-                if (itEditor.key() == object) {
-                    PropertyObjectsEdit *editor = itEditor.key();
-                    QtProperty *property = itEditor.value();
-                    _propertyObjectsEditorToProperty.remove(editor);
-                    _createdPropertyObjectsEditors[property].removeAll(editor);
-                    if (_createdPropertyObjectsEditors[property].isEmpty())
-                        _createdPropertyObjectsEditors.remove(property);
-                    return;
-                }
-                itEditor++;
-            }
-        }
     }
-
-
 }

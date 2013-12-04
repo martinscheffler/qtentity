@@ -17,9 +17,11 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include <QtEntityUtils/Export>
-#include <QWidget>
+
 #include <QtEntity/DataTypes>
+#include <QAction>
 #include <QVariantMap>
+#include <QWidget>
 
 class QtVariantPropertyManager;
 class QtTreePropertyBrowser;
@@ -45,6 +47,7 @@ namespace QtEntityUtils
 
         void displayEntity(QtEntity::EntityId id, const QVariantMap& data, const QVariantMap& attributes);
         void clear();
+        void showContextMenu(const QPoint& p);
 
     protected slots:
 
@@ -61,6 +64,7 @@ namespace QtEntityUtils
         QtVariantPropertyManager* _propertyManager;
         QtTreePropertyBrowser* _editor;
         bool _ignorePropertyChanges;
-
+        QAction* _appendListEntry;
+        QAction* _removeListEntry;
     };
 }

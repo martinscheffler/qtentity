@@ -36,6 +36,7 @@ public:
     void setSubtex(const QRect& v) { _subtex = v; buildShape(); }
     QRect subTex() const { return _subtex; }
 QVariantMap test;
+QVariantList testList;
 private:
 
     void buildShape();

@@ -23,7 +23,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace QtEntityUtils
 {
     class FileEdit;
-    class PropertyObjectsEdit;
+    class ListEdit;
 
     class VariantFactory : public QtVariantEditorFactory
     {
@@ -43,13 +43,13 @@ namespace QtEntityUtils
     private slots:
         void slotPropertyChanged(QtProperty *property, const QVariant &value);
         void slotPropertyAttributeChanged(QtProperty *property, const QString &attribute, const QVariant &value);
-        void slotSetValue(const QString &value);
-        void slotSetObjectsValue(const QVariantList &value);
+        void slotSetFilePathValue(const QString &value);
+        void slotSetListValue(const QVariantList &value);
         void slotEditorDestroyed(QObject *object);
     private:
         QMap<QtProperty *, QList<FileEdit *> > _createdFileEditors;
         QMap<FileEdit *, QtProperty *> _fileEditorToProperty;
-        QMap<QtProperty *, QList<PropertyObjectsEdit *> > _createdPropertyObjectsEditors;
-        QMap<PropertyObjectsEdit *, QtProperty *> _propertyObjectsEditorToProperty;
+        QMap<QtProperty *, QList<ListEdit *> > _createdListEditors;
+        QMap<ListEdit *, QtProperty *> _listEditorToProperty;
     };
 }

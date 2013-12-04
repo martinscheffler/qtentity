@@ -106,6 +106,8 @@ public:
 
     void editItem(QtBrowserItem *item);
 
+    QtProperty* propertyAt(const QPoint& p);
+
 Q_SIGNALS:
 
     void collapsed(QtBrowserItem *item);

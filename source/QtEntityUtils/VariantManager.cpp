@@ -38,13 +38,7 @@ namespace QtEntityUtils
     }
 
 
-    int VariantManager::propertyObjectsId()
-    {
-        return qMetaTypeId<QVariantList>();
-    }
-
-
-    int VariantManager::variantListId()
+    int VariantManager::listId()
     {
         return QVariant::List;
     }
@@ -53,7 +47,7 @@ namespace QtEntityUtils
     bool VariantManager::isPropertyTypeSupported(int propertyType) const
     {
         if (propertyType == filePathTypeId() ||
-            propertyType == variantListId())
+            propertyType == listId())
         {
             return true;
         }
@@ -63,10 +57,13 @@ namespace QtEntityUtils
 
     int VariantManager::valueType(int propertyType) const
     {
-        if (propertyType == filePathTypeId() ||
-            propertyType == variantListId())
+        if (propertyType == filePathTypeId())
         {
             return QVariant::String;
+        }
+        if (propertyType == listId())
+        {
+            return QVariant::List;
         }
         return QtVariantPropertyManager::valueType(propertyType);
     }
@@ -84,14 +81,20 @@ namespace QtEntityUtils
             }
             return ret;
         }
+        if(propertyType(property) == listId())
+        {
+            QList<QtProperty *> subs = property->subProperties();
+            QVariantList ret;
+            for(auto i = subs.begin(); i != subs.end(); ++i)
+            {
+                ret.push_back(value(*i));
+            }
+            return ret;
+        }
         if (_filePathValues.contains(property))
         {
             return QVariant::fromValue(_filePathValues[property].value);
-        }
-        if (_propertyObjectsValues.contains(property))
-        {
-            return QVariant::fromValue(_propertyObjectsValues[property].value);
-        }
+        }        
         return QtVariantPropertyManager::value(property);
     }
 
@@ -105,10 +108,10 @@ namespace QtEntityUtils
             return attr;
         }
 
-        if (propertyType == variantListId())
+        if (propertyType == listId())
         {
             QStringList attr;
-            attr << QLatin1String("classes");
+            attr << QLatin1String("prototypes");
             return attr;
         }
         return QtVariantPropertyManager::attributes(propertyType);
@@ -124,9 +127,9 @@ namespace QtEntityUtils
             return 0;
         }
 
-        if (propertyType == variantListId())
+        if (propertyType == listId())
         {
-            if (attribute == QLatin1String("classes"))
+            if (attribute == QLatin1String("prototypes"))
                return QVariant::Map;
             return 0;
         }
@@ -142,12 +145,6 @@ namespace QtEntityUtils
                 return _filePathValues[property].filter;
             return QVariant();
         }
-        if (_propertyObjectsValues.contains(property))
-        {
-            if (attribute == QLatin1String("classes"))
-                return _propertyObjectsValues[property].classes;
-            return QVariant();
-        }
         return QtVariantPropertyManager::attributeValue(property, attribute);
     }
 
@@ -157,25 +154,7 @@ namespace QtEntityUtils
         if (_filePathValues.contains(property))
         {
             return _filePathValues[property].value;
-        }
-        else if (_propertyObjectsValues.contains(property))
-        {
-            const QVariantList&  val = _propertyObjectsValues[property].value;
-            QString ret = "[";
-            bool first = true;
-            foreach(auto o, val)
-            {
-                if(!o.canConvert<QVariantMap>()) continue;
-                QVariantMap obj = o.toMap();
-                if(first)
-                    first = false;
-                else
-                    ret.append(";");
-                ret.append(obj["classname"].toString());
-            }
-            ret.append("]");
-            return ret;
-        }
+        }        
         else
         {
             return QtVariantPropertyManager::valueText(property);
@@ -196,21 +175,7 @@ namespace QtEntityUtils
             emit propertyChanged(property);
             emit valueChanged(property, str);
             return;
-        }
-        if (_propertyObjectsValues.contains(property))
-        {
-            if (!val.canConvert<QVariantList>())
-                return;
-            QVariantList obs = val.value<QVariantList>();
-            PropertyObjectsData d = _propertyObjectsValues[property];
-            if (d.value == obs)
-                return;
-            d.value = obs;
-            _propertyObjectsValues[property] = d;
-            emit propertyChanged(property);
-            emit valueChanged(property, QVariant::fromValue(obs));
-            return;
-        }
+        }        
         QtVariantPropertyManager::setValue(property, val);
     }
 
@@ -233,21 +198,6 @@ namespace QtEntityUtils
             }
             return;
         }
-        if (_propertyObjectsValues.contains(property))
-        {
-            if (attribute == QLatin1String("classes")) {
-                if (val.type() != QVariant::Map && !val.canConvert(QVariant::Map))
-                    return;
-                QVariantMap classes = val.toMap();
-                PropertyObjectsData d = _propertyObjectsValues[property];
-                if (d.classes == classes)
-                    return;
-                d.classes = classes;
-                _propertyObjectsValues[property] = d;
-                emit attributeChanged(property, attribute, classes);
-            }
-            return;
-        }
         QtVariantPropertyManager::setAttribute(property, attribute, val);
     }
 
@@ -256,8 +206,6 @@ namespace QtEntityUtils
     {
         if (propertyType(property) == filePathTypeId())
             _filePathValues[property] = FilePathData();
-        if (propertyType(property) == variantListId())
-            _propertyObjectsValues[property] = PropertyObjectsData();
         QtVariantPropertyManager::initializeProperty(property);
     }
 

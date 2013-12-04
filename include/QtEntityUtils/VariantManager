@@ -54,8 +54,7 @@ namespace QtEntityUtils
         virtual QVariant attributeValue(const QtProperty *property, const QString &attribute) const override;
         
         static int filePathTypeId();
-        static int variantListId();
-        static int propertyObjectsId();
+        static int listId();
 
     public slots:
 
@@ -78,10 +77,5 @@ namespace QtEntityUtils
 
         QMap<const QtProperty *, FilePathData> _filePathValues;
 
-        struct PropertyObjectsData {
-            QVariantList value;
-            QVariantMap classes;
-        };
-        QMap<const QtProperty *, PropertyObjectsData> _propertyObjectsValues;
     }; 
 }
