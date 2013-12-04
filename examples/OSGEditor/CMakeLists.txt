@@ -1,11 +1,11 @@
 set(APP_NAME OSGEntityEditor)
 
 include_directories(
-  ${CMAKE_SOURCE_DIR}/include/
-  ${CMAKE_BINARY_DIR}/source/
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../../qtentity/include/
+  ${CMAKE_CURRENT_BINARY_DIR}/.. # for moc files
   ${CMAKE_CURRENT_BINARY_DIR} # for .ui files
-  ${OSG_INCLUDE_DIR}
-  ${CMAKE_SOURCE_DIR}/source/QtPropertyBrowser
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../source/QtPropertyBrowser
+  ${CMAKE_CURRENT_BINARY_DIR}/../../source # for dtentity export header
 )
 
 FIND_PACKAGE(OpenSceneGraph REQUIRED osgDB osgGA osgUtil osgViewer)
