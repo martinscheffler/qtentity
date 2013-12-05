@@ -66,9 +66,6 @@ namespace QtEntityUtils
         {
             ListEdit *editor = new ListEdit(parent);
 
-            //editor->setClasses(manager->attributeValue(property, QLatin1String("prototypes")).toMap());
-            //editor->setValue( manager->value(property).value<QVariantList>());
-            
             _createdListEditors[property].append(editor);
             _listEditorToProperty[editor] = property;
 

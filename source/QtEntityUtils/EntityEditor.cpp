@@ -155,17 +155,15 @@ namespace QtEntityUtils
             return;
         }
 
-        //for(auto k = attributes.begin(); k != attributes.end(); ++k)
-        //{
-        //    lst->setAttribute(k.key(), k.value());
-        //}
+        QVariant prototypeAttributes = _variantManager->attributeValue(prop, "prototypeAttributes");
+        QVariantMap attrs = prototypeAttributes.toMap();
+        QVariantMap at = attrs[prototype].toMap();
 
 
         QVariant proto = protos[prototype];
-        QVariantMap attrs;
 
         _ignorePropertyChanges = true;
-        QtVariantProperty* item = this->addWidgetsRecursively(prototype, proto, attrs);
+        QtVariantProperty* item = this->addWidgetsRecursively(prototype, proto, at);
         item->setAttribute("prototype", prototype);
         prop->addSubProperty(item);
 
@@ -226,12 +224,14 @@ namespace QtEntityUtils
                 lst->setAttribute(k.key(), k.value());
             }
 
+            lst->setAttribute("prototypeAttributes", attributes);
+
             for(auto j = items.begin(); j != items.end(); ++j)
             {
                 QVariantMap entry = j->toMap();
                 QString prototype = entry["prototype"].toString();
                 QVariant val = entry["value"];
-                QVariantMap subattribs;// = attributes[j.key()].toMap();
+                QVariantMap subattribs = attributes[prototype].toMap();
 
                 QtVariantProperty* prop = this->addWidgetsRecursively(prototype, val, subattribs);
                 prop->setAttribute("prototype", prototype);
@@ -272,7 +272,7 @@ namespace QtEntityUtils
         _ignorePropertyChanges = true;
         _entityId = id;
         clear();        
-        
+
         for(auto i = data.begin(); i != data.end(); ++i)
         {
             QVariantMap attrs = attributes.value(i.key(), QVariantMap()).toMap();

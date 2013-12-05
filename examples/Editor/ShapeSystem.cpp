@@ -17,6 +17,8 @@ Shape::Shape()
     entry1["prototype"] = "Box";
     QVariantMap v;
     v["Color"] = QColor(0,255,0);
+    v["Test0.1"] = 0.1;
+    v["Test0.5"] = 0.5;
     entry1["value"] = v;
     testList.push_back(entry1);
 }
@@ -101,14 +103,25 @@ QVariantMap ShapeSystem::propertyAttributes() const
 
     QVariantMap box;
     box["Color"] = QColor(255,0,0,255);
+    box["Test0.1"] = 3.1;
+    box["Test0.5"] = 3.5;
 
     QVariantMap prototypes;
     prototypes["Box"] = box;
     prototypes["Sphere"] = sphere;
-    prototypes["Number"] = 3.1415;
 
     QVariantMap attribs;
     attribs["prototypes"] = prototypes;
+
+    QVariantMap test01;
+    test01["singleStep"] = 0.1;
+    QVariantMap test05;
+    test05["singleStep"] = 0.5;
+
+    QVariantMap boxattrs;
+    boxattrs["Test0.1"] = test01;
+    boxattrs["Test0.5"] = test05;
+    attribs["Box"] = boxattrs;
 
     r["testList"] = attribs;
 

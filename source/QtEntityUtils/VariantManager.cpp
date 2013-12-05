@@ -113,7 +113,8 @@ namespace QtEntityUtils
 
         if (propertyType == listId())
         {            
-            attr << QLatin1String("prototypes");           
+            attr << QLatin1String("prototypes");
+            attr << QLatin1String("prototypeAttributes");
         }
 
         // available for all properties:
@@ -138,6 +139,8 @@ namespace QtEntityUtils
         {
             if (attribute == QLatin1String("prototypes"))
                return QVariant::Map;
+            if (attribute == QLatin1String("prototypeAttributes"))
+               return QVariant::Map;
             return 0;
         }
         return QtVariantPropertyManager::attributeType(propertyType, attribute);
@@ -161,6 +164,11 @@ namespace QtEntityUtils
                 attribute == QLatin1String("prototypes"))
         {
             return _prototypesValues[property];
+        }
+        if (_prototypeAttributesValues.contains(property) &&
+                attribute == QLatin1String("prototypeAttributes"))
+        {
+            return _prototypeAttributesValues[property];
         }
 
         return QtVariantPropertyManager::attributeValue(property, attribute);
@@ -228,6 +236,13 @@ namespace QtEntityUtils
             return;
         }
 
+        if(_prototypeAttributesValues.contains(property) && attribute == QLatin1String("prototypeAttributes"))
+        {
+            _prototypeAttributesValues[property] = val.toMap();
+            return;
+        }
+
+
         QtVariantPropertyManager::setAttribute(property, attribute, val);
     }
 
@@ -238,7 +253,10 @@ namespace QtEntityUtils
         if (t == filePathTypeId())
             _filePathValues[property] = FilePathData();
         if (t == listId())
+         {
+            _prototypeAttributesValues[property] = QVariantMap();
             _prototypesValues[property] = QVariantMap();
+        }
         QtVariantPropertyManager::initializeProperty(property);
     }
 
@@ -247,6 +265,7 @@ namespace QtEntityUtils
     {
         _filePathValues.remove(property);
         _prototypesValues.remove(property);
+        _prototypeAttributesValues.remove(property);
         _prototypeValues.remove(property);
         QtVariantPropertyManager::uninitializeProperty(property);
     }
