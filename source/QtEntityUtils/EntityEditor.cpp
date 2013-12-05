@@ -161,7 +161,7 @@ namespace QtEntityUtils
         //}
 
 
-        QVariantMap proto = protos[prototype].toMap();
+        QVariant proto = protos[prototype];
         QVariantMap attrs;
 
         _ignorePropertyChanges = true;
