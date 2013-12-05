@@ -53,17 +53,34 @@ Creating a spaceship entity with two components, transform and sprite.
 The third parameter to createComponent accepts a QVariantMap with values for the
 component properties - more on that later.
 
-Implementation details
+Components
 -------------
 All components in QtEntity derive from the abstract interface QtEntity::Component. It defines a
-single method that returns a type id for the component class.
+single method returning a type id for the component class.
+There is a pair of macros which may be used to create a type id for the component and to implement
+the necessary methods. In the header:
 
+        class ExampleComponent : public QtEntity::Component
+        {
+            DECLARE_COMPONENT_TYPE(NOEXP)
+
+        public:
+            ExampleComponent() { }
+        };
+
+And in the cpp:
+
+        IMPLEMENT_COMPONENT_TYPE(ExampleComponent)
+
+Entity Systems
+-------------
 The entity system class is derived from QObject.
-Entity systems can be directly used to create, retrieve or delete components, although usually this is called by
-the EntityManager.
+Entity systems are used to create, retrieve and delete components.
 
-Systems also give access to the properties of its components: The properties method accepts an entity id
-and returns a QVariantMap containing properties of the component associated with the id. The setProperties method can
+
+
+They also give access to the properties of its components: The properties() method returns
+a QVariantMap containing properties of the component associated with the given id. The setProperties method can
 be used to assign values to the properties of a specified component.
 
 Properties can be used in editor tools for introspection and manipulation and also for serializing to JSON or other formats.
