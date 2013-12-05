@@ -76,6 +76,7 @@ namespace QtEntityUtils
         };
 
         QMap<const QtProperty *, FilePathData> _filePathValues;
-        QMap<const QtProperty *, QVariantMap> _prototypeValues;
+        QMap<const QtProperty *, QVariantMap> _prototypesValues;
+        QMap<const QtProperty *, QString> _prototypeValues;
     }; 
 }

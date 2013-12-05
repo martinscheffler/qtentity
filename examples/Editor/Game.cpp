@@ -152,7 +152,7 @@ void Game::createEnemy()
 
 void Game::step(int frameNumber, int totalTime, int delta)
 {
-    if(frameNumber % 120 == 0)
+    if(frameNumber % 12000 == 0)
     {
         createEnemy();
     }

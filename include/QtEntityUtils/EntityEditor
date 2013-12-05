@@ -54,7 +54,7 @@ namespace QtEntityUtils
 
     protected slots:
 
-        void propertyValueChanged(QtProperty *property, const QVariant &val);
+        void propertyValueChanged(QtProperty *property);
 
     signals:
 
@@ -62,9 +62,9 @@ namespace QtEntityUtils
 
     private:
 
-        QtProperty* addWidgetsRecursively(const QString& name, const QVariant& data, const QVariantMap& schema);
+        QtVariantProperty* addWidgetsRecursively(const QString& name, const QVariant& data, const QVariantMap& schema);
         QtEntity::EntityId _entityId;
-        QtVariantPropertyManager* _propertyManager;
+        QtVariantPropertyManager* _variantManager;
         QtTreePropertyBrowser* _editor;
         bool _ignorePropertyChanges;
     };

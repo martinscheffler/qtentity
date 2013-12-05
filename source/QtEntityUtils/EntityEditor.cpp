@@ -85,14 +85,14 @@ namespace QtEntityUtils
 
     EntityEditor::EntityEditor()
         : _entityId(0)
-        , _propertyManager(new VariantManager(this))
+        , _variantManager(new VariantManager(this))
         , _editor(new QtTreePropertyBrowser(this))
         , _ignorePropertyChanges(false)
     {
 
         QtVariantEditorFactory* variantFactory = new VariantFactory();
 
-        _editor->setFactoryForManager(_propertyManager, variantFactory);
+        _editor->setFactoryForManager(_variantManager, variantFactory);
         _editor->setPropertiesWithoutValueMarked(false);
         _editor->setRootIsDecorated(false);
         _editor->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -101,7 +101,7 @@ namespace QtEntityUtils
         setLayout(new QHBoxLayout());
         layout()->addWidget(_editor);
 
-        connect(_propertyManager, &VariantManager::valueChanged, this, &EntityEditor::propertyValueChanged);
+        connect(_variantManager, &VariantManager::valueChanged, this, &EntityEditor::propertyValueChanged);
 
     }
 
@@ -115,7 +115,7 @@ namespace QtEntityUtils
 
         if(prop->valueType() == VariantManager::listId())
         {
-            QVariant prototypes = _propertyManager->attributeValue(prop, "prototypes");
+            QVariant prototypes = _variantManager->attributeValue(prop, "prototypes");
             QVariantMap protos = prototypes.toMap();
             if(!protos.isEmpty())
             {
@@ -147,7 +147,7 @@ namespace QtEntityUtils
 
     void EntityEditor::addListItem(const QString& prototype, QtVariantProperty* prop)
     {
-        QVariant prototypes = _propertyManager->attributeValue(prop, "prototypes");
+        QVariant prototypes = _variantManager->attributeValue(prop, "prototypes");
         QVariantMap protos = prototypes.toMap();
         if(!protos.contains(prototype))
         {
@@ -165,13 +165,14 @@ namespace QtEntityUtils
         QVariantMap attrs;
 
         _ignorePropertyChanges = true;
-        auto item = this->addWidgetsRecursively(prototype, proto, attrs);
+        QtVariantProperty* item = this->addWidgetsRecursively(prototype, proto, attrs);
+        item->setAttribute("prototype", prototype);
         prop->addSubProperty(item);
 
         _ignorePropertyChanges = false;
 
         // send changed value to entity system
-        propertyValueChanged(prop, prop->value());
+        propertyValueChanged(prop);
 
     }
 
@@ -188,11 +189,11 @@ namespace QtEntityUtils
         _ignorePropertyChanges = false;
 
         // send changed value to entity system
-        propertyValueChanged(parent, parent->value());
+        propertyValueChanged(parent);
     }
 
 
-    QtProperty* EntityEditor::addWidgetsRecursively(const QString& name,
+    QtVariantProperty* EntityEditor::addWidgetsRecursively(const QString& name,
                                                     const QVariant& data,
                                                     const QVariantMap& attributes)
     {
@@ -200,7 +201,7 @@ namespace QtEntityUtils
         {
             QVariantMap props = data.toMap();
 
-            QtProperty* grp = _propertyManager->addProperty(QtVariantPropertyManager::groupTypeId(), name);
+            QtVariantProperty* grp = _variantManager->addProperty(QtVariantPropertyManager::groupTypeId(), name);
 
             for(auto j = props.begin(); j != props.end(); ++j)
             {
@@ -218,7 +219,7 @@ namespace QtEntityUtils
         {
             QVariantList items = data.toList();
 
-            QtVariantProperty* lst = _propertyManager->addProperty(VariantManager::listId(), name);
+            QtVariantProperty* lst = _variantManager->addProperty(VariantManager::listId(), name);
 
             for(auto k = attributes.begin(); k != attributes.end(); ++k)
             {
@@ -227,9 +228,13 @@ namespace QtEntityUtils
 
             for(auto j = items.begin(); j != items.end(); ++j)
             {
+                QVariantMap entry = j->toMap();
+                QString prototype = entry["prototype"].toString();
+                QVariant val = entry["value"];
                 QVariantMap subattribs;// = attributes[j.key()].toMap();
 
-                auto prop = this->addWidgetsRecursively("", *j, subattribs);
+                QtVariantProperty* prop = this->addWidgetsRecursively(prototype, val, subattribs);
+                prop->setAttribute("prototype", prototype);
                 if(prop)
                 {
                     lst->addSubProperty(prop);
@@ -239,7 +244,7 @@ namespace QtEntityUtils
         }
         else
         {
-            QtVariantProperty* propitem = _propertyManager->addProperty(data.userType(), name);
+            QtVariantProperty* propitem = _variantManager->addProperty(data.userType(), name);
             if(propitem)
             {
 
@@ -284,7 +289,7 @@ namespace QtEntityUtils
 
     void EntityEditor::clear()
     {
-        _propertyManager->clear();
+        _variantManager->clear();
         _editor->clear();
     }
 
@@ -315,7 +320,7 @@ namespace QtEntityUtils
         }
     }
 
-    void EntityEditor::propertyValueChanged(QtProperty *property, const QVariant &val)
+    void EntityEditor::propertyValueChanged(QtProperty *property)
     {
         // changing property editors triggers signals which cause the component to be updated in the game.
         // ignore these signals while initially creating the property editors
@@ -335,7 +340,7 @@ namespace QtEntityUtils
         Q_ASSERT(changedProp);
 
         QVariantMap prop;
-        prop[changedProp->propertyName()] =  _propertyManager->value(changedProp);
+        prop[changedProp->propertyName()] =  _variantManager->value(changedProp);
         QVariantMap components;
         components[changedComponent->propertyName()] = prop;
         emit entityDataChanged(_entityId, components);

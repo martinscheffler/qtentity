@@ -87,7 +87,11 @@ namespace QtEntityUtils
             QVariantList ret;
             for(auto i = subs.begin(); i != subs.end(); ++i)
             {
-                ret.push_back(value(*i));
+                QVariantMap entry;
+                entry["prototype"] = attributeValue(*i, "prototype");
+                std::string v = entry["prototype"].toString().toStdString();
+                entry["value"] = value(*i);
+                ret.push_back(entry);
             }
             return ret;
         }
@@ -101,25 +105,28 @@ namespace QtEntityUtils
 
     QStringList VariantManager::attributes(int propertyType) const
     {
+        QStringList attr = QtVariantPropertyManager::attributes(propertyType);
         if (propertyType == filePathTypeId())
-        {
-            QStringList attr;
-            attr << QLatin1String("filter");
-            return attr;
+        {            
+            attr << QLatin1String("filter");            
         }
 
         if (propertyType == listId())
-        {
-            QStringList attr;
-            attr << QLatin1String("prototypes");
-            return attr;
+        {            
+            attr << QLatin1String("prototypes");           
         }
-        return QtVariantPropertyManager::attributes(propertyType);
+
+        // available for all properties:
+        attr << QLatin1String("prototype");
+        return attr;
     }
 
 
     int VariantManager::attributeType(int propertyType, const QString &attribute) const
     {
+        if (attribute == QLatin1String("prototype"))
+           return QVariant::String;
+
         if (propertyType == filePathTypeId())
         {
             if (attribute == QLatin1String("filter"))
@@ -139,16 +146,21 @@ namespace QtEntityUtils
 
     QVariant VariantManager::attributeValue(const QtProperty *property, const QString &attribute) const
     {
+        if (attribute == QLatin1String("prototype"))
+        {
+            return _prototypeValues.contains(property) ? _prototypeValues[property] : "";
+        }
+
         if (_filePathValues.contains(property))
         {
             if (attribute == QLatin1String("filter"))
                 return _filePathValues[property].filter;
             return QVariant();
         }
-        if (_prototypeValues.contains(property) &&
+        if (_prototypesValues.contains(property) &&
                 attribute == QLatin1String("prototypes"))
         {
-            return _prototypeValues[property];
+            return _prototypesValues[property];
         }
 
         return QtVariantPropertyManager::attributeValue(property, attribute);
@@ -189,6 +201,11 @@ namespace QtEntityUtils
     void VariantManager::setAttribute(QtProperty *property,
                     const QString &attribute, const QVariant &val)
     {
+        if(attribute == QLatin1String("prototype"))
+        {
+            _prototypeValues[property] = val.toString();
+            return;
+        }
         if (_filePathValues.contains(property))
         {
             if (attribute == QLatin1String("filter")) {
@@ -205,9 +222,9 @@ namespace QtEntityUtils
             return;
         }
 
-        if(_prototypeValues.contains(property) && attribute == QLatin1String("prototypes"))
+        if(_prototypesValues.contains(property) && attribute == QLatin1String("prototypes"))
         {
-            _prototypeValues[property] = val.toMap();
+            _prototypesValues[property] = val.toMap();
             return;
         }
 
@@ -221,7 +238,7 @@ namespace QtEntityUtils
         if (t == filePathTypeId())
             _filePathValues[property] = FilePathData();
         if (t == listId())
-            _prototypeValues[property] = QVariantMap();
+            _prototypesValues[property] = QVariantMap();
         QtVariantPropertyManager::initializeProperty(property);
     }
 
@@ -229,6 +246,7 @@ namespace QtEntityUtils
     void VariantManager::uninitializeProperty(QtProperty *property)
     {
         _filePathValues.remove(property);
+        _prototypesValues.remove(property);
         _prototypeValues.remove(property);
         QtVariantPropertyManager::uninitializeProperty(property);
     }

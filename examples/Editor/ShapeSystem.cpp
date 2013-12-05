@@ -13,6 +13,12 @@ Shape::Shape()
     test["z"] = 789.0;
     test["bla"] = "Hallo Welt";
 
+    QVariantMap entry1;
+    entry1["prototype"] = "Box";
+    QVariantMap v;
+    v["Color"] = QColor(0,255,0);
+    entry1["value"] = v;
+    testList.push_back(entry1);
 }
 
 

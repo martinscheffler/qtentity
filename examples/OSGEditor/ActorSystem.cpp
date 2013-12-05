@@ -59,26 +59,27 @@ void Actor::setShapes(const QVariantList& shapes)
 
     for(auto i = shapes.begin(); i != shapes.end(); ++i)
     {
-        QVariantMap val = i->toMap();
-        if(!val.contains("classname"))
+        QVariantMap entry = i->toMap();
+        if(!entry.contains("prototype"))
         {
-            qDebug() << "Shape contains no classname!?!";
+            qDebug() << "Shape contains no prototype name!?!";
             continue;
         }
-        QString classname = val["classname"].toString();
+        QString prototype = entry["prototype"].toString();
+        QVariantMap val = entry["value"].toMap();
 
         osg::ref_ptr<osg::ShapeDrawable> sd = new osg::ShapeDrawable();
         
         using namespace QtEntity;
 
-        if(classname == "Box")
+        if(prototype == "Box")
         {
             osg::Vec3 hl = toVec(val["HalfLengths"]);
             osg::Vec3 c = toVec(val["Center"]);
             sd->setShape(new osg::Box(c, hl[0],hl[1],hl[2]));
             
         }
-        else if(classname == "Sphere")
+        else if(prototype == "Sphere")
         {
             osg::Vec3 c = toVec(val["Center"]);
             float radius = val["Radius"].toFloat();
