@@ -1,13 +1,14 @@
 QtEntity
 ========
 
-QtEntity is a component entity system built on the Qt framework. It can aid in the creation of games,
-simulation systems or other applications that need to handle lots of state in a flexible way.
-Functionality of game or simulation objects can be separated into components and composed 
-during runtime in a flexible and efficient way. 
+QtEntity is a component entity system built on the Qt framework. It helps in the creation of games,
+simulation systems or other applications that need to handle dynamic data in a flexible way.
+Game objects are composed from components in a flexible and efficient way.
 
-QtEntity provides a property system based on the QVariant data type. 
-This can be used for component introspection, serialization and scripting. 
+QtEntity provides a powerful property system based on the QVariant data type.
+This can be used for component introspection, serialization and scripting.
+
+QtEntity is easy to integrate with rendering systems and can be extended in various ways.
 
 Entity Component System Basics
 -------------
@@ -17,22 +18,31 @@ From  [http://entity-systems.wikidot.com/]
 	This makes the programming process leaner and easier to extend, with advantages in:
         performance, extensibility, and game-design flexibility
 
-Entities are collections of components. A spaceship entity may consist of a drawable component, 
+An entity is a set of components. As an example, a spaceship entity may consist of a drawable component,
 a physics component, a sound component and a position component. The way the spaceship entity
-is decomposed into components depends on the application being developed and may be done in a number of ways.
+is composed from components depends on the application being developed and may be done
+in a number of ways.
 
-Components are stored in entity systems. A single system instance holds all instances of a specific component type.
-A system is responsible for creating, deleting and retrieving its components.
+All components of one class are stored in one place. For each component class
+there exists one object of the class EntitySystem which holds the component instances and is
+responsible for creating, deleting and retrieving them.
 
-Components are indexed by entity ids. An entity id is simply a unique integer identifying an entity. For each entity
-id there may only be one component in a system.
+Components are indexed by entity ids. An entity id is simply a unique integer
+identifying an entity. To get a list of all components of an entity it is necessary to
+iterate over all EntitySystems and to query for components indexed by the entity id.
 
-All systems are stored in the EntityManager. Usually there is only one EntityManager instance
+Each entity system can only hold a single component for a given entity id.
+To have an entity have lists of something you should not have multiple components of the same type,
+instead you should have a single component handling a list of things.
+
+All entity systems are stored in the EntityManager. Usually there is only one EntityManager
 in an application. Access to the EntityManager gives access to all entity systems.
 The EntityManager provides a number of convenience methods to create, retrieve or delete components
-in its systems. It is also responsible for creating entity ids.
+in its systems. It is also responsible for handing out entity ids.
 
-Example: Creating a spaceship entity with two components, transform and sprite.
+A spaceship example
+-------------
+Creating a spaceship entity with two components, transform and sprite.
 
         QtEntity::EntityId spaceShipId = entityManager.createEntityId();
         Transform* transform;
@@ -40,7 +50,8 @@ Example: Creating a spaceship entity with two components, transform and sprite.
         Sprite* sprite;
         entityManager.createComponent(spaceShipId, sprite, {"path", ":/assets/spaceArt.svg"}, {"subTex", QRect(374,360,106,90)});
 
-The third parameter to createComponent accepts a QVariantMap with values for the component properties - more later.
+The third parameter to createComponent accepts a QVariantMap with values for the
+component properties - more on that later.
 
 Implementation details
 -------------
