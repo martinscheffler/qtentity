@@ -5,6 +5,7 @@
 #include <QtEntity/DataTypes>
 #include "MetaDataSystem"
 #include <QtEntityUtils/EntityEditor>
+#include <QDebug>
 
 MainWindow::MainWindow()
     : _timer(nullptr)

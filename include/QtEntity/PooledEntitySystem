@@ -18,7 +18,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtEntity/EntitySystem>
 #include <unordered_map>
-#include <QDebug>
 
 namespace QtEntity
 {
@@ -158,10 +157,13 @@ namespace QtEntity
         {
             if(component(id) != nullptr)
             {
-                qCritical() << "Component already exists!";
                 return nullptr;
             }
-            if(_size == _capacity) reserve(_chunkSize);
+            if(_size == _capacity)
+            {
+                bool success = reserve(_chunkSize);
+                if(!success) return nullptr;
+            }
             size_t index = _size++;
             _indices[id] = index;
             Entry* ptr = static_cast<Entry*>(_components);
@@ -234,13 +236,12 @@ namespace QtEntity
 
     protected:
 
-        void reserve(size_t chunk)
+        bool reserve(size_t chunk)
         {
             void* components = operator new []( (_capacity + chunk) * sizeof(Entry) );
             if(components == nullptr)
             {
-                qCritical() << "Out of memory, can't increase pool size!";
-                return;
+                return false;
             }
 
             if(_capacity != 0)
@@ -250,6 +251,7 @@ namespace QtEntity
             }            
             _components = components;
             _capacity += chunk;
+            return true;
         }
 
         size_t _capacity;
