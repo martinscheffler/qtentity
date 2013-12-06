@@ -19,6 +19,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtEntity/Export>
 #include <QtEntity/EntitySystem>
 #include <unordered_map>
+#include <QDebug>
 
 namespace QtEntity
 {
@@ -40,13 +41,13 @@ namespace QtEntity
          * @param componentMeta the QMetaObject of the Component subclass that
          *                      this entity system uses as components
          */
-        SimpleEntitySystem(EntityManager* em) 
+        SimpleEntitySystem(EntityManager* em)
             : EntitySystem(T::classTypeId(), em)
         {
         }
 
         virtual ~SimpleEntitySystem()
-	    {
+        {
             for(auto i = _components.begin(); i != _components.end(); ++i)
             {
                 delete i->second;
@@ -105,7 +106,7 @@ namespace QtEntity
             // store
             _components[id] = component;
             this->setProperties(id, properties);
-            return component;       
+            return component;
         }
 
         /**
@@ -117,7 +118,7 @@ namespace QtEntity
          * @return true if component existed, else false
          */
         virtual bool destroyComponent(EntityId id) override
-        {        
+        {
             auto i = _components.find(id);
             if(i == _components.end()) return false;
             delete i->second;

@@ -78,7 +78,6 @@ The entity system class is derived from QObject.
 Entity systems are used to create, retrieve and delete components.
 
 
-
 They also give access to the properties of its components: The properties() method returns
 a QVariantMap containing properties of the component associated with the given id. The setProperties method can
 be used to assign values to the properties of a specified component.

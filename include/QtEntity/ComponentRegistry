@@ -19,6 +19,11 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtEntity/Export>
 #include <QtEntity/DataTypes>
 
+/*
+ * This file contains a singleton that assigns type ids for component types.
+ * Also contains macros for registering component classes with that singleton.
+ */
+
 namespace QtEntity
 {
     /**
@@ -27,11 +32,13 @@ namespace QtEntity
 #define NOEXP
 
     /**
-     * Macro to use in class declaration of QtEntity::Component subclasses.B
-     * Adds a static class type id and a dynamic, virtual type id method.
+     * Macro to use in class declaration of QtEntity::Component subclasses.
+     * Adds two methods, a static one returning the static class type id
+     * and a dynamic, virtual type id method returning the polymorphic id.
+     *
      * Parameter EXMACRO can be used to pass name of export macro for windows DLLs.
      * Use NOEXP as parameter if methods don't need to be exported or the whole
-     * component class is exported
+     * class is exported.
      */
 #define DECLARE_COMPONENT_TYPE(EXPMACRO)\
     public:\
@@ -39,13 +46,10 @@ namespace QtEntity
         EXPMACRO virtual QtEntity::ClassTypeId typeId() const override;\
     private:\
         static QtEntity::ClassTypeId _typeId;
-    /**
-     * Global methods assigning class type ids
-     */
 
     /**
      * Macro for implementing the component types of a component.
-     * Call this in the cpp of a component.
+     * Call this in the cpp of the component.
      * Use parameter TYPE to pass in class name of the component
      */
 #define IMPLEMENT_COMPONENT_TYPE(TYPE)\
@@ -54,10 +58,22 @@ namespace QtEntity
     QtEntity::ClassTypeId TYPE::typeId(void) const { return _typeId; }
 
 
+
     namespace ComponentRegistry
     {
+        /**
+          * Create and return a unique ClassTypeId integer for classname
+          */
         QTENTITY_EXPORT ClassTypeId registerComponent(const QString& classname);
+
+        /**
+          * Return the unique ClassTypeId integer previously created by registerComponent
+          */
         QTENTITY_EXPORT ClassTypeId classTypeId(const QString& classname);
+
+        /**
+          * Return class name that is assigned to the class type id
+          */
         QTENTITY_EXPORT QString className(ClassTypeId typeId);
     }
 

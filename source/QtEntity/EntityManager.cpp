@@ -18,7 +18,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtEntity/EntitySystem>
 #include <QDebug>
-#include <assert.h>
 
 namespace QtEntity
 {
@@ -67,8 +66,8 @@ namespace QtEntity
     {
         // assert that system is in both maps
         auto j = _systems.find(es->componentType());
-        assert(j != _systems.end());
-        assert(es == j->second);
+        Q_ASSERT(j != _systems.end());
+        Q_ASSERT(es == j->second);
         _systems.erase(j);
         es->setParent(nullptr);
         return true;
@@ -86,7 +85,7 @@ namespace QtEntity
     {        
         auto i = _systems.find(componentType);
         if(i == _systems.end()) return nullptr;
-        assert(i->second->componentType() == componentType);
+        Q_ASSERT(i->second->componentType() == componentType);
         return i->second;
     }
 

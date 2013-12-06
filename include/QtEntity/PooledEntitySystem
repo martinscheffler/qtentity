@@ -18,7 +18,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtEntity/EntitySystem>
 #include <unordered_map>
-#include <assert.h>
+#include <QDebug>
 
 namespace QtEntity
 {
@@ -95,7 +95,7 @@ namespace QtEntity
             , _chunkSize(chunkSize)
             , _size(0)            
         {
-            assert(chunkSize > 0);
+            Q_ASSERT(chunkSize > 0);
             _components = (capacity == 0) ? nullptr : operator new [](capacity * sizeof(Entry));                
         }
 
@@ -186,7 +186,7 @@ namespace QtEntity
             // call destructor
             Entry* ptr = static_cast<Entry*>(_components);
             Entry* toDestroy = ptr + indexToDestroy;
-            assert(toDestroy->_id == id);
+            Q_ASSERT(toDestroy->_id == id);
             toDestroy->_component.~T();
             _indices.erase(id);
 
@@ -208,7 +208,7 @@ namespace QtEntity
                         break;
                     }
                 }
-                assert(last != 0);
+                Q_ASSERT(last != 0);
                 // copy last entry in _components over entry to destroy                
                 memcpy(toDestroy, &ptr[lastindex], sizeof(Entry));                
                 _indices[last] = indexToDestroy;                

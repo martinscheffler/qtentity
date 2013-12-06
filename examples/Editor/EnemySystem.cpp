@@ -44,7 +44,7 @@ void EnemySystem::step(int frameNumber, int totalTime, int delta)
         enemy->setLifetime(enemy->lifetime() + delta);
         Shape* shape;
         bool found = entityManager()->component(i->first, shape);
-        assert(found);
+        Q_ASSERT(found);
         int x = sin(t / 10.0f + lifetime) * 300 + 280;
         int y = float(lifetime * 3.0f) + cos(t / 20.0f) * 10 - 50;
         shape->setPosition(QPoint(x, y));
