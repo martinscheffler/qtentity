@@ -101,7 +101,7 @@ namespace QtEntity
 
             // store
             _components[id] = component;
-            this->setProperties(id, properties);
+            this->fromVariantMap(id, properties);
             return component;
         }
 

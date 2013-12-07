@@ -300,8 +300,8 @@ namespace QtEntityUtils
         {
             QtEntity::EntitySystem* es = i->second;
             if(!es->component(eid)) continue;
-            components[es->componentName()] = es->properties(eid);
-            attributes[es->componentName()] = es->propertyAttributes();
+            components[es->componentName()] = es->toVariantMap(eid);
+            attributes[es->componentName()] = es->editingAttributes();
         }
     }
 
@@ -316,7 +316,7 @@ namespace QtEntityUtils
                 qDebug() << "Could not apply entity data, no entity system of type " << componenttype;
                 return;
             }
-            es->setProperties(eid, values.value(componenttype).toMap());               
+            es->fromVariantMap(eid, values.value(componenttype).toMap());
         }
     }
 

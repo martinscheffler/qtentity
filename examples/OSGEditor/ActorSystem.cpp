@@ -12,7 +12,7 @@ osg::Vec3 toVec(const QVariant& m)
     return osg::Vec3d(map["x"].toDouble(), map["y"].toDouble(), map["z"].toDouble());
 }
 
-QVariantMap toVariantMap(const osg::Vec3& v)
+QVariantMap toVarMap(const osg::Vec3& v)
 {
     QVariantMap m;
     m["x"] = v[0];
@@ -101,21 +101,21 @@ ActorSystem::ActorSystem(QtEntity::EntityManager* em, osg::Group* rootnode)
 }
 
 
-QVariantMap ActorSystem::properties(QtEntity::EntityId eid)
+QVariantMap ActorSystem::toVariantMap(QtEntity::EntityId eid)
 {
     QVariantMap m;
     Actor* a;
     if(component(eid, a))
     {
         m["name"]     = a->name();
-        m["position"] = toVariantMap(a->position());
+        m["position"] = toVarMap(a->position());
         m["shapes"]   = a->shapes();
     }
     return m;    
 }
 
 
-void ActorSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
+void ActorSystem::fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m)
 {
     Actor* a;
     if(component(eid, a))
@@ -127,18 +127,18 @@ void ActorSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
 }
 
 
-QVariantMap ActorSystem::propertyAttributes() const
+QVariantMap ActorSystem::editingAttributes() const
 {
 
     QVariantMap sphere;
     sphere["Radius"] = 1.0f;
     sphere["Color"] = QColor(255,0,0,255);
-    sphere["Center"] = toVariantMap(osg::Vec3(0,0,0));
+    sphere["Center"] = toVarMap(osg::Vec3(0,0,0));
 
     QVariantMap box;
-    box["HalfLengths"] = toVariantMap(osg::Vec3(0.5f,0.5f,0.5f));
+    box["HalfLengths"] = toVarMap(osg::Vec3(0.5f,0.5f,0.5f));
     box["Color"] = QColor(255,0,0,255);
-    box["Center"] = toVariantMap(osg::Vec3(0,0,0));
+    box["Center"] = toVarMap(osg::Vec3(0,0,0));
 
     QVariantMap prototypes;
     prototypes["Box"] = box;

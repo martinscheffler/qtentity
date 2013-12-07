@@ -172,7 +172,7 @@ namespace QtEntity
             
             if(!properties.empty())
             {
-                this->setProperties(id, properties);
+                this->fromVariantMap(id, properties);
             }
 
             return &obj->_component;

@@ -109,7 +109,7 @@ namespace QtEntityUtils
                         PrefabInstance* pi = static_cast<PrefabInstance*>(k->second);
                         if(pi->prefab() == prefab)
                         {
-                            QVariantMap data = es->properties(k->first);
+                            QVariantMap data = es->toVariantMap(k->first);
                             for(auto i = newvals.begin(); i != newvals.end(); ++i)
                             {
                                 data[i.key()] = i.value();
@@ -127,7 +127,7 @@ namespace QtEntityUtils
                                     ++i;
                                 }
                             }
-                            es->setProperties(k->first, data);
+                            es->fromVariantMap(k->first, data);
                         }
                     }
                 }

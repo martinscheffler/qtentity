@@ -127,20 +127,20 @@ namespace QtEntity
          * @param eid ID of component entity to fetch from
          * @return A map from property names to QVariant values
          */
-        Q_INVOKABLE virtual QVariantMap properties(QtEntity::EntityId eid) { return QVariantMap(); }
+        Q_INVOKABLE virtual QVariantMap toVariantMap(QtEntity::EntityId) { return QVariantMap(); }
 
         /**
-         * Fetch all property attributes for an entity system.
+         * Fetch all editing attributes for an entity system.
          * @return A map from property names to property attributes map
          */
-        Q_INVOKABLE virtual QVariantMap propertyAttributes() const { return QVariantMap(); }
+        Q_INVOKABLE virtual QVariantMap editingAttributes() const { return QVariantMap(); }
 
         /**
          * Assign multiple property values to a specified component
          * @param eid ID identifying component
          * @param m A map from property name => value
          */
-        Q_INVOKABLE virtual void setProperties(QtEntity::EntityId eid, const QVariantMap& m) {}
+        Q_INVOKABLE virtual void fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m) {}
 
         /**
          * pend() and pbegin() implementations have to return EntitySystem::Iterator instances.

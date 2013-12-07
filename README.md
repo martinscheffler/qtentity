@@ -97,7 +97,7 @@ access to the internal properties of the component.
         {
         }
 
-        virtual QVariantMap properties(QtEntity::EntityId eid) override
+        virtual QVariantMap toVariantMap(QtEntity::EntityId eid) override
         {
             QVariantMap m;
             ExampleComponent* e;
@@ -108,7 +108,7 @@ access to the internal properties of the component.
             return m;
         }
 
-        virtual void setProperties(QtEntity::EntityId eid, const QVariantMap& m) override
+        virtual void fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m) override
         {
             ExampleComponent* e;
             if(component(eid, e))
@@ -118,14 +118,15 @@ access to the internal properties of the component.
         }
     };
 
-The properties() method returns a QVariantMap containing properties
-of a component. These properties may or may not correspond to internal
+The toVariantMap() method returns a QVariantMap representation of the component data.
+The map entries may or may not correspond to internal
 variables of the component.
-The setProperties method accepts a QVariantMap and applies its values
+The fromVariantMap method accepts a QVariantMap and applies its values
 in some way to the indexed component.
 
-Properties are used by the QtEntityUtils::EntityEditor widget to show and edit
-internal state of components. They can also be used
+The QVariantMap representation of components is used by
+the QtEntityUtils::EntityEditor widget to show and edit
+internal state of components. It can also be used
 for serializing components to JSON or other formats.
 The method for creating components EntitySystem::createComponent accepts a QVariantMap
 of property values which are applied to the component after construction.
@@ -183,10 +184,10 @@ of the entity. Under the hood the entity editor uses the
 QtPropertyBrowser (https://qt.gitorious.org/qt-solutions/).
 For the different QVariant types different editors are used. For example when a
 component has a QColor parameter then a color picker editor is shown.
-It is possible to configure the editors. The method EntitySystem::propertyAttributes()
+It is possible to configure the editors. The method EntitySystem::editingAttributes()
 may return a QVariantMap with configuration for the QPropertyBrowser editors.
 Double parameters are edited with a QDoubleSpinbox widget. To set the step size of a property
-named MyValue, return this from propertyAttributes():
+named MyValue, return this from editingAttributes():
 
     QVariantMap myvalueattrs;
     myvalueattrs["singleStep"] = 0.5;
