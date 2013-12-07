@@ -2,8 +2,9 @@
 
 #include <osg/Geode>
 #include <QStringList>
+#include <QDebug>
 
-IMPLEMENT_COMPONENT_TYPE(Actor);
+IMPLEMENT_COMPONENT_TYPE(Actor)
 
 osg::Vec3 toVec(const QVariant& m)
 {

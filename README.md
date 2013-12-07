@@ -1,7 +1,7 @@
 QtEntity
 ========
 
-QtEntity is a component entity system built on the Qt framework. It helps in the creation of games,
+QtEntity is a component entity system object system for games and simulations. It . It helps in the creation of games,
 simulation systems or other applications that need to handle dynamic data in a flexible way.
 Game objects are composed from components in a flexible and efficient way.
 
@@ -44,143 +44,209 @@ A spaceship example
 -------------
 Creating a spaceship entity with two components, transform and sprite.
 
-        QtEntity::EntityId spaceShipId = entityManager.createEntityId();
-        Transform* transform;
-        entityManager.createComponent(spaceShipId, transform);
-        Sprite* sprite;
-        entityManager.createComponent(spaceShipId, sprite, {"path", ":/assets/spaceArt.svg"}, {"subTex", QRect(374,360,106,90)});
+    QtEntity::EntityId spaceShipId = entityManager.createEntityId();
+    Transform* transform;
+    entityManager.createComponent(spaceShipId, transform);
+
+    QVariantMap args;
+    args["path"] = ":/assets/spaceArt.svg";
+    Sprite* sprite;
+    entityManager.createComponent(spaceShipId, sprite, args);
 
 The third parameter to createComponent accepts a QVariantMap with values for the
 component properties - more on that later.
 
 Components
 -------------
-All components in QtEntity derive from the abstract interface QtEntity::Component. It defines a
-single method returning a type id for the component class.
+All components in QtEntity derive from the abstract interface QtEntity::Component.
+That interface defines a single method returning a type id for the component class.
 There is a pair of macros which may be used to create a type id for the component and to implement
 the necessary methods. In the header:
 
-        class ExampleComponent : public QtEntity::Component
-        {
-            DECLARE_COMPONENT_TYPE(NOEXP)
+    class ExampleComponent : public QtEntity::Component
+    {
+        DECLARE_COMPONENT_TYPE(NOEXP)
 
-        public:
-            ExampleComponent() { }
-        };
+    public:
+
+       ExampleComponent() : _myValue(0) { }
+       double myValue() const { return _myValue; }
+       void setMyValue(double v) { _myValue = v; }
+    private:
+        double _myValue;
+    };
 
 And in the cpp:
 
-        IMPLEMENT_COMPONENT_TYPE(ExampleComponent)
+    IMPLEMENT_COMPONENT_TYPE(ExampleComponent)
 
 Entity Systems
 -------------
-The entity system class is derived from QObject.
-Entity systems are used to create, retrieve and delete components.
+Entity systems are used to create, retrieve and delete components. They also give
+access to the internal properties of the component.
 
 
-They also give access to the properties of its components: The properties() method returns
-a QVariantMap containing properties of the component associated with the given id. The setProperties method can
-be used to assign values to the properties of a specified component.
+    class ExampleSystem : public QtEntity::SimpleEntitySystem<ExampleComponent>
+    {
 
-Properties can be used in editor tools for introspection and manipulation and also for serializing to JSON or other formats.
-Component construction methods (EntitySystem::createComponent()) accept a QVariantMap which can hold initialization 
-values for the properties. Entity system implementations are themselves responsible for fetching and applying these property maps.
-
-Example of an entity system holding components with a single int value:
-
-	
-	#include <QtEntity/PooledEntitySystem>
-
-	class Damage : public QtEntity::Component
-	{
-		DECLARE_COMPONENT_TYPE(NOEXP)    
-
-	public:
-
-		Damage() : _energy(0) { }
-
-		void setEnergy(int v) { _energy = v; }
-		int energy() const { return _energy; }
-
-	private:
-
-		int _energy;
-
-	};
-
-
-        class DamageSystem : public QtEntity::PooledEntitySystem<Damage>
-        {
-
-        public:
-            typedef QtEntity::PooledEntitySystem<Damage> BaseClass;
-            DamageSystem(QtEntity::EntityManager* em);
-
-            virtual QVariantMap properties(QtEntity::EntityId eid) override;
-            virtual void setProperties(QtEntity::EntityId eid, const QVariantMap& m) override;
-
-            void step(int frameNumber, int totalTime, int delta);
-        };
-
-	// Source file
-
-        DamageSystem::DamageSystem(QtEntity::EntityManager* em)
-            : BaseClass(em)
+    public:
+        ExampleSystem(QtEntity::EntityManager* em)
+            : SimpleEntitySystem<ExampleComponent>(em)
         {
         }
 
-
-        QVariantMap DamageSystem::properties(QtEntity::EntityId eid)
+        virtual QVariantMap properties(QtEntity::EntityId eid) override
         {
             QVariantMap m;
-            Damage* d;
-            if(component(eid, d))
+            ExampleComponent* e;
+            if(component(eid, e))
             {
-                m["energy"] = d->energy();
+                m["MyValue"] = e->myValue();
             }
             return m;
         }
 
-
-        void DamageSystem::setProperties(QtEntity::EntityId eid, const QVariantMap& m)
+        virtual void setProperties(QtEntity::EntityId eid, const QVariantMap& m) override
         {
-            Damage* d;
-            if(component(eid, d))
+            ExampleComponent* e;
+            if(component(eid, e))
             {
-                if(m.contains("energy")) d->setEnergy(m["energy"].toInt());
+                if(m.contains("MyValue")) e->setMyValue(m["MyValue"].toInt());
             }
         }
+    };
+
+The properties() method returns a QVariantMap containing properties
+of a component. These properties may or may not correspond to internal
+variables of the component.
+The setProperties method accepts a QVariantMap and applies its values
+in some way to the indexed component.
+
+Properties are used by the QtEntityUtils::EntityEditor widget to show and edit
+internal state of components. They can also be used
+for serializing components to JSON or other formats.
+The method for creating components EntitySystem::createComponent accepts a QVariantMap
+of property values which are applied to the component after construction.
 
 
-        void DamageSystem::step(int frameNumber, int totalTime, int delta)
-        {
-            for(auto i = begin(); i != end(); ++i)
-            {
-                Shape* shape;
-                entityManager()->component(i->first, shape);
-            }
-        }
+Entity Manager
+-------------
 
-
-Now add this to an entity manager:
+The entity manager has two responsibilities: Passing out unique entity ids,
+and holding entity systems.
 
 
 	QtEntity::EntityManager em;
-        DamageSystem* ds = new DamageSystem(&em);
+        ExampleSystem* ds = new ExampleSystem(&em);
 
-Now create an entity and add a damage component to it:
+The entity system adds itself to the entity manager. The entity manager takes ownership
+of the system.
+
+Now create an entity and add an example component to it:
 
         QtEntity::EntityId eid = em.createEntityId();
 
         QVariantMap props;
-        props["energy"] = 100;
-        Damage* damage; em.createComponent(eid, damage, props);
+        props["MyValue"] = 3.1415;
+        ExampleComponent* example; em.createComponent(eid, exmple, props);
 
 	// C++11 alternative:
-	// auto damage = em.createComponent<Damage>(eid);
+        // auto example = em.createComponent<ExampleComponent>(eid);
 
 You can retrieve components later by doing:
 
-	Damage* damage; em.getComponent(eid, damage);
+        ExampleComponent* ex; em.getComponent(eid, ex);
 
-Included in the library are some examples and Qt widgets for managing and visualizing entities and their components.
+Entity System implementations
+-------------
+EntitySystem is an abstract interface. There a currently two implementations:
+SimpleEntitySystem and PooledEntitySystem.
+SimpleEntitySystem uses new to create components and delete to delete them. It is
+meant to be an easy to understand example implementation.
+PooledEntitySystem is a little more sophisticated.
+All components are kept in a consecutive memory block.
+Newly created components are appended at the end of that memory block,
+deleting a component causes the last component in the block to be moved into
+the freed location. Creating and deleting components causes all iterators to become
+invalid.
+Create and delete operations should not be executed while iterating through the system.
+
+
+Entity Editor
+-------------
+
+The entity editor is a Qt widget that can be used to show and modify properties of components.
+It shows the entries of the QVariantMap returned by the entity systems holding components
+of the entity. Under the hood the entity editor uses the
+QtPropertyBrowser (https://qt.gitorious.org/qt-solutions/).
+For the different QVariant types different editors are used. For example when a
+component has a QColor parameter then a color picker editor is shown.
+It is possible to configure the editors. The method EntitySystem::propertyAttributes()
+may return a QVariantMap with configuration for the QPropertyBrowser editors.
+Double parameters are edited with a QDoubleSpinbox widget. To set the step size of a property
+named MyValue, return this from propertyAttributes():
+
+    QVariantMap myvalueattrs;
+    myvalueattrs["singleStep"] = 0.5;
+    QVariantMap attrs;
+    attrs["MyValue"] = myvalueattrs;
+    QVariantMap components;
+    components["ExampleComponent"] = attrs;
+    return components;
+
+Or when using a compiler supporting c++11 brace init:
+    return {"ExampleComponent", {"MyValue", {"singleStep", 0.5}}};
+
+When a property is of type QVariantMap its entries are shown as properties themselves:
+
+![Property Group](doc/propertygroup.png "Property Group")
+
+Properties of type QVariantList are shown as editable lists:
+
+![Property List](doc/propertylist.png "Property List")
+
+The objects available for adding to this list are defined in
+the property attributes:
+
+    QVariantMap sphere;
+    sphere["Radius"] = 1.0f;
+    sphere["Color"] = QColor(255,0,0,255);
+
+    QVariantMap box;
+    box["Color"] = QColor(255,0,0,255);
+    box["Test0.1"] = 3.1;
+    box["Test0.5"] = 3.5;
+
+    QVariantMap prototypes;
+    prototypes["Box"] = box;
+    prototypes["Sphere"] = sphere;
+
+    QVariantMap attribs;
+    attribs["prototypes"] = prototypes;
+
+    QVariantMap test01;
+    test01["singleStep"] = 0.1;
+    QVariantMap test05;
+    test05["singleStep"] = 0.5;
+
+    QVariantMap boxattrs;
+    boxattrs["Test0.1"] = test01;
+    boxattrs["Test0.5"] = test05;
+    attribs["Box"] = boxattrs;
+
+    r["testList"] = attribs;
+
+Items in QVariantLists are not stored directly because there has to be information
+about the prototype that was used to create the list entry. QVariantLists contain
+ther entries in this format:
+    QVariantList l;
+    QVariantMap entry1;
+    entry1["prototype"] = "Box";
+    entry["value"] = box; // A variantmap again.
+    l.push_back(entry1);
+
+Scripting
+-------------
+The EntityManager and EntitySystem classes derive from QObject. This makes
+it easy to give QtScript / JavaScript access to its methods.
+See tests/test_scripting.h for an example of accessing entity systems from scripts.
