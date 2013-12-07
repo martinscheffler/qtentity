@@ -10,6 +10,8 @@ This can be used for component introspection, serialization and scripting.
 
 QtEntity is easy to integrate with rendering systems and can be extended in various ways.
 
+![Property List](doc/osgdemo.png "OSG Demo")
+
 Entity Component System Basics
 -------------
 From  [http://entity-systems.wikidot.com/]
