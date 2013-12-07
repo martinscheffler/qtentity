@@ -138,7 +138,6 @@ namespace QtEntity
          */
         Component* createComponent(EntityId id, ClassTypeId cid, const QVariantMap& properties = QVariantMap());
 
-
         /**
          * Templated method to create a new component.
          * If component already exists or can not be created then component is set to nullptr
@@ -169,23 +168,6 @@ namespace QtEntity
          */
         template <typename T>
         T* createComponent(EntityId id, const QVariantMap& properties = QVariantMap());
-
-        /**
-         * Templated method to fetch existing component or create a new one if it is not found.
-         * If component can not be created then component is set to nullptr
-         * and method returns false.
-         * Usage:
-         * MyComponent* comp;
-         * if(em.getOrCreateComponent(entityId, comp)) {...}
-         * @param id Entity id of component to get or create
-         * @param component receives pointer existing or to newly created component
-         * @param properties A map of property values to apply to component before adding it to system
-         *                   Format is: { name of QMetaProperty => value to set }
-         *                   This is ignored if component already exists!
-         * @return true if component could be found or created, else false
-         */
-        template <typename T>
-        bool getOrCreateComponent(EntityId id, T*& component, const QVariantMap& properties = QVariantMap());
 
         /**
          * Destroy existing component.
@@ -269,20 +251,6 @@ namespace QtEntity
     T* EntityManager::createComponent(EntityId id, const QVariantMap& properties)
     {
         return static_cast<T*>(createComponent(id, T::classTypeId(), properties));
-    }
-
-
-    template <typename T>
-    bool EntityManager::getOrCreateComponent(EntityId id, T*& comp, const QVariantMap& properties)
-    {
-        Component* c = component(id, T::classTypeId());
-        if(c) {
-            comp = static_cast<T*>(c);
-            return true;
-        }
-        c = createComponent(id, T::classTypeId(), properties);
-        comp = static_cast<T*>(c);
-        return comp != nullptr;
     }
 
 
