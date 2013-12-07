@@ -12,7 +12,7 @@ QtEntity is easy to integrate with rendering systems and can be extended in vari
 
 ![Property List](doc/osgdemo.png "OSG Demo")
 
-Entity Component System Basics
+Component Entity System Basics
 -------------
 From  [http://entity-systems.wikidot.com/]
 	Entity Systems (ES) are a technique/architecture for building complex extensible projects 
@@ -202,6 +202,8 @@ Or when using a compiler supporting c++11 brace init:
 When a property is of type QVariantMap its entries are shown as properties themselves:
 
 ![Property Group](doc/propertygroup.png "Property Group")
+
+This can be used for vector types. Just use a QVariantMap with three entries for x, y and z.
 
 Properties of type QVariantList are shown as editable lists:
 
