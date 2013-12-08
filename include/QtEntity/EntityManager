@@ -68,7 +68,6 @@ namespace QtEntity
          * @return nullptr if not found, else the system
          */
         Q_INVOKABLE EntitySystem* system(const QString& classname) const;
-
         
         /**
          * @brief system returns an entity system that holds components

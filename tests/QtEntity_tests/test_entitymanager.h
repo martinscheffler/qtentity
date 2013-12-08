@@ -99,17 +99,6 @@ private slots:
         
     }
 
-    void getOrCreateComponent()
-    {
-        EntityManager em;
-        new TestingSystem(&em);
-        Testing *comp, *comp2;
-        em.getOrCreateComponent(1, comp);
-
-        bool success = em.getOrCreateComponent(1, comp2);
-        QVERIFY(success);
-        QVERIFY(comp == comp2);
-    }
 
     void createEntityId()
     {

@@ -1,18 +1,20 @@
 QtEntity
 ========
 
-QtEntity is a component entity system object system for games and simulations. It . It helps in the creation of games,
-simulation systems or other applications that need to handle dynamic data in a flexible way.
-Game objects are composed from components in a flexible and efficient way.
-
-QtEntity provides a powerful property system based on the QVariant data type.
-This can be used for component introspection, serialization and scripting.
-
-QtEntity is easy to integrate with rendering systems and can be extended in various ways.
+QtEntity is an [entity component system](http://en.wikipedia.org/wiki/Entity_component_system).
+It helps in the creation of games, simulation systems or other applications
+that need to dynamically compose functionality.
+Components of a type are stored in consecutive memory blocks, allowing fast iteration.
+QtEntity uses the [Qt](http://www.qt-project.org) framework. It includes widgets
+and examples that can be used to quickly build tools and editors for handling
+components. Through the QtScript API it is possible to acces components from
+the JavaScript language. Serializing components for disk storage or networking
+is also supported.
+QtEntity does not depend on a specific rendering system or game engine.
 
 ![Property List](doc/osgdemo.png "OSG Demo")
 
-Component Entity System Basics
+Entity Component System Basics
 -------------
 From  [http://entity-systems.wikidot.com/]
 	Entity Systems (ES) are a technique/architecture for building complex extensible projects 
