@@ -25,6 +25,10 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace QtEntityUtils
 {    
 
+    /**
+     * An entity system that allows creating entities from templates
+     */
+
     class Prefab
     {        
     public:

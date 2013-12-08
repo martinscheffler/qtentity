@@ -24,7 +24,7 @@ namespace QtEntityUtils
     ListEdit::ListEdit(QWidget *parent)
         : QWidget(parent)
     {
-        QHBoxLayout* layout = new QHBoxLayout(this);
+        /*QHBoxLayout* layout = new QHBoxLayout(this);
         layout->setMargin(0);
         layout->setSpacing(0);
         QPushButton* b1 = new QPushButton(this);
@@ -35,7 +35,7 @@ namespace QtEntityUtils
         b2->setText("-");
         b2->setMaximumWidth(20);
         layout->addWidget(b2);
-        layout->addStretch();
+        layout->addStretch();*/
     }
 
 }

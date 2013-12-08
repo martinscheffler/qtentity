@@ -37,27 +37,76 @@ namespace QtEntityUtils
 {
     class QTENTITYUTILS_EXPORT EntityEditor : public QWidget
     {
+
     Q_OBJECT
+
     public:
         EntityEditor();
 
-        static void fetchEntityData(const QtEntity::EntityManager& em, QtEntity::EntityId, QVariantMap& components, QVariantMap& attributes);
-        static void applyEntityData(QtEntity::EntityManager& em, QtEntity::EntityId eid, const QVariantMap& values);
+        /**
+         * Fetch all components of given entity, get their VariantMap representation
+         * and store these by component name into the provided components map.
+         * Also fetch the editing attributes of their entity systems and store
+         * them by component name into the provided attributes map.
+         * @param em entity manager
+         * @param id entity id of entity to fetch
+         * @param components Store component VariantMaps to this map
+         * @param attributes Store component editing attributes to this map
+         */
+        static void fetchEntityData(const QtEntity::EntityManager& em,
+                                    QtEntity::EntityId id,
+                                    QVariantMap& components,
+                                    QVariantMap& attributes);
+
+        /**
+         * Applies component variant maps to components of entity with given id
+         * @param em entity manager
+         * @param eid apply values to components of this entity
+         * @param values A map in format component name => component values
+         */
+        static void applyEntityData(QtEntity::EntityManager& em,
+                                    QtEntity::EntityId eid,
+                                    const QVariantMap& values);
 
     public slots:
 
-        void displayEntity(QtEntity::EntityId id, const QVariantMap& data, const QVariantMap& attributes);
+        /**
+         * Display entity and its components in editor.
+         * @param id Entity id of displayed entity
+         * @param data A map in format component name => component values
+         * @param attributes Editing attributes influencing the way component
+         *                   values are handled in editor.
+         *                   Format is component name => component attributes, where
+         *                   component attributes is a map property name => property attributes,
+         *                   where property attributes are Qt Property Browser attributes.
+         *                   Example: { "MyComponent", { "MyProperty", {"SingleStep", 0.5 } } }
+         */
+        void displayEntity(QtEntity::EntityId id,
+                           const QVariantMap& data,
+                           const QVariantMap& attributes);
+
+        /**
+         * Remove currently shown component data
+         */
         void clear();
-        void showContextMenu(const QPoint& p);
-        void addListItem(const QString& prototype, QtVariantProperty* prop);
-        void removeListItem(QtVariantProperty* prop);
 
     protected slots:
 
+        // Emits entityDataChanged when property value was changed
         void propertyValueChanged(QtProperty *property);
+
+        // Context menu was requested by right-click on property
+        void showContextMenu(const QPoint& p);
+
+        // Add a new entry to QVariantList property from prototype
+        void addListItem(const QString& prototype, QtVariantProperty* prop);
+
+        // Remove entry from QVariantList
+        void removeListItem(QtVariantProperty* prop);
 
     signals:
 
+        // emitted when user changed a property
         void entityDataChanged(QtEntity::EntityId id, const QVariantMap& values);
 
     private:

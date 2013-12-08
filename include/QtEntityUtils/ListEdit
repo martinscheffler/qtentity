@@ -21,7 +21,10 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace QtEntityUtils
 {
-    
+    /**
+     * A widget showing lists of things (QVariantList).
+     * No editing attributes.
+     */
     class ListEdit : public QWidget
     {
         Q_OBJECT
