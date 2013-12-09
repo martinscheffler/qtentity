@@ -64,9 +64,9 @@ public:
     // override to emit signal for removing entity list entry
     virtual bool destroyComponent(QtEntity::EntityId id) override;
 
-    virtual QVariantMap toVariantMap(QtEntity::EntityId eid, int context = QtEntity::EntitySystem::EDIT_ALL) override;
-    virtual void fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, int context = QtEntity::EntitySystem::EDIT_ALL) override;
-    virtual QVariantMap editingAttributes(int conversionContext = QtEntity::EntitySystem::EDIT_ALL) const override;
+    virtual QVariantMap toVariantMap(QtEntity::EntityId eid, int context = 0) override;
+    virtual void fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, int context = 0) override;
+    virtual QVariantMap editingAttributes(int context = 0) const override;
 
 signals:
 

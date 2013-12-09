@@ -68,7 +68,7 @@ public:
     }
 
     virtual QVariantMap toVariantMap(QtEntity::EntityId eid,
-                                     int context = QtEntity::EntitySystem::EDIT_ALL) override
+                                     int context = 0) override
     {
         Q_UNUSED(context)
         QVariantMap m;
@@ -84,7 +84,7 @@ public:
 
     virtual void fromVariantMap(QtEntity::EntityId eid,
                                 const QVariantMap& m,
-                                int context = QtEntity::EntitySystem::EDIT_ALL) override
+                                int context = 0) override
     {
         Q_UNUSED(context)
         Testing* t;

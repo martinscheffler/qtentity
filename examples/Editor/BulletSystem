@@ -27,10 +27,10 @@ public:
     void step(int frameNumber, int totalTime, int delta);
 
     virtual QVariantMap toVariantMap(QtEntity::EntityId eid,
-                                     int context = QtEntity::EntitySystem::EDIT_ALL
+                                     int context = 0
             ) override;
     virtual void fromVariantMap(QtEntity::EntityId eid,
                                 const QVariantMap& m,
-                                int context = QtEntity::EntitySystem::EDIT_ALL) override;
+                                int context = 0) override;
     
 };
