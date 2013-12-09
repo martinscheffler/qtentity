@@ -30,8 +30,8 @@ public:
     typedef QtEntity::PooledEntitySystem<Enemy> BaseClass;
     EnemySystem(QtEntity::EntityManager* em);
     
-    virtual QVariantMap toVariantMap(QtEntity::EntityId eid) override;
-    virtual void fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m) override;
+    virtual QVariantMap toVariantMap(QtEntity::EntityId eid, int context = QtEntity::EntitySystem::EDIT_ALL) override;
+    virtual void fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, int context = QtEntity::EntitySystem::EDIT_ALL) override;
 
     void step(int frameNumber, int totalTime, int delta);
 

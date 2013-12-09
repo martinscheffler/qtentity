@@ -67,8 +67,10 @@ public:
         QtEntity::registerMetaTypes();
     }
 
-    virtual QVariantMap toVariantMap(QtEntity::EntityId eid) override
+    virtual QVariantMap toVariantMap(QtEntity::EntityId eid,
+                                     int context = QtEntity::EntitySystem::EDIT_ALL) override
     {
+        Q_UNUSED(context)
         QVariantMap m;
         Testing* t;
         if(component(eid, t))
@@ -80,8 +82,11 @@ public:
         return m;    
     }
 
-    virtual void fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m) override
+    virtual void fromVariantMap(QtEntity::EntityId eid,
+                                const QVariantMap& m,
+                                int context = QtEntity::EntitySystem::EDIT_ALL) override
     {
+        Q_UNUSED(context)
         Testing* t;
         if(component(eid, t))
         {

@@ -101,7 +101,7 @@ ActorSystem::ActorSystem(QtEntity::EntityManager* em, osg::Group* rootnode)
 }
 
 
-QVariantMap ActorSystem::toVariantMap(QtEntity::EntityId eid)
+QVariantMap ActorSystem::toVariantMap(QtEntity::EntityId eid, int)
 {
     QVariantMap m;
     Actor* a;
@@ -115,7 +115,7 @@ QVariantMap ActorSystem::toVariantMap(QtEntity::EntityId eid)
 }
 
 
-void ActorSystem::fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m)
+void ActorSystem::fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, int)
 {
     Actor* a;
     if(component(eid, a))

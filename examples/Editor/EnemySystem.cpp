@@ -11,7 +11,7 @@ EnemySystem::EnemySystem(QtEntity::EntityManager* em)
 }
 
 
-QVariantMap EnemySystem::toVariantMap(QtEntity::EntityId eid)
+QVariantMap EnemySystem::toVariantMap(QtEntity::EntityId eid, int)
 {
     QVariantMap m;
     Enemy* e;
@@ -23,7 +23,7 @@ QVariantMap EnemySystem::toVariantMap(QtEntity::EntityId eid)
 }
 
 
-void EnemySystem::fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m)
+void EnemySystem::fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, int)
 {
     Enemy* e;
     if(component(eid, e))

@@ -20,7 +20,7 @@ Game::Game(QObject* parent)
     _viewer->setSceneData(rootNode);
     _actorSystem = new ActorSystem(&_entityManager, rootNode);
 
-    osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
+    //osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
     //ds->setNumMultiSamples(4);
 
     _viewer->getCamera()->setClearColor(osg::Vec4(0.2, 0.2, 0.2, 1.0));

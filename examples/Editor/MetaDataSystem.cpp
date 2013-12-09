@@ -36,7 +36,7 @@ MetaDataSystem::MetaDataSystem(QtEntity::EntityManager* em)
 }
 
 
-QVariantMap MetaDataSystem::toVariantMap(QtEntity::EntityId eid)
+QVariantMap MetaDataSystem::toVariantMap(QtEntity::EntityId eid, int)
 {
     QVariantMap m;
     MetaData* e;
@@ -49,7 +49,7 @@ QVariantMap MetaDataSystem::toVariantMap(QtEntity::EntityId eid)
 }
 
 
-void MetaDataSystem::fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m)
+void MetaDataSystem::fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, int)
 {
     MetaData* e;
     if(component(eid, e))

@@ -122,19 +122,55 @@ namespace QtEntity
          */
         virtual void clear() = 0;
   
+
+        /**
+         * The ConversionContext enum is used in toVariantMap and fromVariantMap
+         * and can be used by implementations and callers to affect the way
+         * component internals are converted. For example when called with
+         * EDIT_SIMPLE, a system may return fewer QVariants to make editing
+         * simpler.
+         */
+        enum ConversionContext
+        {
+            EDIT_ALL = 1,
+            EDIT_SIMPLE = 2,
+            NETWORK = 3,
+            STORAGE = 4,
+            USER_1 = 5,
+            USER_2 = 6,
+            USER_3 = 7
+        };
+
         /**
          * Fetch a map containing property names => values for a specific component
          * @param eid ID of component entity to fetch from
+         * @param conversionContext can be used to affect which set of properties are returned.
          * @return A map from property names to QVariant values
          */
-        Q_INVOKABLE virtual QVariantMap toVariantMap(QtEntity::EntityId) { return QVariantMap(); }
+        Q_INVOKABLE virtual QVariantMap toVariantMap(QtEntity::EntityId eid,
+                                                     int conversionContext = EDIT_ALL)
+        {
+            Q_UNUSED(eid)
+            Q_UNUSED(conversionContext)
+            return QVariantMap();
+        }
 
         /**
          * Assign multiple property values to a specified component
          * @param eid ID identifying component
          * @param m A map from property name => value
+         * @param conversionContext May affect the way map entries are processed. Should
+         *                          accept data in the format returned by toVariantMap when
+         *                          used with that conversion context
          */
-        Q_INVOKABLE virtual void fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m) {}
+        Q_INVOKABLE virtual void fromVariantMap(QtEntity::EntityId eid,
+                                                const QVariantMap& m,
+                                                int conversionContext = EDIT_ALL)
+        {
+            Q_UNUSED(eid)
+            Q_UNUSED(m)
+            Q_UNUSED(conversionContext)
+        }
 
         /**
          * Fetch all editing attributes for an entity system.

@@ -229,6 +229,11 @@ namespace QtEntityUtils
             for(auto j = items.begin(); j != items.end(); ++j)
             {
                 QVariantMap entry = j->toMap();
+                if(!entry.contains("prototype") || !entry.contains("value"))
+                {
+                    qDebug("QList properties need entries of format QVariantMap(\"prototype\"=>\"value\"");
+                    continue;
+                }
                 QString prototype = entry["prototype"].toString();
                 QVariant val = entry["value"];
                 QVariantMap subattribs = attributes[prototype].toMap();
