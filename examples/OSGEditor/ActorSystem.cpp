@@ -127,7 +127,7 @@ void ActorSystem::fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, i
 }
 
 
-QVariantMap ActorSystem::editingAttributes() const
+QVariantMap ActorSystem::editingAttributes(int) const
 {
 
     QVariantMap sphere;

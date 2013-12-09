@@ -59,7 +59,7 @@ public:
     virtual QtEntity::Component* createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;
         
     virtual QVariantMap toVariantMap(QtEntity::EntityId eid, int context = QtEntity::EntitySystem::EDIT_ALL) override;
-    virtual QVariantMap editingAttributes() const override;
+    virtual QVariantMap editingAttributes(int conversionContext = QtEntity::EntitySystem::EDIT_ALL) const override;
     virtual void fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, int context = QtEntity::EntitySystem::EDIT_ALL) override;
 
 private:

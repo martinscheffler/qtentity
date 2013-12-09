@@ -88,7 +88,7 @@ QVariantMap ShapeSystem::toVariantMap(QtEntity::EntityId eid, int)
 }
 
 
-QVariantMap ShapeSystem::editingAttributes() const
+QVariantMap ShapeSystem::editingAttributes(int) const
 {
 
     QVariantMap path;

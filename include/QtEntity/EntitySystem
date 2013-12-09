@@ -176,7 +176,11 @@ namespace QtEntity
          * Fetch all editing attributes for an entity system.
          * @return A map from property names to property attributes map
          */
-        Q_INVOKABLE virtual QVariantMap editingAttributes() const { return QVariantMap(); }
+        Q_INVOKABLE virtual QVariantMap editingAttributes(int conversionContext = EDIT_ALL) const
+        {
+            Q_UNUSED(conversionContext)
+            return QVariantMap();
+        }
 
         /**
          * pend() and pbegin() implementations have to return EntitySystem::Iterator instances.
