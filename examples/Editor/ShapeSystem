@@ -35,8 +35,10 @@ public:
 
     void setSubtex(const QRect& v) { _subtex = v; buildShape(); }
     QRect subTex() const { return _subtex; }
-QVariantMap test;
-QVariantList testList;
+
+    void setRotation(int i);
+    int rotation() const { return _rotation; }
+
 private:
 
     void buildShape();
@@ -45,6 +47,7 @@ private:
     QPoint _position;
     QRect _subtex;
     int _zindex;
+    int _rotation;
     RenderHandle _handle;
 };
 

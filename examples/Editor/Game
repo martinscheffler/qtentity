@@ -1,14 +1,11 @@
 #pragma once
 
 #include <QtEntity/EntityManager>
+#include <QtEntityUtils/PrefabSystem>
 #include <QObject>
 #include <QTimer>
 #include <QKeyEvent>
 
-
-class BulletSystem;
-class DamageSystem;
-class EnemySystem;
 class MetaDataSystem;
 class Renderer;
 class ShapeSystem;
@@ -37,6 +34,12 @@ public:
         SPACE_PRESSED = 1 << 4
     };
 
+    QtEntity::EntityId createPrefabInstance(const QString& name);
+
+    MetaDataSystem* metaDataSystem() const { return _metasys; }
+    QtEntityUtils::PrefabSystem* prefabSystem() const { return _prefabsys; }
+    ShapeSystem* shapeSystem() const { return _shapesys; }
+
 public slots:
 
     void init();
@@ -55,10 +58,8 @@ private:
     QtEntity::EntityManager _entityManager;
     bool _isRunning;
 
-    BulletSystem* _bulletsys;
-    DamageSystem* _damagesys;
     MetaDataSystem* _metasys;
-    EnemySystem* _enemysys;
+    QtEntityUtils::PrefabSystem* _prefabsys;
     ShapeSystem* _shapesys;
 
     QtEntity::EntityId _playerid;

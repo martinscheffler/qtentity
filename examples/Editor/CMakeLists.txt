@@ -12,9 +12,6 @@ set(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(LIB_PUBLIC_HEADERS
-  ${HEADER_PATH}/BulletSystem
-  ${HEADER_PATH}/DamageSystem
-  ${HEADER_PATH}/EnemySystem
   ${HEADER_PATH}/Game
   ${HEADER_PATH}/MainWindow
   ${HEADER_PATH}/MetaDataSystem
@@ -23,9 +20,6 @@ set(LIB_PUBLIC_HEADERS
 )
 
 set(LIB_SOURCES
-  ${SOURCE_PATH}/BulletSystem.cpp
-  ${SOURCE_PATH}/DamageSystem.cpp
-  ${SOURCE_PATH}/EnemySystem.cpp
   ${SOURCE_PATH}/Game.cpp
   ${SOURCE_PATH}/MainWindow.cpp
   ${SOURCE_PATH}/main.cpp

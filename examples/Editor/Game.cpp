@@ -1,9 +1,6 @@
 #include "Game"
 
-#include "BulletSystem"
-#include "DamageSystem"
 #include "Renderer"
-#include "EnemySystem"
 #include "ShapeSystem"
 #include "MetaDataSystem"
 #include <QCoreApplication>
@@ -36,22 +33,38 @@ bool bitIsSet(unsigned int mask, Game::KeyBit bit)
 Game::Game(Renderer* renderer)
     : _keyBits(0)
     , _renderer(renderer)
-    , _isRunning(false)
-    , _bulletsys(new BulletSystem(&_entityManager))
-    , _damagesys(new DamageSystem(&_entityManager))
+    , _isRunning(false)    
     , _metasys(new MetaDataSystem(&_entityManager))
-    , _enemysys(new EnemySystem(&_entityManager))
+    , _prefabsys(new QtEntityUtils::PrefabSystem(&_entityManager))
     , _shapesys(new ShapeSystem(&_entityManager, renderer))
     , _playerid(0)
 {
-
-    //_background = _renderer->createShape(":/assets/GalaxyUno.jpg", QPoint(0,0), QRect(0, 0, 480,600), -10);
 
 }
 
 
 void Game::init()
 {
+
+    QVariantMap shape;
+    shape["position"] = QPoint(0, 0);
+    shape["path"] = ":/assets/spaceArt.svg";
+    shape["subTex"] = QRect(590,148,100,55);
+    shape["zIndex"] = 10;
+
+
+    QVariantMap meta;
+    meta["name"] = QString("Enemy");
+    meta["additionalInfo"] = "prefab=enemy";
+
+
+    QVariantMap m;
+    m["Shape"] = shape;
+    m["MetaData"] = meta;
+
+    QStringList l;
+    _prefabsys->addPrefab("enemy", m, l);
+
     createPlayer();
 }
 
@@ -108,12 +121,7 @@ void Game::createPlayer()
         m["additionalInfo"] = "prefab=player";
         _entityManager.createComponent(_playerid, metadata, m);
     }
-    {
-        Damage* damage;
-        QVariantMap m;
-        m["energy"] = 1000;
-        _entityManager.createComponent(_playerid, damage, m);
-    }
+
 }
 
 
@@ -137,16 +145,7 @@ void Game::createEnemy()
         m["additionalInfo"] = "prefab=enemy";
         _entityManager.createComponent(id, metadata, m);
     }
-    {
-        Damage* damage;
-        QVariantMap m;
-        m["energy"] = 100;
-        _entityManager.createComponent(id, damage, m);
-    }
-    {
-        Enemy* enemy;
-        _entityManager.createComponent(id, enemy);
-    }
+
 }
 
 
@@ -156,8 +155,6 @@ void Game::step(int frameNumber, int totalTime, int delta)
     {
         createEnemy();
     }
-
-    _enemysys->step(frameNumber, totalTime, delta);
 
     Shape* player;
     _entityManager.component(_playerid, player);
@@ -209,3 +206,12 @@ void Game::keyReleaseEvent ( QKeyEvent * event )
     }
 }
 
+
+QtEntity::EntityId Game::createPrefabInstance(const QString& name)
+{
+    QtEntity::EntityId id = _entityManager.createEntityId();
+    QtEntityUtils::PrefabInstance* pre;
+    QVariantMap m; m["path"] = name;
+    _entityManager.createComponent(id, pre, m);
+    return id;
+}

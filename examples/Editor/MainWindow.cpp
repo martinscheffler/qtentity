@@ -5,6 +5,7 @@
 #include <QtEntity/DataTypes>
 #include "MetaDataSystem"
 #include <QtEntityUtils/EntityEditor>
+#include <QtEntityUtils/PrefabSystem>
 #include <QDebug>
 
 MainWindow::MainWindow()
@@ -14,30 +15,16 @@ MainWindow::MainWindow()
 
     QtEntity::registerMetaTypes();
 
+    ////////////////// game ///////////////////////////
     _rendererPos->setLayout(new QHBoxLayout());
     _renderer = new Renderer(_rendererPos);
     _rendererPos->layout()->addWidget(_renderer);
-
-
-    QtEntityUtils::EntityEditor* editor = new QtEntityUtils::EntityEditor();
-    connect(this, &MainWindow::selectedEntityChanged, editor, &QtEntityUtils::EntityEditor::displayEntity);
-    connect(editor, &QtEntityUtils::EntityEditor::entityDataChanged, this, &MainWindow::changeEntityData);
-    centralWidget()->layout()->addWidget(editor);
-
     _game = new Game(_renderer);
 
     // make main window get input events when game area is focused
     _renderer->installRendererEventFilter(this);
 
-    // connect signals of meta data system to entity list
-    MetaDataSystem* ms = static_cast<MetaDataSystem*>(_game->entityManager().system(MetaData::classTypeId()));
-    connect(ms, &MetaDataSystem::entityAdded,   this, &MainWindow::entityAdded);
-    connect(ms, &MetaDataSystem::entityRemoved, this, &MainWindow::entityRemoved);
-    connect(ms, &MetaDataSystem::entityChanged, this, &MainWindow::entityChanged);
 
-    connect(_entities, &QTableWidget::itemSelectionChanged, this, &MainWindow::entitySelectionChanged);
-
-    _game->init();
     // setup game tick
 #ifdef RUN_GAME_IN_THREAD
     _game->moveToThread(&_gameThread);
@@ -49,10 +36,30 @@ MainWindow::MainWindow()
     _timer->start((int)(1000.0 / 60.0));
 #endif
 
-    adjustSize();
+    ////////////////// entity editor ///////////////////////////
+    QtEntityUtils::EntityEditor* editor = new QtEntityUtils::EntityEditor();
+    connect(this, &MainWindow::selectedEntityChanged, editor, &QtEntityUtils::EntityEditor::displayEntity);
+    connect(editor, &QtEntityUtils::EntityEditor::entityDataChanged, this, &MainWindow::changeEntityData);
+    centralWidget()->layout()->addWidget(editor);
 
+    ////////////////// entity list ///////////////////////////
+    // connect signals of meta data system to entity list
+
+    connect(_game->metaDataSystem(), &MetaDataSystem::entityAdded,   this, &MainWindow::entityAdded);
+    connect(_game->metaDataSystem(), &MetaDataSystem::entityRemoved, this, &MainWindow::entityRemoved);
+    connect(_game->metaDataSystem(), &MetaDataSystem::entityChanged, this, &MainWindow::entityChanged);
+
+    connect(_entities, &QTableWidget::itemSelectionChanged, this, &MainWindow::entitySelectionChanged);
+
+    ////////////////// prefab menu ///////////////////////////
+    connect(_game->prefabSystem(), &QtEntityUtils::PrefabSystem::prefabAdded, this, &MainWindow::prefabAdded);
+    connect(_prefabs, &QListWidget::itemSelectionChanged, this, &MainWindow::prefabSelectionChanged);
+    connect(_addInstance, &QPushButton::clicked, this, &MainWindow::addPrefabInstance);
+    adjustSize();
     setFocusPolicy(Qt::StrongFocus);
 
+    // start the game!
+    _game->init();
 }
 
 
@@ -92,6 +99,12 @@ void MainWindow::stepGame()
 {
     ++frameNumber;
     _game->step(frameNumber, frameNumber * 60, 60);
+}
+
+
+void MainWindow::prefabAdded(const QString& prefab)
+{
+    _prefabs->addItem(prefab);
 }
 
 
@@ -156,6 +169,31 @@ void MainWindow::entitySelectionChanged()
         QVariantMap props, attributes;
         QtEntityUtils::EntityEditor::fetchEntityData(_game->entityManager(), selected, props, attributes);
         emit selectedEntityChanged(selected, props, attributes);
+    }
+}
+
+
+void MainWindow::prefabSelectionChanged()
+{
+    auto items = _prefabs->selectedItems();
+    if(items.empty())
+    {
+        _addInstance->setEnabled(false);
+    }
+    else
+    {
+        _addInstance->setEnabled(true);
+    }
+}
+
+
+void MainWindow::addPrefabInstance()
+{
+    auto items = _prefabs->selectedItems();
+    if(!items.empty())
+    {
+        QString prefab = items.front()->text();
+        _game->createPrefabInstance(prefab);
     }
 }
 

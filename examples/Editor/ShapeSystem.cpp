@@ -6,21 +6,10 @@ IMPLEMENT_COMPONENT_TYPE(Shape)
 
 Shape::Shape()
     : _renderer(nullptr)
-    , _handle(0)    
+    , _zindex(0)
+    , _rotation(0)
+    , _handle(0)
 {
-    test["x"] = 123;
-    test["y"] = 456.0f;
-    test["z"] = 789.0;
-    test["bla"] = "Hallo Welt";
-
-    QVariantMap entry1;
-    entry1["prototype"] = "Box";
-    QVariantMap v;
-    v["Color"] = QColor(0,255,0);
-    v["Test0.1"] = 0.1;
-    v["Test0.5"] = 0.5;
-    entry1["value"] = v;
-    testList.push_back(entry1);
 }
 
 
@@ -32,21 +21,28 @@ void Shape::buildShape()
         _renderer->destroyShape(_handle);
     }
 
-    _handle = _renderer->createShape(_path, _position, _subtex, _zindex);
+    _handle = _renderer->createShape(_path, _position, _subtex, _zindex, _rotation);
 }
 
 
 void Shape::setPosition(const QPoint& p)
 {
     _position = p;
-    if(_renderer) _renderer->updateShape(_handle, _position, _subtex, _zindex);
+    if(_renderer) _renderer->updateShape(_handle, _position, _subtex, _zindex, _rotation);
 }
 
 
 void Shape::setZIndex(int i)
 {
     _zindex = i;
-    if(_renderer) _renderer->updateShape(_handle, _position, _subtex, _zindex);
+    if(_renderer) _renderer->updateShape(_handle, _position, _subtex, _zindex, _rotation);
+}
+
+
+void Shape::setRotation(int i)
+{
+    _zindex = i;
+    if(_renderer) _renderer->updateShape(_handle, _position, _subtex, _zindex, _rotation);
 }
 
 
@@ -71,61 +67,13 @@ QVariantMap ShapeSystem::toVariantMap(QtEntity::EntityId eid, int)
     Shape* s;
     if(component(eid, s))
     {
-        QVariantMap pos;
-        pos["x"] = s->position().x();
-        pos["y"] = s->position().y();
-        m["position"] = pos;
-        //m["position"] = s->position();
+        m["position"] = s->position();
         m["path"]     = QVariant::fromValue(s->path());
         m["zIndex"]   = s->zIndex();
         m["subTex"]   = s->subTex();
-
-        m["test"] = s->test;
-        m["testList"] = s->testList;
     }
     return m;
     
-}
-
-
-QVariantMap ShapeSystem::editingAttributes(int) const
-{
-
-    QVariantMap path;
-    path["filter"] = "SVG files (*.svg)";  
-    QVariantMap r;
-    r["path"] = path;
-
-
-    QVariantMap sphere;
-    sphere["Radius"] = 1.0f;
-    sphere["Color"] = QColor(255,0,0,255);
-
-    QVariantMap box;
-    box["Color"] = QColor(255,0,0,255);
-    box["Test0.1"] = 3.1;
-    box["Test0.5"] = 3.5;
-
-    QVariantMap prototypes;
-    prototypes["Box"] = box;
-    prototypes["Sphere"] = sphere;
-
-    QVariantMap attribs;
-    attribs["prototypes"] = prototypes;
-
-    QVariantMap test01;
-    test01["singleStep"] = 0.1;
-    QVariantMap test05;
-    test05["singleStep"] = 0.5;
-
-    QVariantMap boxattrs;
-    boxattrs["Test0.1"] = test01;
-    boxattrs["Test0.5"] = test05;
-    attribs["Box"] = boxattrs;
-
-    r["testList"] = attribs;
-
-    return r;
 }
 
 
@@ -138,11 +86,16 @@ void ShapeSystem::fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, i
         if(m.contains("path"))     s->setPath(m["path"].toString());
         if(m.contains("zIndex"))   s->setZIndex(m["zIndex"].toInt());
         if(m.contains("subTex"))   s->setSubtex(m["subTex"].toRect());
-        if(m.contains("test"))     s->test = m["test"].toMap();
-        if(m.contains("testList"))
-        {
-            s->testList = m["testList"].toList();
-        }
-        s->setSubtex(m["subTex"].toRect());
     }
+}
+
+
+QVariantMap ShapeSystem::editingAttributes(int) const
+{
+
+    QVariantMap path;
+    path["filter"] = "SVG files (*.svg)";
+    QVariantMap r;
+    r["path"] = path;
+    return r;
 }

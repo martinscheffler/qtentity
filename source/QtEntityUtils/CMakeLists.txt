@@ -32,6 +32,7 @@ set(MOC_INPUT
   ${HEADER_PATH}/EntityEditor
   ${HEADER_PATH}/FileEdit
   ${HEADER_PATH}/ListEdit
+  ${HEADER_PATH}/PrefabSystem
   ${HEADER_PATH}/VariantFactory
   ${HEADER_PATH}/VariantManager
 )

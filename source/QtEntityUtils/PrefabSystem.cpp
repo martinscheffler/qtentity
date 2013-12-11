@@ -59,6 +59,7 @@ namespace QtEntityUtils
     void PrefabSystem::addPrefab(const QString& path, const QVariantMap& components, const QStringList& parameters)
     {
         _prefabs[path] = QSharedPointer<Prefab>(new Prefab(path, components, parameters));
+        emit prefabAdded(path);
     }
 
 
@@ -157,9 +158,13 @@ namespace QtEntityUtils
 
         // finally update prefab in prefab store
         prefab->setComponents(newcomponents);
-
+        emit prefabUpdated(path);
     }
 
+    QStringList PrefabSystem::prefabNames() const
+    {
+        return _prefabs.keys();
+    }
 
     void PrefabSystem::createPrefabComponents(QtEntity::EntityId id, Prefab* prefab) const
     {

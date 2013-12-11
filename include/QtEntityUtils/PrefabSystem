@@ -74,7 +74,8 @@ namespace QtEntityUtils
 
     class QTENTITYUTILS_EXPORT PrefabSystem : public QtEntity::SimpleEntitySystem<PrefabInstance>
     {
-        
+        Q_OBJECT
+
     public:
         typedef SimpleEntitySystem<PrefabInstance> BaseClass;
 
@@ -101,7 +102,15 @@ namespace QtEntityUtils
          */
         void updatePrefab(const QString& path, const QVariantMap& components, bool updateInstances);
 
+        QStringList prefabNames() const;
+
         virtual QtEntity::Component* createComponent(QtEntity::EntityId id, const QVariantMap& properties = QVariantMap()) override;
+
+    signals:
+
+        void prefabAdded(const QString& name);
+        void prefabUpdated(const QString& name);
+        void prefabRemoved(const QString& name);
 
     private:
 
