@@ -31,6 +31,7 @@ namespace QtEntityUtils
 
     class Prefab
     {        
+        friend class PrefabSystem;
     public:
 
         Prefab(const QString& path, const QVariantMap& components, const QStringList& parameters);
@@ -102,7 +103,17 @@ namespace QtEntityUtils
          */
         void updatePrefab(const QString& path, const QVariantMap& components, bool updateInstances);
 
+        void updateComponentInPrefab(const QString& path, const QString& component, const QVariantMap& values, bool updateInstances);
+
+        /**
+         * Returns a list with the names of all registered prefabs
+         */
         QStringList prefabNames() const;
+
+        /**
+         * Returns the prefab registered by given name or nullptr if none registered
+         */
+        const Prefab* prefab(const QString& name) const;
 
         virtual QtEntity::Component* createComponent(QtEntity::EntityId id, const QVariantMap& properties = QVariantMap()) override;
 

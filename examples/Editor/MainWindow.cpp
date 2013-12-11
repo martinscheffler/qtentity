@@ -53,7 +53,7 @@ MainWindow::MainWindow()
 
     ////////////////// prefab menu ///////////////////////////
     connect(_game->prefabSystem(), &QtEntityUtils::PrefabSystem::prefabAdded, this, &MainWindow::prefabAdded);
-    connect(_prefabs, &QListWidget::itemSelectionChanged, this, &MainWindow::prefabSelectionChanged);
+    connect(_prefabs, &QListWidget::itemClicked, this, &MainWindow::prefabSelectionChanged);
     connect(_addInstance, &QPushButton::clicked, this, &MainWindow::addPrefabInstance);
     adjustSize();
     setFocusPolicy(Qt::StrongFocus);
@@ -173,17 +173,17 @@ void MainWindow::entitySelectionChanged()
 }
 
 
-void MainWindow::prefabSelectionChanged()
+void MainWindow::prefabSelectionChanged(QListWidgetItem * item)
 {
-    auto items = _prefabs->selectedItems();
-    if(items.empty())
-    {
-        _addInstance->setEnabled(false);
-    }
-    else
-    {
-        _addInstance->setEnabled(true);
-    }
+
+    _addInstance->setEnabled(true);
+
+    QString selected = item->text();
+    auto prefab = _game->prefabSystem()->prefab(selected);
+    QVariantMap attributes;
+    emit selectedEntityChanged(0, prefab->components(), attributes);
+
+
 }
 
 
@@ -200,7 +200,23 @@ void MainWindow::addPrefabInstance()
 
 void MainWindow::changeEntityData(QtEntity::EntityId id, const QVariantMap& values)
 {
-     QtEntityUtils::EntityEditor::applyEntityData(_game->entityManager(), id, values);
+    if(id == 0) // edited prefab
+    {
+        auto items = _prefabs->selectedItems();
+        if(!items.empty())
+        {
+            QString prefab = items.front()->text();
+            for(QString key : values.keys())
+            {
+                _game->prefabSystem()->updateComponentInPrefab(prefab, key, values[key].toMap(), true);
+            }
+
+        }
+    }
+    else
+    {
+        QtEntityUtils::EntityEditor::applyEntityData(_game->entityManager(), id, values);
+    }
 }
 
 

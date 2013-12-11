@@ -63,6 +63,7 @@ void Game::init()
     m["MetaData"] = meta;
 
     QStringList l;
+    l.push_back("position");
     _prefabsys->addPrefab("enemy", m, l);
 
     createPlayer();
@@ -125,36 +126,10 @@ void Game::createPlayer()
 }
 
 
-void Game::createEnemy()
-{
-    QtEntity::EntityId id = _entityManager.createEntityId();
-
-    {
-        Shape* shape;
-        QVariantMap m;
-        m["position"] = QPoint(0, 0);
-        m["path"] = ":/assets/spaceArt.svg";
-        m["subTex"] = QRect(590,148,100,55);
-        m["zIndex"] = 10;
-        _entityManager.createComponent(id, shape, m);
-    }
-    {
-        MetaData* metadata;
-        QVariantMap m;
-        m["name"] = QString("Enemy_%1").arg(id);
-        m["additionalInfo"] = "prefab=enemy";
-        _entityManager.createComponent(id, metadata, m);
-    }
-
-}
 
 
 void Game::step(int frameNumber, int totalTime, int delta)
 {
-    if(frameNumber % 1200 == 0)
-    {
-        createEnemy();
-    }
 
     Shape* player;
     _entityManager.component(_playerid, player);

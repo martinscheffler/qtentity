@@ -26,7 +26,7 @@ protected slots:
     void entityChanged(QtEntity::EntityId id, QString name, QString additionalInfo);
     void entityRemoved(QtEntity::EntityId id);
     void entitySelectionChanged();
-    void prefabSelectionChanged();
+    void prefabSelectionChanged(QListWidgetItem * item);
     void changeEntityData(QtEntity::EntityId id, const QVariantMap& values);
     void prefabAdded(const QString&);
     void addPrefabInstance();

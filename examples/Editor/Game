@@ -49,7 +49,6 @@ public slots:
 
 private:
 
-    void createEnemy();
     void createPlayer();
 
     unsigned int _keyBits;

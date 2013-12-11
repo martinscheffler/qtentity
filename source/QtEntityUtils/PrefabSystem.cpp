@@ -18,6 +18,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtEntity/EntityManager>
 #include <QMetaProperty>
+#include <QDebug>
 
 namespace QtEntityUtils
 {
@@ -62,6 +63,41 @@ namespace QtEntityUtils
         emit prefabAdded(path);
     }
 
+    void PrefabSystem::updateComponentInPrefab(const QString& path, const QString& component, const QVariantMap& values, bool updateInstances)
+    {
+        EntitySystem* es = entityManager()->system(component);
+        Q_ASSERT(es);
+
+        auto i = _prefabs.find(path);
+        if(i == _prefabs.end())
+        {
+            return;
+        }
+        Prefab* prefab = i.value().data();
+        QVariantMap current = prefab->components()[component].toMap();
+        for(QString param : values.keys())
+        {
+            current[param] = values[param];
+        }
+
+        for(QString param : prefab->parameters())
+        {
+            current.remove(param);
+        }
+        prefab->_components[component] = current;
+
+
+        if(updateInstances)
+        {
+            for(auto k = this->begin(); k != this->end(); ++k)
+            {
+                if(es->component(k->first))
+                {
+                    es->fromVariantMap(k->first, values);
+                }
+            }
+        }
+    }
 
     void PrefabSystem::updatePrefab(const QString& path, const QVariantMap& newcomponents, bool updateInstances)
     {
@@ -74,6 +110,11 @@ namespace QtEntityUtils
                 return;
             }
             prefab = i.value().data();
+        }
+
+        for(auto k: newcomponents.keys())
+        {
+            qDebug() << "Receeived: " << k;
         }
 
         if(updateInstances)
@@ -89,6 +130,7 @@ namespace QtEntityUtils
                 // component is in prefab but not in components map. Delete it from prefab instances.
                 if(newcomponents.find(j.key()) == newcomponents.end())
                 {
+                    qDebug() << "Removing from prefab instances:" << j.key();
                     // find all prefab instances and destroy the component
                     for(auto k = this->begin(); k != this->end(); ++k)
                     {
@@ -197,4 +239,14 @@ namespace QtEntityUtils
         return o;
     }
 
+
+    const Prefab* PrefabSystem::prefab(const QString& name) const
+    {
+        Prefabs::const_iterator i = _prefabs.find(name);
+        if(i == _prefabs.end())
+        {
+            return nullptr;
+        }
+        return i->data();
+    }
 }
