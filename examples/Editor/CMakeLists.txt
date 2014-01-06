@@ -1,11 +1,12 @@
 set(APP_NAME QtEntityEditor)
 
 include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/../../../qtentity/include/
   ${CMAKE_CURRENT_BINARY_DIR}/.. # for moc files
   ${CMAKE_CURRENT_BINARY_DIR} # for .ui files
   ${CMAKE_CURRENT_SOURCE_DIR}/../../source/QtPropertyBrowser
-  ${CMAKE_CURRENT_BINARY_DIR}/../../source # for dtentity export header
+  ${CMAKE_CURRENT_BINARY_DIR}/../../source # for qtentity export header
 )
 
 set(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR})

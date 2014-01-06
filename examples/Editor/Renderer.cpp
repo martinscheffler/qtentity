@@ -4,7 +4,7 @@
 #include <QtGlobal>
 
 
-
+#include <ShapeSystem>
 #include <QQuickItem>
 #include <QQuickView>
 #include <QQmlComponent>
@@ -48,44 +48,49 @@ Renderer::Renderer(QWidget* parent)
     }
 }
 
+
 void Renderer::installRendererEventFilter(QObject* o)
 {
     _impl->_view->installEventFilter(o);
 }
 
-// create a shape with given texture and transform, returns an identifier
-RenderHandle Renderer::createShape(const QString& path, const QPoint& pos, const QRect& rect, int zindex, int rotation)
-{
 
+// create a shape with given texture and transform, returns an identifier
+void Renderer::addShape(Shape* shape)
+{
     QObject *object = _impl->_shapeComponent->create();
 
     Q_ASSERT(object);
-    QQmlProperty::write(object, "path", "qrc" + path);
-    RenderHandle handle = reinterpret_cast<RenderHandle>(object);
+    QQmlProperty::write(object, "path", "qrc" + shape->_path);
+
     qobject_cast<QQuickItem*>(object)->setParentItem(_impl->_view->rootObject());
-    updateShape(handle, pos, rect, zindex, rotation);
-    return handle;
+    Q_ASSERT(shape->_handle == nullptr);
+    shape->_handle = object;
+    updateShape(shape);
 }
 
 
 // destroy shape previously created with createShape
-void Renderer::destroyShape(RenderHandle handle)
+void Renderer::removeShape(Shape* shape)
 {
-    QObject* item = reinterpret_cast<QObject*>(handle);
+    QObject* item = reinterpret_cast<QObject*>(shape->_handle);
     delete item;
+    shape->_handle = nullptr;
 }
 
 
 // update transform of shape previously created with createShape
-void Renderer::updateShape(RenderHandle handle, const QPoint& pos, const QRect& rect, int zindex, int rotation)
+void Renderer::updateShape(Shape* shape)
 {
-   QObject* object = reinterpret_cast<QObject*>(handle);
+   QObject* object = reinterpret_cast<QObject*>(shape->_handle);
+   QPoint pos = shape->_position;
    QQmlProperty::write(object, "x", pos.x());
    QQmlProperty::write(object, "y", pos.y());
-   QQmlProperty::write(object, "z", zindex);
-   QQmlProperty::write(object, "clipX", rect.x());
-   QQmlProperty::write(object, "clipY", rect.y());
-   QQmlProperty::write(object, "width", rect.width());
-   QQmlProperty::write(object, "height", rect.height());
+   QQmlProperty::write(object, "z", shape->_zindex);
+   QRect s = shape->_subtex;
+   QQmlProperty::write(object, "clipX", s.x());
+   QQmlProperty::write(object, "clipY", s.y());
+   QQmlProperty::write(object, "width", s.width());
+   QQmlProperty::write(object, "height", s.height());
 }
 

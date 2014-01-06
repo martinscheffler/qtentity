@@ -131,28 +131,28 @@ void Game::createPlayer()
 void Game::step(int frameNumber, int totalTime, int delta)
 {
 
-    Shape* player;
-    _entityManager.component(_playerid, player);
-    QPoint pos = player->position();
+    //Shape* player;
+    //_entityManager.component(_playerid, player);
+    QPoint pos = _shapesys->position(_playerid);
     if(bitIsSet(_keyBits, LEFT_PRESSED))
     {
         pos.setX(std::max(-PLAYERWIDTH / 2, pos.x() - PLAYERSPEED));
-        player->setPosition(pos);
+        _shapesys->setPosition(_playerid, pos);
     }
     if(bitIsSet(_keyBits, RIGHT_PRESSED))
     {
         pos.setX(std::min(GAMEWIDTH - PLAYERWIDTH / 2, pos.x() + PLAYERSPEED));
-        player->setPosition(pos);
+        _shapesys->setPosition(_playerid, pos);
     }
     if(bitIsSet(_keyBits, DOWN_PRESSED))
     {
         pos.setY(std::min(GAMEHEIGHT - PLAYERHEIGHT / 2, pos.y() + PLAYERSPEED));
-        player->setPosition(pos);
+        _shapesys->setPosition(_playerid, pos);
     }
     if(bitIsSet(_keyBits, UP_PRESSED))
     {
         pos.setY(std::max(-PLAYERHEIGHT / 2, pos.y() - PLAYERSPEED));
-        player->setPosition(pos);
+        _shapesys->setPosition(_playerid, pos);
     }
 }
 

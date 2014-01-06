@@ -13,42 +13,20 @@ class Shape : public QtEntity::Component
     DECLARE_COMPONENT_TYPE(NOEXP)    
     
     friend class ShapeSystem;
+    friend class Renderer;
 
 public:
 
     Shape();
 
-    void setPosition(const QPoint& p);
-    QPoint position() const { return _position; }
-
-    void setPath(const QtEntityUtils::FilePath& path)
-    {
-        _path = path;
-        buildShape();
-    }
-    QtEntityUtils::FilePath path() const {
-        return _path;
-    }
-
-    void setZIndex(int i);
-    int zIndex() const { return _zindex; }
-
-    void setSubtex(const QRect& v) { _subtex = v; buildShape(); }
-    QRect subTex() const { return _subtex; }
-
-    void setRotation(int i);
-    int rotation() const { return _rotation; }
-
 private:
 
-    void buildShape();
-    Renderer* _renderer;
     QtEntityUtils::FilePath _path;
     QPoint _position;
     QRect _subtex;
     int _zindex;
     int _rotation;
-    RenderHandle _handle;
+    QObject* _handle;
 };
 
 
@@ -60,10 +38,25 @@ public:
     ShapeSystem(QtEntity::EntityManager* em, Renderer* renderer);
 
     virtual QtEntity::Component* createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;
-        
+    virtual bool destroyComponent(QtEntity::EntityId id);
     virtual QVariantMap toVariantMap(QtEntity::EntityId eid, int context = 0) override;
     virtual QVariantMap editingAttributes(int context = 0) const override;
     virtual void fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, int context = 0) override;
+
+    void setPosition(QtEntity::EntityId eid, const QPoint& p);
+    QPoint position(QtEntity::EntityId eid) const;
+
+    void setPath(QtEntity::EntityId eid, const QtEntityUtils::FilePath& path);
+    QtEntityUtils::FilePath path(QtEntity::EntityId eid) const;
+
+    void setZIndex(QtEntity::EntityId eid, int i);
+    int zIndex(QtEntity::EntityId eid) const;
+
+    void setSubtex(QtEntity::EntityId eid, const QRect& v);
+    QRect subTex(QtEntity::EntityId eid) const;
+
+    void setRotation(QtEntity::EntityId eid, int i);
+    int rotation(QtEntity::EntityId eid) const;
 
 private:
     Renderer* _renderer;

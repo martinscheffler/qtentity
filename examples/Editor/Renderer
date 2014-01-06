@@ -2,9 +2,9 @@
 
 #include <QWidget>
 
-class RendererImpl;
 
-typedef uintptr_t RenderHandle;
+class RendererImpl;
+class Shape;
 
 class Renderer : public QWidget
 {
@@ -13,13 +13,12 @@ public:
     Renderer(QWidget* parent);
 
     // create a shape with given texture and position, returns an identifier
-    RenderHandle createShape(const QString& path, const QPoint& pos, const QRect& rect, int zindex, int rotation);
+    void addShape(Shape* shape);
 
     // destroy shape previously created with createShape
-    void destroyShape(RenderHandle identifier);
+    void removeShape(Shape* shape);
 
-    // update transform of shape previously created with createShape
-    void updateShape(RenderHandle identifier, const QPoint& pos, const QRect& rect, int zindex, int rotation);
+    void updateShape(Shape* shape);
 
     // install event handler receiving events from view
     void installRendererEventFilter(QObject*);
