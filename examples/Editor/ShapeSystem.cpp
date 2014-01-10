@@ -24,6 +24,7 @@ QtEntity::Component* ShapeSystem::createComponent(QtEntity::EntityId id, const Q
     Shape* shape = static_cast<Shape*>(PooledEntitySystem::createComponent(id, properties));
     Q_ASSERT(_renderer);
     _renderer->addShape(shape);
+    emit entityAdded(id, shape->_name);
     return shape;
 }
 
@@ -35,6 +36,7 @@ bool ShapeSystem::destroyComponent(QtEntity::EntityId id)
     {
         _renderer->removeShape(shape);
     }
+    emit entityRemoved(id);
     return PooledEntitySystem::destroyComponent(id);
 }
 
@@ -45,6 +47,7 @@ QVariantMap ShapeSystem::toVariantMap(QtEntity::EntityId eid, int)
     Shape* s;
     if(component(eid, s))
     {
+        m["name"]     = s->_name;
         m["position"] = s->_position;
         m["path"]     = QVariant::fromValue(s->_path);
         m["zIndex"]   = s->_zindex;
@@ -71,6 +74,7 @@ void ShapeSystem::fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, i
         if(m.contains("position")) s->_position = m["position"].toPoint();
         if(m.contains("zIndex"))   s->_zindex = m["zIndex"].toInt();
         if(m.contains("subTex"))   s->_subtex = m["subTex"].toRect();
+        if(m.contains("name"))     setName(eid, m["name"].toString());
         _renderer->updateShape(s);
     }
 }
@@ -87,10 +91,21 @@ QVariantMap ShapeSystem::editingAttributes(int) const
 }
 
 
-QPoint ShapeSystem::position(QtEntity::EntityId eid) const
+void ShapeSystem::setName(QtEntity::EntityId eid, const QString& name)
 {
-    Shape* s; if(!component(eid, s)) { return QPoint(); }
-    return s->_position;
+    Shape* s; if(!component(eid, s)) { return; }
+    if(s->_name != name)
+    {
+        s->_name = name;
+        emit entityNameChanged(eid, name);
+    }
+}
+
+
+QString ShapeSystem::name(QtEntity::EntityId eid) const
+{
+    Shape* s; if(!component(eid, s)) { return "error"; }
+    return s->_name;
 }
 
 
@@ -102,10 +117,10 @@ void ShapeSystem::setPosition(QtEntity::EntityId eid, const QPoint& p)
 }
 
 
-int ShapeSystem::zIndex(QtEntity::EntityId eid) const
+QPoint ShapeSystem::position(QtEntity::EntityId eid) const
 {
-    Shape* s; if(!component(eid, s)) { return 0; }
-    return s->_zindex;
+    Shape* s; if(!component(eid, s)) { return QPoint(); }
+    return s->_position;
 }
 
 
@@ -117,10 +132,10 @@ void ShapeSystem::setZIndex(QtEntity::EntityId eid, int i)
 }
 
 
-int ShapeSystem::rotation(QtEntity::EntityId eid) const
+int ShapeSystem::zIndex(QtEntity::EntityId eid) const
 {
     Shape* s; if(!component(eid, s)) { return 0; }
-    return s->_rotation;
+    return s->_zindex;
 }
 
 
@@ -132,10 +147,10 @@ void ShapeSystem::setRotation(QtEntity::EntityId eid, int i)
 }
 
 
-QRect ShapeSystem::subTex(QtEntity::EntityId eid) const
+int ShapeSystem::rotation(QtEntity::EntityId eid) const
 {
-    Shape* s; if(!component(eid, s)) { return QRect(); }
-    return s->_subtex;
+    Shape* s; if(!component(eid, s)) { return 0; }
+    return s->_rotation;
 }
 
 
@@ -147,10 +162,10 @@ void ShapeSystem::setSubtex(QtEntity::EntityId eid, const QRect& v)
 }
 
 
-QtEntityUtils::FilePath ShapeSystem::path(QtEntity::EntityId eid) const
+QRect ShapeSystem::subTex(QtEntity::EntityId eid) const
 {
-    Shape* s; if(!component(eid, s)) { return QtEntityUtils::FilePath(); }
-    return s->_path;
+    Shape* s; if(!component(eid, s)) { return QRect(); }
+    return s->_subtex;
 }
 
 
@@ -169,3 +184,9 @@ void ShapeSystem::setPath(QtEntity::EntityId eid, const QtEntityUtils::FilePath&
     }
 }
 
+
+QtEntityUtils::FilePath ShapeSystem::path(QtEntity::EntityId eid) const
+{
+    Shape* s; if(!component(eid, s)) { return QtEntityUtils::FilePath(); }
+    return s->_path;
+}

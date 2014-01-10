@@ -15,7 +15,6 @@ set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/Game
   ${HEADER_PATH}/MainWindow
-  ${HEADER_PATH}/MetaDataSystem
   ${HEADER_PATH}/Renderer
   ${HEADER_PATH}/ShapeSystem
 )
@@ -24,7 +23,6 @@ set(LIB_SOURCES
   ${SOURCE_PATH}/Game.cpp
   ${SOURCE_PATH}/MainWindow.cpp
   ${SOURCE_PATH}/main.cpp
-  ${HEADER_PATH}/MetaDataSystem.cpp
   ${SOURCE_PATH}/Renderer.cpp
   ${SOURCE_PATH}/ShapeSystem.cpp
 )
@@ -32,7 +30,7 @@ set(LIB_SOURCES
 set(MOC_INPUT
    ${HEADER_PATH}/Game
    ${HEADER_PATH}/MainWindow
-   ${HEADER_PATH}/MetaDataSystem
+   ${HEADER_PATH}/ShapeSystem
 )
 
 

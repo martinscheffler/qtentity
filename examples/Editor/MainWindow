@@ -22,8 +22,8 @@ public:
     bool eventFilter(QObject *obj, QEvent *event);
 protected slots:
 
-    void entityAdded(QtEntity::EntityId id, QString name, QString additionalInfo);
-    void entityChanged(QtEntity::EntityId id, QString name, QString additionalInfo);
+    void entityAdded(QtEntity::EntityId id, QString name);
+    void entityNameChanged(QtEntity::EntityId id, QString name);
     void entityRemoved(QtEntity::EntityId id);
     void entitySelectionChanged();
     void prefabSelectionChanged(QListWidgetItem * item);

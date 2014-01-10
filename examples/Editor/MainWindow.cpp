@@ -3,7 +3,7 @@
 #include "Game"
 #include "Renderer"
 #include <QtEntity/DataTypes>
-#include "MetaDataSystem"
+#include "ShapeSystem"
 #include <QtEntityUtils/EntityEditor>
 #include <QtEntityUtils/PrefabSystem>
 #include <QDebug>
@@ -45,9 +45,9 @@ MainWindow::MainWindow()
     ////////////////// entity list ///////////////////////////
     // connect signals of meta data system to entity list
 
-    connect(_game->metaDataSystem(), &MetaDataSystem::entityAdded,   this, &MainWindow::entityAdded);
-    connect(_game->metaDataSystem(), &MetaDataSystem::entityRemoved, this, &MainWindow::entityRemoved);
-    connect(_game->metaDataSystem(), &MetaDataSystem::entityChanged, this, &MainWindow::entityChanged);
+    connect(_game->shapeSystem(), &ShapeSystem::entityAdded,   this, &MainWindow::entityAdded);
+    connect(_game->shapeSystem(), &ShapeSystem::entityRemoved, this, &MainWindow::entityRemoved);
+    connect(_game->shapeSystem(), &ShapeSystem::entityNameChanged, this, &MainWindow::entityNameChanged);
 
     connect(_entities, &QTableWidget::itemSelectionChanged, this, &MainWindow::entitySelectionChanged);
 
@@ -109,7 +109,7 @@ void MainWindow::prefabAdded(const QString& prefab)
 
 
 // insert entry into entity list
-void MainWindow::entityAdded(QtEntity::EntityId id, QString name, QString additionalInfo)
+void MainWindow::entityAdded(QtEntity::EntityId id, QString name)
 {
     _entities->setSortingEnabled(false);
 
@@ -118,23 +118,7 @@ void MainWindow::entityAdded(QtEntity::EntityId id, QString name, QString additi
     auto item = new QTableWidgetItem(QString("%1").arg(id));
     item->setData(Qt::UserRole, id);
     _entities->setItem(row, 0, item);
-    _entities->setItem(row, 1, new QTableWidgetItem(name));
-    QStringList additional = additionalInfo.split(";");
-    foreach(QString val, additional)
-    {
-        QStringList pair = val.split("=");
-        if(pair.count() < 2) continue;
-        for(int i = 0; i < _entities->columnCount(); ++i)
-        {
-            QString colname = _entities->horizontalHeaderItem(i)->text();
-            if(colname == pair.first())
-            {
-                auto item = new QTableWidgetItem(pair.last());
-                item->setData(Qt::UserRole, id);
-                _entities->setItem(row, i, item);
-            }
-        }
-    }
+    _entities->setItem(row, 1, new QTableWidgetItem(name));    
     _entities->setSortingEnabled(true);
 }
 
@@ -221,7 +205,7 @@ void MainWindow::changeEntityData(QtEntity::EntityId id, const QVariantMap& valu
 
 
 // update entry in entity list
-void MainWindow::entityChanged(QtEntity::EntityId id, QString name, QString additionalInfo)
+void MainWindow::entityNameChanged(QtEntity::EntityId id, QString name)
 {
     _entities->setSortingEnabled(false);
 
@@ -242,20 +226,6 @@ void MainWindow::entityChanged(QtEntity::EntityId id, QString name, QString addi
                 }
             }
 
-            QStringList additional = additionalInfo.split(";");
-            foreach(QString val, additional)
-            {
-                QStringList pair = val.split("=");
-                if(pair.count() < 2) continue;
-                for(int j = 0; j < _entities->columnCount(); ++j)
-                {
-                    QString colname = _entities->horizontalHeaderItem(j)->text();
-                    if(colname == pair.first())
-                    {
-                        _entities->setItem(i, j, new QTableWidgetItem(pair.last()));
-                    }
-                }
-            }
             break;
         }
     }

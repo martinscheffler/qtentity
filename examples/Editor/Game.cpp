@@ -2,7 +2,6 @@
 
 #include "Renderer"
 #include "ShapeSystem"
-#include "MetaDataSystem"
 #include <QCoreApplication>
 #include <QTime>
 #include <QThread>
@@ -34,7 +33,6 @@ Game::Game(Renderer* renderer)
     : _keyBits(0)
     , _renderer(renderer)
     , _isRunning(false)    
-    , _metasys(new MetaDataSystem(&_entityManager))
     , _prefabsys(new QtEntityUtils::PrefabSystem(&_entityManager))
     , _shapesys(new ShapeSystem(&_entityManager, renderer))
     , _playerid(0)
@@ -47,20 +45,14 @@ void Game::init()
 {
 
     QVariantMap shape;
+    shape["name"] = QString("Enemy");
     shape["position"] = QPoint(0, 0);
     shape["path"] = ":/assets/spaceArt.svg";
     shape["subTex"] = QRect(590,148,100,55);
     shape["zIndex"] = 10;
 
-
-    QVariantMap meta;
-    meta["name"] = QString("Enemy");
-    meta["additionalInfo"] = "prefab=enemy";
-
-
     QVariantMap m;
     m["Shape"] = shape;
-    m["MetaData"] = meta;
 
     QStringList l;
     l.push_back("position");
@@ -105,23 +97,15 @@ void Game::createPlayer()
 {
     _playerid = _entityManager.createEntityId();
 
-    {
-        Shape* shape;
+    Shape* shape;
 
-        QVariantMap m;
-        m["position"] = QPoint(GAMEWIDTH / 2 - PLAYERWIDTH / 2, 600 - PLAYERHEIGHT);
-        m["path"] = ":/assets/spaceArt.svg";
-        m["subTex"] = QRect(374,360,PLAYERWIDTH,PLAYERHEIGHT);
-        m["zIndex"] = 10;
-        _entityManager.createComponent(_playerid, shape, m);
-    }
-    {
-        MetaData* metadata;
-        QVariantMap m;
-        m["name"] = QString("Player");
-        m["additionalInfo"] = "prefab=player";
-        _entityManager.createComponent(_playerid, metadata, m);
-    }
+    QVariantMap m;
+    m["name"] = QString("Player");
+    m["position"] = QPoint(GAMEWIDTH / 2 - PLAYERWIDTH / 2, 600 - PLAYERHEIGHT);
+    m["path"] = ":/assets/spaceArt.svg";
+    m["subTex"] = QRect(374,360,PLAYERWIDTH,PLAYERHEIGHT);
+    m["zIndex"] = 10;
+    _entityManager.createComponent(_playerid, shape, m);
 
 }
 

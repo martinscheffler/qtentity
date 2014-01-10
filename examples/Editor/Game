@@ -6,7 +6,6 @@
 #include <QTimer>
 #include <QKeyEvent>
 
-class MetaDataSystem;
 class Renderer;
 class ShapeSystem;
 
@@ -36,7 +35,6 @@ public:
 
     QtEntity::EntityId createPrefabInstance(const QString& name);
 
-    MetaDataSystem* metaDataSystem() const { return _metasys; }
     QtEntityUtils::PrefabSystem* prefabSystem() const { return _prefabsys; }
     ShapeSystem* shapeSystem() const { return _shapesys; }
 
@@ -57,7 +55,6 @@ private:
     QtEntity::EntityManager _entityManager;
     bool _isRunning;
 
-    MetaDataSystem* _metasys;
     QtEntityUtils::PrefabSystem* _prefabsys;
     ShapeSystem* _shapesys;
 

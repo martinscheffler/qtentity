@@ -21,6 +21,7 @@ public:
 
 private:
 
+    QString _name;
     QtEntityUtils::FilePath _path;
     QPoint _position;
     QRect _subtex;
@@ -32,6 +33,7 @@ private:
 
 class ShapeSystem : public QtEntity::PooledEntitySystem<Shape>
 {   
+    Q_OBJECT
 
 public:
     typedef QtEntity::PooledEntitySystem<Shape> BaseClass;
@@ -42,6 +44,9 @@ public:
     virtual QVariantMap toVariantMap(QtEntity::EntityId eid, int context = 0) override;
     virtual QVariantMap editingAttributes(int context = 0) const override;
     virtual void fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, int context = 0) override;
+
+    void setName(QtEntity::EntityId eid, const QString& name);
+    QString name(QtEntity::EntityId eid) const;
 
     void setPosition(QtEntity::EntityId eid, const QPoint& p);
     QPoint position(QtEntity::EntityId eid) const;
@@ -57,6 +62,12 @@ public:
 
     void setRotation(QtEntity::EntityId eid, int i);
     int rotation(QtEntity::EntityId eid) const;
+
+signals:
+
+    void entityAdded(QtEntity::EntityId id, QString name);
+    void entityRemoved(QtEntity::EntityId id);
+    void entityNameChanged(QtEntity::EntityId id, QString name);
 
 private:
     Renderer* _renderer;
