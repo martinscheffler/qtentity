@@ -25,6 +25,8 @@ set(LIB_SOURCES
   ${SOURCE_PATH}/main.cpp
   ${SOURCE_PATH}/Renderer.cpp
   ${SOURCE_PATH}/ShapeSystem.cpp
+  main.qml
+  particles.qml
   shape.qml
 )
 
