@@ -1,9 +1,9 @@
 <RCC>
     <qresource prefix="/assets">
         <file>spaceArt.svg</file>
-        <file>space.jpg</file>
         <file>main.qml</file>
         <file>shape.qml</file>
         <file>GalaxyUno.jpg</file>
+        <file>star.png</file>
     </qresource>
 </RCC>
