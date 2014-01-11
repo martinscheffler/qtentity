@@ -19,6 +19,7 @@ public:
 
     void keyPressEvent ( QKeyEvent * event );
     void keyReleaseEvent ( QKeyEvent * event );
+    void timerEvent(QTimerEvent * event);
     bool eventFilter(QObject *obj, QEvent *event);
 protected slots:
 
@@ -39,7 +40,6 @@ signals:
 private:
 
     QThread _gameThread;
-    QTimer* _timer;
     Game* _game;
     Renderer* _renderer;
 };

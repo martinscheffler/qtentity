@@ -1,0 +1,61 @@
+#pragma once
+
+#include <QtEntity/PooledEntitySystem>
+#include <QtEntityUtils/VariantManager>
+
+enum AttackMode
+{
+    ATTACK_NONE,
+    ATTACK_STRAIGHT,
+    ATTACK_CIRCLE
+};
+
+Q_DECLARE_METATYPE(AttackMode)
+
+class Attack : public QtEntity::Component
+{
+    DECLARE_COMPONENT_TYPE(NOEXP)    
+
+    friend class AttackSystem;
+
+public:
+
+    Attack();
+
+    AttackMode attackMode() const { return _attackMode; }
+    void setAttackMode(AttackMode v) { _attackMode = v; }
+
+private:
+
+    AttackMode _attackMode;
+    float _speed;
+
+};
+
+
+class AttackSystem : public QtEntity::PooledEntitySystem<Attack>
+{   
+    Q_OBJECT
+
+public:
+    typedef QtEntity::PooledEntitySystem<Attack> BaseClass;
+
+    Q_ENUMS(AttackMode)
+
+    AttackSystem(QtEntity::EntityManager* em);
+
+    virtual QVariantMap toVariantMap(QtEntity::EntityId eid, int context = 0) override;
+    virtual QVariantMap editingAttributes(int context = 0) const override;
+    virtual void fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, int context = 0) override;
+
+    void setTarget(QtEntity::EntityId id) { _target = id; }
+    QtEntity::EntityId target() const { return _target; }
+
+    AttackMode attackMode(QtEntity::EntityId eid) const;
+    void setAttackMode(QtEntity::EntityId eid, AttackMode v);
+
+    void tick(int frameNumber, int totalTime, float delta);
+
+private:
+    QtEntity::EntityId _target;
+};

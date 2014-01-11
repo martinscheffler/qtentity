@@ -48,7 +48,7 @@ QVariantMap ShapeSystem::toVariantMap(QtEntity::EntityId eid, int)
     if(component(eid, s))
     {
         m["name"]     = s->_name;
-        m["position"] = s->_position;
+        m["position"] = QPointF(s->_position.x(), s->_position.y());
         m["path"]     = QVariant::fromValue(s->_path);
         m["zIndex"]   = s->_zindex;
         m["subTex"]   = s->_subtex;
@@ -71,7 +71,11 @@ void ShapeSystem::fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, i
                 setPath(eid, p);
             }
         }
-        if(m.contains("position")) s->_position = m["position"].toPoint();
+        if(m.contains("position"))
+        {
+            QPointF p = m["position"].toPointF();
+            s->_position = QVector2D(p.x(), p.y());
+        }
         if(m.contains("zIndex"))   s->_zindex = m["zIndex"].toInt();
         if(m.contains("subTex"))   s->_subtex = m["subTex"].toRect();
         if(m.contains("name"))     setName(eid, m["name"].toString());
@@ -109,7 +113,7 @@ QString ShapeSystem::name(QtEntity::EntityId eid) const
 }
 
 
-void ShapeSystem::setPosition(QtEntity::EntityId eid, const QPoint& p)
+void ShapeSystem::setPosition(QtEntity::EntityId eid, const QVector2D& p)
 {
     Shape* s; if(!component(eid, s)) { return; }
     s->_position = p;
@@ -117,9 +121,9 @@ void ShapeSystem::setPosition(QtEntity::EntityId eid, const QPoint& p)
 }
 
 
-QPoint ShapeSystem::position(QtEntity::EntityId eid) const
+QVector2D ShapeSystem::position(QtEntity::EntityId eid) const
 {
-    Shape* s; if(!component(eid, s)) { return QPoint(); }
+    Shape* s; if(!component(eid, s)) { return QVector2D(); }
     return s->_position;
 }
 

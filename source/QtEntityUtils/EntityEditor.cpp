@@ -249,7 +249,15 @@ namespace QtEntityUtils
         }
         else
         {
-            QtVariantProperty* propitem = _variantManager->addProperty(data.userType(), name);
+            int tid = data.userType();
+
+            // hack to detect enums
+            if(attributes.contains("enumNames"))
+            {
+                tid = VariantManager::enumTypeId();
+            }
+
+            QtVariantProperty* propitem = _variantManager->addProperty(tid, name);
             if(propitem)
             {
 

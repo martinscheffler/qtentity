@@ -1,16 +1,17 @@
 #include "Game"
 
+#include "AttackSystem"
 #include "Renderer"
 #include "ShapeSystem"
 #include <QCoreApplication>
 #include <QTime>
 #include <QThread>
 
-#define PLAYERWIDTH 110
-#define PLAYERHEIGHT 90
-#define GAMEHEIGHT 600
-#define GAMEWIDTH 480
-#define PLAYERSPEED 10
+#define PLAYERWIDTH 110.0f
+#define PLAYERHEIGHT 90.0f
+#define GAMEHEIGHT 600.0f
+#define GAMEWIDTH 480.0f
+#define PLAYERSPEED 100.0f
 
 void setBit(unsigned int& mask, Game::KeyBit bit, bool val)
 {
@@ -33,6 +34,7 @@ Game::Game(Renderer* renderer)
     : _keyBits(0)
     , _renderer(renderer)
     , _isRunning(false)    
+    , _attacksys(new AttackSystem(&_entityManager))
     , _prefabsys(new QtEntityUtils::PrefabSystem(&_entityManager))
     , _shapesys(new ShapeSystem(&_entityManager, renderer))
     , _playerid(0)
@@ -53,6 +55,7 @@ void Game::init()
 
     QVariantMap m;
     m["Shape"] = shape;
+    m["Attack"] = QVariantMap();
 
     QStringList l;
     l.push_back("position");
@@ -106,38 +109,40 @@ void Game::createPlayer()
     m["subTex"] = QRect(374,360,PLAYERWIDTH,PLAYERHEIGHT);
     m["zIndex"] = 10;
     _entityManager.createComponent(_playerid, shape, m);
+    _attacksys->setTarget(_playerid);
 
 }
 
 
-
-
-void Game::step(int frameNumber, int totalTime, int delta)
+void Game::step(int frameNumber, int totalTime, float delta)
 {
 
     //Shape* player;
     //_entityManager.component(_playerid, player);
-    QPoint pos = _shapesys->position(_playerid);
+    QVector2D pos = _shapesys->position(_playerid);
+    float movement = PLAYERSPEED * delta;
     if(bitIsSet(_keyBits, LEFT_PRESSED))
     {
-        pos.setX(std::max(-PLAYERWIDTH / 2, pos.x() - PLAYERSPEED));
+        pos.setX(std::max(-PLAYERWIDTH / 2.0f, pos.x() - movement));
         _shapesys->setPosition(_playerid, pos);
     }
     if(bitIsSet(_keyBits, RIGHT_PRESSED))
     {
-        pos.setX(std::min(GAMEWIDTH - PLAYERWIDTH / 2, pos.x() + PLAYERSPEED));
+        pos.setX(std::min(GAMEWIDTH - PLAYERWIDTH / 2.0f, pos.x() + movement));
         _shapesys->setPosition(_playerid, pos);
     }
     if(bitIsSet(_keyBits, DOWN_PRESSED))
     {
-        pos.setY(std::min(GAMEHEIGHT - PLAYERHEIGHT / 2, pos.y() + PLAYERSPEED));
+        pos.setY(std::min(GAMEHEIGHT - PLAYERHEIGHT / 2.0f , pos.y() + movement));
         _shapesys->setPosition(_playerid, pos);
     }
     if(bitIsSet(_keyBits, UP_PRESSED))
     {
-        pos.setY(std::max(-PLAYERHEIGHT / 2, pos.y() - PLAYERSPEED));
+        pos.setY(std::max(-PLAYERHEIGHT / 2.0f , pos.y() - movement));
         _shapesys->setPosition(_playerid, pos);
     }
+
+    _attacksys->tick(frameNumber, totalTime, delta);
 }
 
 

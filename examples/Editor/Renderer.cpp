@@ -83,7 +83,7 @@ void Renderer::removeShape(Shape* shape)
 void Renderer::updateShape(Shape* shape)
 {
    QObject* object = reinterpret_cast<QObject*>(shape->_handle);
-   QPoint pos = shape->_position;
+   QVector2D pos = shape->_position;
    QQmlProperty::write(object, "x", pos.x());
    QQmlProperty::write(object, "y", pos.y());
    QQmlProperty::write(object, "z", shape->_zindex);

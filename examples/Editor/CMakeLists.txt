@@ -13,6 +13,7 @@ set(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(LIB_PUBLIC_HEADERS
+  ${HEADER_PATH}/AttackSystem
   ${HEADER_PATH}/Game
   ${HEADER_PATH}/MainWindow
   ${HEADER_PATH}/Renderer
@@ -20,17 +21,18 @@ set(LIB_PUBLIC_HEADERS
 )
 
 set(LIB_SOURCES
+  ${SOURCE_PATH}/AttackSystem.cpp
   ${SOURCE_PATH}/Game.cpp
   ${SOURCE_PATH}/MainWindow.cpp
   ${SOURCE_PATH}/main.cpp
   ${SOURCE_PATH}/Renderer.cpp
   ${SOURCE_PATH}/ShapeSystem.cpp
   main.qml
-  particles.qml
   shape.qml
 )
 
 set(MOC_INPUT
+   ${HEADER_PATH}/AttackSystem
    ${HEADER_PATH}/Game
    ${HEADER_PATH}/MainWindow
    ${HEADER_PATH}/ShapeSystem

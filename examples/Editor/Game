@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QKeyEvent>
 
+class AttackSystem;
 class Renderer;
 class ShapeSystem;
 
@@ -43,7 +44,7 @@ public slots:
     void init();
     void run();
     void end();
-    void step(int frameNumber, int totalTime, int delta);
+    void step(int frameNumber, int totalTime, float delta);
 
 private:
 
@@ -55,6 +56,7 @@ private:
     QtEntity::EntityManager _entityManager;
     bool _isRunning;
 
+    AttackSystem* _attacksys;
     QtEntityUtils::PrefabSystem* _prefabsys;
     ShapeSystem* _shapesys;
 

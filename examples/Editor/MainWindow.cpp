@@ -8,8 +8,7 @@
 #include <QtEntityUtils/PrefabSystem>
 #include <QDebug>
 
-MainWindow::MainWindow()
-    : _timer(nullptr)
+MainWindow::MainWindow()    
 {
     setupUi(this);
 
@@ -25,16 +24,7 @@ MainWindow::MainWindow()
     _renderer->installRendererEventFilter(this);
 
 
-    // setup game tick
-#ifdef RUN_GAME_IN_THREAD
-    _game->moveToThread(&_gameThread);
-    connect(&_gameThread, &QThread::started, _game, &Game::run);
-    _gameThread.start();
-#else
-    _timer = new QTimer(this);
-    connect(_timer, &QTimer::timeout, this, &MainWindow::stepGame);
-    _timer->start((int)(1000.0 / 60.0));
-#endif
+    startTimer(20, Qt::PreciseTimer);
 
     ////////////////// entity editor ///////////////////////////
     QtEntityUtils::EntityEditor* editor = new QtEntityUtils::EntityEditor();
@@ -74,6 +64,13 @@ void MainWindow::keyReleaseEvent ( QKeyEvent * event )
     _game->keyReleaseEvent(event);
 }
 
+
+void MainWindow::timerEvent(QTimerEvent * event)
+{
+    stepGame();
+}
+
+
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if(event->type() == QEvent::KeyPress)
@@ -98,7 +95,7 @@ int frameNumber = 0;
 void MainWindow::stepGame()
 {
     ++frameNumber;
-    _game->step(frameNumber, frameNumber * 60, 60);
+    _game->step(frameNumber, frameNumber * 20, 0.02);
 }
 
 
