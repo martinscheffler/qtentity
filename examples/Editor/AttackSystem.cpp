@@ -111,11 +111,8 @@ void AttackSystem::tick(int frameNumber, int totalTime, float delta)
             attackerPos += toTarget * delta * attack->_speed;
             break;
         case ATTACK_CIRCLE:
-
-
             attackerPos += QVector2D(toTarget.y(), -toTarget.x()) * delta * attack->_speed;
             break;
-
         }
         shapesys->setPosition(i->first, attackerPos);
     }

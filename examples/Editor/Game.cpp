@@ -48,14 +48,18 @@ void Game::init()
 
     QVariantMap shape;
     shape["name"] = QString("Enemy");
-    shape["position"] = QPoint(0, 0);
+    shape["position"] = QPoint(GAMEWIDTH / 2, 100);
     shape["path"] = ":/assets/spaceArt.svg";
     shape["subTex"] = QRect(590,148,100,55);
-    shape["zIndex"] = 10;
+    shape["zIndex"] = 50;
+
+    QVariantMap attack;
+    attack["speed"] = 50.0f;
+    attack["attackMode"] = QVariant::fromValue(ATTACK_CIRCLE);
 
     QVariantMap m;
     m["Shape"] = shape;
-    m["Attack"] = QVariantMap();
+    m["Attack"] = attack;
 
     QStringList l;
     l.push_back("position");
