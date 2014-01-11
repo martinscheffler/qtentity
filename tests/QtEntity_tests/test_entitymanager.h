@@ -16,11 +16,11 @@ private slots:
     {
         EntityManager em;
 
-        EntitySystem* esnothing = em.system(Testing::classTypeId());
+        EntitySystem* esnothing = em.system(qMetaTypeId<Testing>());
         QVERIFY(esnothing == nullptr);
 
         auto es = new TestingSystem(&em);
-        EntitySystem* es2 = em.system(Testing::classTypeId());
+        EntitySystem* es2 = em.system(qMetaTypeId<Testing>());
         QVERIFY(es == es2);
     }  
 
@@ -30,7 +30,7 @@ private slots:
 
         auto es = new TestingSystem(&em);
         em.removeSystem(es);
-        EntitySystem* es2 = em.system(Testing::classTypeId());
+        EntitySystem* es2 = em.system(qMetaTypeId<Testing>());
         QVERIFY(nullptr == es2);
         delete es;
     }

@@ -36,11 +36,6 @@ namespace QtEntity
     {
     public:
         virtual ~Component() {}
-
-        /**
-         * Returns type ID of component class. These are usually assigned by ComponentRegistry::registerComponent().
-         */
-        virtual QtEntity::ClassTypeId typeId() const = 0;
     };
 
 
@@ -59,12 +54,11 @@ namespace QtEntity
 
         /**
          * CTor.
-         *@param cid Class type id uniquely identifying this entity system.
-         *           The id is usually created by ComponentRegistry::registerComponent.
+         *@param metatypeid Qt metatype id of component class
          *@param em Entity manager that should hold this system. Class instance is
          *          added to the entity manager. Entity manager takes ownership.
          */
-        EntitySystem(ClassTypeId cid, EntityManager* em);
+        EntitySystem(int metatypeid, EntityManager* em);
 
         /**
          * DTor. Deletes all components.
@@ -103,9 +97,9 @@ namespace QtEntity
         virtual bool destroyComponent(EntityId id) = 0;
 
         /**
-         * @return type of component class
+         * @return Qt metatype of component class
          */
-        virtual ClassTypeId componentType() const = 0;
+        virtual int componentType() const = 0;
 
         /**
          * Return class name of component type stored in this entity system

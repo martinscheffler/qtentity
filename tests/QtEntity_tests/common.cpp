@@ -1,7 +1,6 @@
 #include "common.h"
 #include <QtScript/QScriptEngine>
 
-IMPLEMENT_COMPONENT_TYPE(Testing)
 Q_DECLARE_METATYPE(QtEntity::EntitySystem*)
 
 EntitySystemPrototype::EntitySystemPrototype(QObject *parent)

@@ -30,11 +30,6 @@ namespace QtEntity
      */
     typedef uint32_t EntityId;
 
-    /**
-     * Identifier for component classes
-     */
-    typedef uint32_t ClassTypeId;
-
 }
 
 // have to do this in global namespace

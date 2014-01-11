@@ -33,9 +33,6 @@ namespace QtEntityUtils
     }
 
 
-    IMPLEMENT_COMPONENT_TYPE(PrefabInstance)
-
-
     PrefabInstance::PrefabInstance()
     {
 

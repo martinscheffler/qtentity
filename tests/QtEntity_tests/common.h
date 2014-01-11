@@ -35,8 +35,6 @@ public:
 
 class Testing : public QtEntity::Component
 {
-    DECLARE_COMPONENT_TYPE(NOEXP)        
-
 public:
 
     Testing() {}
@@ -56,7 +54,7 @@ public:
 
 };
 
-
+Q_DECLARE_METATYPE(Testing)
 
 class TestingSystem : public SimpleEntitySystem<Testing>
 {     

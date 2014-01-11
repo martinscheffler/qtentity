@@ -1,9 +1,6 @@
 #include "ShapeSystem"
 
 
-IMPLEMENT_COMPONENT_TYPE(Shape)
-
-
 Shape::Shape()
     : _zindex(0)
     , _rotation(0)

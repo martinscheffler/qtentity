@@ -50,13 +50,13 @@ namespace QtEntity
     }
 
 
-    void EntityManager::addSystem(ClassTypeId cid, EntitySystem* es)
+    void EntityManager::addSystem(int mid, EntitySystem* es)
     {
-        _systems[cid] = es;        
+        _systems[mid] = es;
     }
 
 
-    bool EntityManager::hasSystem(ClassTypeId ctype)
+    bool EntityManager::hasSystem(int ctype)
     {
         return _systems.find(ctype) != _systems.end();
     }
@@ -76,28 +76,28 @@ namespace QtEntity
 
     EntitySystem* EntityManager::system(const QString& classname) const
     {
-        ClassTypeId classtype = ComponentRegistry::classTypeId(classname);
-        return system(classtype);
+        int metatype = QMetaType::type(classname.toLocal8Bit());
+        return system(metatype);
     }
 
 
-    EntitySystem* EntityManager::system(ClassTypeId componentType) const
+    EntitySystem* EntityManager::system(int metatypeid) const
     {        
-        auto i = _systems.find(componentType);
+        auto i = _systems.find(metatypeid);
         if(i == _systems.end()) return nullptr;
-        Q_ASSERT(i->second->componentType() == componentType);
+        Q_ASSERT(i->second->componentType() == metatypeid);
         return i->second;
     }
 
 
-    Component* EntityManager::component(EntityId id, ClassTypeId tid) const
+    Component* EntityManager::component(EntityId id, int tid) const
     {
         EntitySystem* s = this->system(tid);
         return (s == nullptr) ? nullptr : s->component(id);
     }
 
 
-    Component* EntityManager::createComponent(EntityId id, ClassTypeId cid, const QVariantMap& properties)
+    Component* EntityManager::createComponent(EntityId id, int cid, const QVariantMap& properties)
     {
         EntitySystem* s = this->system(cid);
 
@@ -121,7 +121,7 @@ namespace QtEntity
     }
 
 
-    bool EntityManager::destroyComponent(EntityId id, ClassTypeId cid)
+    bool EntityManager::destroyComponent(EntityId id, int cid)
     {
         EntitySystem* s = this->system(cid);
         if(s == nullptr) return false;

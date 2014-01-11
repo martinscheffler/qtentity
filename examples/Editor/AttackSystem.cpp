@@ -3,8 +3,6 @@
 #include <QtEntity/EntityManager>
 #include <ShapeSystem>
 
-IMPLEMENT_COMPONENT_TYPE(Attack)
-
 
 Attack::Attack()
     : _attackMode(ATTACK_NONE)
@@ -88,7 +86,7 @@ void AttackSystem::tick(int frameNumber, int totalTime, float delta)
     Q_UNUSED(frameNumber)
     Q_UNUSED(totalTime)
 
-    ShapeSystem* shapesys = static_cast<ShapeSystem*>(entityManager()->system(Shape::classTypeId()));
+    ShapeSystem* shapesys = static_cast<ShapeSystem*>(entityManager()->system(qMetaTypeId<Shape>()));
 
     QVector2D targetPos = shapesys->position(_target);
 

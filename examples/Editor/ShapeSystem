@@ -10,8 +10,7 @@ class ShapeSystem;
 
 class Shape : public QtEntity::Component
 {
-    DECLARE_COMPONENT_TYPE(NOEXP)    
-    
+
     friend class ShapeSystem;
     friend class Renderer;
 
@@ -30,6 +29,7 @@ private:
     QObject* _handle;
 };
 
+Q_DECLARE_METATYPE(Shape)
 
 class ShapeSystem : public QtEntity::PooledEntitySystem<Shape>
 {   

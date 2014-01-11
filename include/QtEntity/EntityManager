@@ -41,7 +41,7 @@ namespace QtEntity
     public:
 
         // data type for entity system container
-        typedef std::unordered_map<ClassTypeId,EntitySystem*> EntitySystemStore;
+        typedef std::unordered_map<int,EntitySystem*> EntitySystemStore;
 
         /**
          * CTor
@@ -72,18 +72,20 @@ namespace QtEntity
         /**
          * @brief system returns an entity system that holds components
          *        that are of the type identified in ctype
+         * @param metatypeid Qt metatype id of component class
          * @return nullptr if not found, else the system
          */
-        EntitySystem* system(ClassTypeId ctype) const;
+        EntitySystem* system(int metatypeid) const;
 
         /**
          * @brief Adds an entity system to the entity manager.
          * The entity manager takes ownership of the system, it is
          * deleted when entity manager is deleted.
          * Don't call this directly, this is called in EntitySystem constructor
-         * @throw runtime_error if entity system already in manager
+         * @param metatypeid Qt metatype id of component class
+         * @param es entity system to add
          */
-        void addSystem(ClassTypeId cid, EntitySystem* es);
+        void addSystem(int metatypeid, EntitySystem* es);
 
         /**
          * @brief removeSystem removes entity system from manager.
@@ -99,12 +101,12 @@ namespace QtEntity
          *        is present.
          * @return true if exists
          */
-        bool hasSystem(ClassTypeId ctype);
+        bool hasSystem(int metatype);
 
         /**
-         * Fetch component by component type id
+         * Fetch component by component metatype id
          **/
-        Component* component(EntityId id, ClassTypeId tid) const;
+        Component* component(EntityId id, int metatypeid) const;
 
         /**
          * Templated method to get an existing component.
@@ -130,12 +132,12 @@ namespace QtEntity
         T* component(EntityId id) const;
 
         /**
-         * Fetch entity system with given ClassTypeId and create a component.
+         * Fetch entity system with components of given metatype id and create a component.
          * @param id Entity id to create component for
          * @param cid Class type id of entity system
          * @return nullptr if component could not be created, else the newly created component
          */
-        Component* createComponent(EntityId id, ClassTypeId cid, const QVariantMap& properties = QVariantMap());
+        Component* createComponent(EntityId id, int metatypeid, const QVariantMap& properties = QVariantMap());
 
         /**
          * Templated method to create a new component.
@@ -171,10 +173,10 @@ namespace QtEntity
         /**
          * Destroy existing component.
          * @param id entity id of component to destroy
-         * @param class type id of component to destroy
+         * @param metatypeid meta type id of component class which to destroy
          * @return true if component existed, else false
          */
-        bool destroyComponent(EntityId id, ClassTypeId cid);
+        bool destroyComponent(EntityId id, int metatypeid);
 
         /**
          * Templated method to destroy existing component.
@@ -214,7 +216,7 @@ namespace QtEntity
     template <typename T>
     bool EntityManager::component(EntityId id, T*& comp) const
     {
-        Component* c = component(id, T::classTypeId());
+        Component* c = component(id, qMetaTypeId<T>());
         if(c == nullptr)
         {
             comp = nullptr;
@@ -228,14 +230,14 @@ namespace QtEntity
     template <typename T>
     T* EntityManager::component(EntityId id) const
     {
-        return static_cast<T*>(component(id, T::classTypeId()));
+        return static_cast<T*>(component(id, qMetaTypeId<T>()));
     }
 
 
     template <typename T>
     bool EntityManager::createComponent(EntityId id, T*& comp, const QVariantMap& properties)
     {
-        Component* c = createComponent(id, T::classTypeId(), properties);
+        Component* c = createComponent(id, qMetaTypeId<T>(), properties);
         if(c == nullptr)
         {
             comp = nullptr;
@@ -249,14 +251,14 @@ namespace QtEntity
     template <typename T>
     T* EntityManager::createComponent(EntityId id, const QVariantMap& properties)
     {
-        return static_cast<T*>(createComponent(id, T::classTypeId(), properties));
+        return static_cast<T*>(createComponent(id, qMetaTypeId<T>(), properties));
     }
 
 
     template <typename T>
     bool EntityManager::destroyComponent(EntityId id)
     {
-        return destroyComponent(id, T::classTypeId());
+        return destroyComponent(id, qMetaTypeId<T>());
     }
 
 }

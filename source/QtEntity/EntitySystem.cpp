@@ -21,56 +21,16 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace QtEntity
 {
-    typedef std::unordered_map<std::string, ClassTypeId> ClassTypeIds;
-    typedef std::unordered_map<ClassTypeId, std::string> ClassNames;
-    
-    inline ClassTypeIds& classTypeIds() 
-    {
-        static ClassTypeIds ids;
-        return ids;
-    }
 
-    inline ClassNames& classNames() 
-    {
-        static ClassNames names;
-        return names;
-    }
-
-    ClassTypeId ComponentRegistry::registerComponent(const QString& classname)
-    {
-        Q_ASSERT(classTypeIds().find(classname.toStdString()) == classTypeIds().end());
-        ClassTypeId s = (ClassTypeId) classTypeIds().size();
-        classTypeIds()[classname.toStdString()] = s;
-        classNames()[s] = classname.toStdString();
-        return s;
-    }
-
-
-    ClassTypeId ComponentRegistry::classTypeId(const QString& classname)
-    {
-        auto i = classTypeIds().find(classname.toStdString());
-        if(i == classTypeIds().end()) return -1;
-        return i->second;
-    }
-
-
-    QString ComponentRegistry::className(ClassTypeId typeId)
-    {
-        auto i = classNames().find(typeId);
-        if(i == classNames().end()) return "<Class not registered>";
-        return QString::fromStdString(i->second);
-    }
-
-
-    EntitySystem::EntitySystem(ClassTypeId cid, EntityManager* em)
+    EntitySystem::EntitySystem(int metatypeid, EntityManager* em)
         : QObject(em)
         , _entityManager(em)
     {
-        em->addSystem(cid, this);
+        em->addSystem(metatypeid, this);
 
         // Set object name, this is important to make the system accessible
         // from QtScripts
-        setObjectName(ComponentRegistry::className(cid));
+        setObjectName(QMetaType::typeName(metatypeid));
     }
 
 
@@ -81,7 +41,7 @@ namespace QtEntity
 
     QString EntitySystem::componentName() const
     { 
-        return ComponentRegistry::className(componentType()); 
+        return QMetaType::typeName(componentType());
     }
 
 }

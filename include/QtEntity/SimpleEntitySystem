@@ -40,7 +40,7 @@ namespace QtEntity
          *                      this entity system uses as components
          */
         SimpleEntitySystem(EntityManager* em)
-            : EntitySystem(T::classTypeId(), em)
+            : EntitySystem(qMetaTypeId<T>(), em)
         {
         }
 
@@ -125,7 +125,7 @@ namespace QtEntity
         /**
          * @return type id of component class
          */
-        virtual ClassTypeId componentType() const { return T::classTypeId(); }
+        virtual int componentType() const { return qMetaTypeId<T>(); }
 
         /**
          * Return begin iterator of component container

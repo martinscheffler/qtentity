@@ -14,7 +14,6 @@ Q_DECLARE_METATYPE(AttackMode)
 
 class Attack : public QtEntity::Component
 {
-    DECLARE_COMPONENT_TYPE(NOEXP)    
 
     friend class AttackSystem;
 
@@ -32,6 +31,7 @@ private:
 
 };
 
+Q_DECLARE_METATYPE(Attack)
 
 class AttackSystem : public QtEntity::PooledEntitySystem<Attack>
 {   

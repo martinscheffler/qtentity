@@ -58,8 +58,6 @@ namespace QtEntityUtils
     {
         friend class PrefabSystem;
 
-        DECLARE_COMPONENT_TYPE(NOEXP)
-
     public:
 
         PrefabInstance();
@@ -132,3 +130,4 @@ namespace QtEntityUtils
     };
 
 }
+Q_DECLARE_METATYPE(QtEntityUtils::PrefabInstance)

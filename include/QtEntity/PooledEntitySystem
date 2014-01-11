@@ -89,7 +89,7 @@ namespace QtEntity
          * @param chunkSize When capacity is depleted allocate place for that many additional components
          */
         PooledEntitySystem(EntityManager* em, size_t capacity = 0, size_t chunkSize = 4)
-            : EntitySystem(T::classTypeId(), em)
+            : EntitySystem(qMetaTypeId<T>(), em)
             , _capacity(capacity)
             , _chunkSize(chunkSize)
             , _size(0)            
@@ -132,7 +132,7 @@ namespace QtEntity
 
         virtual size_t count() const { return _size; }
 
-        virtual ClassTypeId componentType() const { return T::classTypeId(); }
+        virtual int componentType() const { return qMetaTypeId<T>(); }
 
         size_t capacity() const { return _capacity; }
 

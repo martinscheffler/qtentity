@@ -6,7 +6,6 @@
 #include <QtEntityUtils/EntityEditor>
 #include <QDebug>
 
-
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags)
     , _game(new Game())
@@ -18,7 +17,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     _rendererPos->setLayout(new QHBoxLayout());
 
     // connect signals of meta data system to entity list
-    ActorSystem* as = static_cast<ActorSystem*>(_game->entityManager().system(Actor::classTypeId()));
+    ActorSystem* as = static_cast<ActorSystem*>(_game->entityManager().system(qMetaTypeId<Actor>()));
     connect(as, &ActorSystem::entityAdded,   this, &MainWindow::entityAdded);
     connect(as, &ActorSystem::entityRemoved, this, &MainWindow::entityRemoved);
     connect(as, &ActorSystem::entityChanged, this, &MainWindow::entityChanged);

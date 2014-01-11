@@ -14,7 +14,6 @@ class ActorSystem;
 class Actor : public QtEntity::Component
 {
     friend class ActorSystem;    
-    DECLARE_COMPONENT_TYPE(NOEXP)
 
 public:
 
@@ -48,6 +47,7 @@ private:
     QVariantList _shapes;
 };
 
+Q_DECLARE_METATYPE(Actor)
 
 class ActorSystem 
     : public QtEntity::PooledEntitySystem<Actor>
