@@ -1,0 +1,42 @@
+#pragma once
+
+#include <QtEntity/PooledEntitySystem>
+
+
+class ParticleEmitter : public QtEntity::Component
+{
+
+    friend class ParticleEmitterSystem;
+
+public:
+
+    ParticleEmitter();
+
+private:
+    QVariantList _emitters;
+
+};
+
+Q_DECLARE_METATYPE(ParticleEmitter)
+
+class Renderer;
+
+class ParticleEmitterSystem : public QtEntity::PooledEntitySystem<ParticleEmitter>
+{   
+    Q_OBJECT
+
+public:
+    typedef QtEntity::PooledEntitySystem<ParticleEmitter> BaseClass;
+
+    ParticleEmitterSystem(QtEntity::EntityManager* em, Renderer* renderer);
+
+    virtual QVariantMap toVariantMap(QtEntity::EntityId eid, int context = 0) override;
+    virtual QVariantMap editingAttributes(int context = 0) const override;
+    virtual void fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, int context = 0) override;
+
+    void setEmitters(QtEntity::EntityId id, const QVariantList& emitters);
+
+private:
+
+    Renderer* _renderer;
+};

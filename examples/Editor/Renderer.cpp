@@ -23,6 +23,7 @@ public:
 
     QQuickView* _view;
     QQmlComponent* _shapeComponent;
+    QQmlComponent* _emitterComponent;
 };
 
 
@@ -41,10 +42,15 @@ Renderer::Renderer(QWidget* parent)
     layout()->addWidget(container);
     
     _impl->_shapeComponent = new QQmlComponent(_impl->_view->engine(), QUrl("qrc:/assets/shape.qml"), QQmlComponent::PreferSynchronous);
-
     if (_impl->_shapeComponent->isError())
     {
         qWarning() << _impl->_shapeComponent->errors();
+    }
+
+    _impl->_emitterComponent = new QQmlComponent(_impl->_view->engine(), QUrl("qrc:/assets/emitter.qml"), QQmlComponent::PreferSynchronous);
+    if (_impl->_emitterComponent->isError())
+    {
+        qWarning() << _impl->_emitterComponent->errors();
     }
 }
 
@@ -94,3 +100,41 @@ void Renderer::updateShape(Shape* shape)
    QQmlProperty::write(object, "height", s.height());
 }
 
+
+void Renderer::addEmitter(Shape* shape, const QVariantMap& emitterProps)
+{
+    QObject *object = _impl->_emitterComponent->create();
+    Q_ASSERT(object);
+    //qobject_cast<QQuickItem*>(object)->setParentItem(_impl->_view->rootObject());
+    qobject_cast<QQuickItem*>(object)->setParentItem(qobject_cast<QQuickItem*>(shape->_handle));
+
+    QQuickItem* particles = _impl->_view->rootObject()->findChild<QQuickItem*>("particles");
+    QQmlProperty::write(object, "system", QVariant::fromValue(particles));
+    for(auto i = emitterProps.begin(); i != emitterProps.end(); ++i)
+    {
+        if(i.key() == "velocity")
+        {
+
+        }
+        else
+        {
+            QQmlProperty::write(object, i.key(), i.value());
+        }
+    }
+
+}
+
+
+// clear particle emitters attached to shape
+void Renderer::clearEmitters(Shape* shape)
+{
+    QQuickItem* shapeitem = qobject_cast<QQuickItem*>(shape->_handle);
+    auto children = shapeitem->childItems();
+    foreach(QQuickItem* child, children)
+    {
+        if(QString(child->metaObject()->className()) == "QQuickParticleEmitter")
+        {
+            delete child;
+        }
+    }
+}

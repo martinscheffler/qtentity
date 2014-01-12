@@ -5,5 +5,6 @@
         <file>shape.qml</file>
         <file>GalaxyUno.jpg</file>
         <file>star.png</file>
+        <file>emitter.qml</file>
     </qresource>
 </RCC>
