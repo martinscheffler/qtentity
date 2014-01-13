@@ -52,11 +52,14 @@ namespace QtEntityUtils
          * @param id entity id of entity to fetch
          * @param components Store component VariantMaps to this map
          * @param attributes Store component editing attributes to this map
+         * @param availableComponents will get filled with the names of all available components
+         *        excluding the ones already assigned to the entity
          */
         static void fetchEntityData(const QtEntity::EntityManager& em,
                                     QtEntity::EntityId id,
                                     QVariantMap& components,
-                                    QVariantMap& attributes);
+                                    QVariantMap& attributes,
+                                    QStringList& availableComponents);
 
         /**
          * Applies component variant maps to components of entity with given id
@@ -83,7 +86,8 @@ namespace QtEntityUtils
          */
         void displayEntity(QtEntity::EntityId id,
                            const QVariantMap& data,
-                           const QVariantMap& attributes);
+                           const QVariantMap& attributes,
+                           const QStringList& availableComponents);
 
         /**
          * Remove currently shown component data

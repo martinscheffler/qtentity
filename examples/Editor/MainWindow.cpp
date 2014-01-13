@@ -29,8 +29,10 @@ MainWindow::MainWindow()
     ////////////////// entity editor ///////////////////////////
     QtEntityUtils::EntityEditor* editor = new QtEntityUtils::EntityEditor();
     connect(this, &MainWindow::selectedEntityChanged, editor, &QtEntityUtils::EntityEditor::displayEntity);
+    connect(this, &MainWindow::selectedEntityChanged, this, &MainWindow::entityChanged);
     connect(editor, &QtEntityUtils::EntityEditor::entityDataChanged, this, &MainWindow::changeEntityData);
-    centralWidget()->layout()->addWidget(editor);
+    _editorPos->setLayout(new QHBoxLayout);
+    _editorPos->layout()->addWidget(editor);
 
     ////////////////// entity list ///////////////////////////
     // connect signals of meta data system to entity list
@@ -45,6 +47,10 @@ MainWindow::MainWindow()
     connect(_game->prefabSystem(), &QtEntityUtils::PrefabSystem::prefabAdded, this, &MainWindow::prefabAdded);
     connect(_prefabs, &QListWidget::itemClicked, this, &MainWindow::prefabSelectionChanged);
     connect(_addInstance, &QPushButton::clicked, this, &MainWindow::addPrefabInstance);
+
+    ////////////////// component buttons ///////////////////////////
+    connect(_addComponentButton, &QPushButton::clicked, this, &MainWindow::addComponentButtonClicked);
+    connect(_removeComponentButton, &QPushButton::clicked, this, &MainWindow::removeComponentButtonClicked);
     adjustSize();
     setFocusPolicy(Qt::StrongFocus);
 
@@ -86,8 +92,33 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     return false;
 }
 
+
 MainWindow::~MainWindow()
 {
+}
+
+
+void MainWindow::addComponentButtonClicked()
+{
+    QMenu menu(this);
+    foreach(QString i, _availableComponents)
+    {
+        menu.addAction(i);
+    }
+
+    //QAction* action = menu.addAction(QString("BLABLA"));
+    //    connect(action, &QAction::triggered, [this, prototype, prop]() {
+    //        this->addListItem(prototype, prop);
+    //    });
+
+    menu.exec(QCursor::pos());
+
+}
+
+
+void MainWindow::removeComponentButtonClicked()
+{
+
 }
 
 
@@ -136,35 +167,42 @@ void MainWindow::entityRemoved(QtEntity::EntityId id)
 }
 
 
+void MainWindow::entityChanged(QtEntity::EntityId id, const QVariantMap& data,
+                   const QVariantMap& attributes, const QStringList& availableComponents)
+{
+    Q_UNUSED(id)
+    Q_UNUSED(data)
+    Q_UNUSED(attributes)
+    _availableComponents = availableComponents;
+}
+
+
 void MainWindow::entitySelectionChanged()
 {
     auto items = _entities->selectedItems();
     if(items.empty())
     {
-        QVariantMap empty;
-        emit selectedEntityChanged(0, empty, empty);
+        emit selectedEntityChanged(0, QVariantMap(), QVariantMap(), QStringList());
     }
     else
     {
         QtEntity::EntityId selected = items.front()->data(Qt::UserRole).toUInt();
         QVariantMap props, attributes;
-        QtEntityUtils::EntityEditor::fetchEntityData(_game->entityManager(), selected, props, attributes);
-        emit selectedEntityChanged(selected, props, attributes);
+        QStringList availableComponents;
+        QtEntityUtils::EntityEditor::fetchEntityData(_game->entityManager(), selected, props, attributes, availableComponents);
+        emit selectedEntityChanged(selected, props, attributes, availableComponents);
     }
 }
 
 
 void MainWindow::prefabSelectionChanged(QListWidgetItem * item)
 {
-
     _addInstance->setEnabled(true);
 
     QString selected = item->text();
     auto prefab = _game->prefabSystem()->prefab(selected);
     QVariantMap attributes;
-    emit selectedEntityChanged(0, prefab->components(), attributes);
-
-
+    emit selectedEntityChanged(0, prefab->components(), QVariantMap(), QStringList());
 }
 
 

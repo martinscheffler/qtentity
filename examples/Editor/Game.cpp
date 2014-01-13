@@ -59,7 +59,7 @@ void Game::init()
 
     QVariantMap m;
     m["Shape"] = shape;
-    m["Attack"] = attack;
+    //m["Attack"] = attack;
 
     QStringList l;
     l.push_back("position");

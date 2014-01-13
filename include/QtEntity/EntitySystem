@@ -97,7 +97,7 @@ namespace QtEntity
         virtual bool destroyComponent(EntityId id) = 0;
 
         /**
-         * @return Qt metatype of component class
+         * @return Qt metatype of component class.
          */
         virtual int componentType() const = 0;
 

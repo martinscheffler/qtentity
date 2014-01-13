@@ -86,7 +86,7 @@ void AttackSystem::tick(int frameNumber, int totalTime, float delta)
     Q_UNUSED(frameNumber)
     Q_UNUSED(totalTime)
 
-    ShapeSystem* shapesys = static_cast<ShapeSystem*>(entityManager()->system(qMetaTypeId<Shape>()));
+    ShapeSystem* shapesys = entityManager()->system<ShapeSystem>();
 
     QVector2D targetPos = shapesys->position(_target);
 

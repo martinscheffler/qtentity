@@ -98,7 +98,11 @@ namespace QtEntityUtils
         _editor->setContextMenuPolicy(Qt::CustomContextMenu);
         connect(_editor, &QWidget::customContextMenuRequested, this, &EntityEditor::showContextMenu);
 
-        setLayout(new QHBoxLayout());
+        QHBoxLayout* l = new QHBoxLayout();
+        l->setMargin(0);
+        l->setSpacing(0);
+        l->setContentsMargins(0,0,0,0);
+        setLayout(l);
         layout()->addWidget(_editor);
 
         connect(_variantManager, &VariantManager::valueChanged, this, &EntityEditor::propertyValueChanged);
@@ -278,7 +282,10 @@ namespace QtEntityUtils
     }
 
 
-    void EntityEditor::displayEntity(QtEntity::EntityId id, const QVariantMap& data, const QVariantMap& attributes)
+    void EntityEditor::displayEntity(QtEntity::EntityId id,
+                                     const QVariantMap& data,
+                                     const QVariantMap& attributes,
+                                     const QStringList& availableComponents)
     {
         // changing property editors triggers signals which cause the component to be updated in the game.
         // ignore these signals while initially creating the property editors
@@ -307,14 +314,24 @@ namespace QtEntityUtils
     }
 
 
-    void EntityEditor::fetchEntityData(const QtEntity::EntityManager& em, QtEntity::EntityId eid, QVariantMap& components, QVariantMap& attributes)
+    void EntityEditor::fetchEntityData(const QtEntity::EntityManager& em,
+                                       QtEntity::EntityId eid,
+                                       QVariantMap& components,
+                                       QVariantMap& attributes,
+                                       QStringList& availableComponents)
     {
         for(auto i = em.begin(); i != em.end(); ++i)
         {
             QtEntity::EntitySystem* es = i->second;
-            if(!es->component(eid)) continue;
-            components[es->componentName()] = es->toVariantMap(eid);
-            attributes[es->componentName()] = es->editingAttributes();
+            if(!es->component(eid))
+            {
+                availableComponents.push_back(es->componentName());
+            }
+            else
+            {
+                components[es->componentName()] = es->toVariantMap(eid);
+                attributes[es->componentName()] = es->editingAttributes();
+            }
         }
     }
 
