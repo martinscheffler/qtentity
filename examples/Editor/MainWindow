@@ -35,7 +35,10 @@ protected slots:
     void addPrefabInstance();
     void addComponentButtonClicked();
     void removeComponentButtonClicked();
+    void addComponentToCurrent(const QString& component);
+
     void stepGame();
+
 
 
 signals:
@@ -44,8 +47,8 @@ signals:
                                const QVariantMap& attributes, const QStringList& availableComponents);
 
 private:
-
-    QThread _gameThread;
+    void updateEditorWithCurrent();
+    QtEntity::EntityId _selectedEntity;
     Game* _game;
     Renderer* _renderer;
 
