@@ -32,7 +32,7 @@ protected slots:
     void addActor();
 signals:
 
-    void selectedEntityChanged(QtEntity::EntityId id, const QVariantMap& data, const QVariantMap& attributes);
+    void selectedEntityChanged(QtEntity::EntityId id, const QVariantMap& data, const QVariantMap& attributes, const QStringList& availableComponents);
 
 private:
 
