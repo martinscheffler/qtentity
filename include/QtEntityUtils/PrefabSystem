@@ -128,6 +128,6 @@ namespace QtEntityUtils
         typedef QMap<QString, QSharedPointer<Prefab> > Prefabs;
         Prefabs _prefabs;
     };
-
 }
+
 Q_DECLARE_METATYPE(QtEntityUtils::PrefabInstance)

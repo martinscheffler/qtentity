@@ -132,7 +132,10 @@ namespace QtEntity
 
         virtual size_t count() const { return _size; }
 
-        virtual int componentType() const { return qMetaTypeId<T>(); }
+        virtual int componentType() const { return staticComponentType(); }
+
+        // static implementation for template magic
+        static int staticComponentType() { return qMetaTypeId<T>(); }
 
         size_t capacity() const { return _capacity; }
 

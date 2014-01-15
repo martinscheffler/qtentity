@@ -26,21 +26,33 @@ protected slots:
     void entityAdded(QtEntity::EntityId id, QString name);
     void entityNameChanged(QtEntity::EntityId id, QString name);
     void entityRemoved(QtEntity::EntityId id);
+    void entityChanged(QtEntity::EntityId id, const QVariantMap& data,
+                       const QVariantMap& attributes, const QStringList& availableComponents);
     void entitySelectionChanged();
     void prefabSelectionChanged(QListWidgetItem * item);
     void changeEntityData(QtEntity::EntityId id, const QVariantMap& values);
     void prefabAdded(const QString&);
     void addPrefabInstance();
+    void addComponentButtonClicked();
+    void removeComponentButtonClicked();
+    void addComponentToCurrent(const QString& component);
+
     void stepGame();
+
+
 
 signals:
 
-    void selectedEntityChanged(QtEntity::EntityId id, const QVariantMap& data, const QVariantMap& attributes);
+    void selectedEntityChanged(QtEntity::EntityId id, const QVariantMap& data,
+                               const QVariantMap& attributes, const QStringList& availableComponents);
 
 private:
-
-    QThread _gameThread;
+    void updateEditorWithCurrent();
+    QtEntity::EntityId _selectedEntity;
     Game* _game;
     Renderer* _renderer;
+
+    // components available for currently selected entity
+    QStringList _availableComponents;
 };
 

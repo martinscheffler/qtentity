@@ -125,7 +125,10 @@ namespace QtEntity
         /**
          * @return type id of component class
          */
-        virtual int componentType() const { return qMetaTypeId<T>(); }
+        virtual int componentType() const { return staticComponentType(); }
+
+        // static implementation for template magic
+        static int staticComponentType() { return qMetaTypeId<T>(); }
 
         /**
          * Return begin iterator of component container
