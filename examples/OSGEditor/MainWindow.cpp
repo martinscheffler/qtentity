@@ -12,7 +12,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     , _gameThread(new QThread(this))
 {
     setupUi(this);
-    QtEntity::registerMetaTypes();
 
     _rendererPos->setLayout(new QHBoxLayout());
 

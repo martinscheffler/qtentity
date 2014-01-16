@@ -56,13 +56,8 @@ void Game::init()
     shape["subTex"] = QRect(590,148,100,55);
     shape["zIndex"] = 50;
 
-    QVariantMap attack;
-    attack["speed"] = 50.0f;
-    attack["attackMode"] = QVariant::fromValue(ATTACK_CIRCLE);
-
     QVariantMap m;
     m["Shape"] = shape;
-    //m["Attack"] = attack;
 
     QStringList l;
     l.push_back("position");
@@ -117,8 +112,6 @@ void Game::createPlayer()
     m["zIndex"] = 10;
     _entityManager.createComponent(_playerid, shape, m);
 
-    ParticleEmitter* emitter;
-    _entityManager.createComponent(_playerid, emitter);
     _attacksys->setTarget(_playerid);
 
 }

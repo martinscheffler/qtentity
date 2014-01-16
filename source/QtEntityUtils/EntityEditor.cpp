@@ -96,6 +96,7 @@ namespace QtEntityUtils
         _editor->setPropertiesWithoutValueMarked(false);
         _editor->setRootIsDecorated(false);
         _editor->setContextMenuPolicy(Qt::CustomContextMenu);
+        _editor->setResizeMode(QtTreePropertyBrowser::Interactive);
         connect(_editor, &QWidget::customContextMenuRequested, this, &EntityEditor::showContextMenu);
 
         QHBoxLayout* l = new QHBoxLayout();

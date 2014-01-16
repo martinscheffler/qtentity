@@ -71,6 +71,11 @@ namespace QtEntityUtils
                                     QtEntity::EntityId eid,
                                     const QVariantMap& values);
 
+        /**
+         * Give access to the QtPropertyBrowser instance for further tweaking
+         */
+        QtTreePropertyBrowser* propertyBrowser() const { return _editor; }
+
     public slots:
 
         /**

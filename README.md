@@ -12,6 +12,8 @@ the JavaScript language. Serializing components for disk storage or networking
 is also supported.
 QtEntity does not depend on a specific rendering system or game engine.
 
+[![Editor Demo](doc/youtubelink_editordemo.png)](http://www.youtube.com/watch?v=KS12jaT2kKw)
+
 ![Property List](doc/osgdemo.png "OSG Demo")
 
 Component Entity System Basics

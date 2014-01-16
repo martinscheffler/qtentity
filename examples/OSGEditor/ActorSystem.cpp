@@ -152,10 +152,10 @@ QVariantMap ActorSystem::editingAttributes(int) const
 }
 
 
-QtEntity::Component* ActorSystem::createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals)
+void* ActorSystem::createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals)
 {
-    QtEntity::Component* obj = BaseClass::createComponent(id, propertyVals);
-    if(obj != NULL)
+    void* obj = BaseClass::createComponent(id, propertyVals);
+    if(obj != nullptr)
     {
         Actor* entry = static_cast<Actor*>(obj);
         entry->_id = id;
