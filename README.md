@@ -62,12 +62,11 @@ component properties - more on that later.
 
 Components
 -------------
-All components in QtEntity derive from class QtEntity::Component.
-This is simply a marker interface with no functionality.
-Subclasses of QtEntity::Component have to be added to the Qt metatype system
+There is no component class in QtEntity. Instead all classes can be used as components.
+Classes used as components have to be added to the Qt metatype system
 with the Q_DECLARE_METATYPE macro.
 
-    class ExampleComponent : public QtEntity::Component
+    class ExampleComponent
     {
 
     public:
