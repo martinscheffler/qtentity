@@ -12,16 +12,24 @@ public:
 
     Renderer(QWidget* parent);
 
-    // create a shape with given texture and position, returns an identifier
+    // create a shape with given texture and position
     void addShape(Shape* shape);
 
-    // destroy shape previously created with createShape
+    // destroy shape previously created with addShape
     void removeShape(Shape* shape);
 
+    // apply shape parameters to shape representation
     void updateShape(Shape* shape);
+
+    // clear particle emitters attached to shape
+    void clearEmitters(Shape* shape);
+
+    // attach a particle emitter to shape
+    void addEmitter(Shape* shape, const QVariantMap& emitterProps);
 
     // install event handler receiving events from view
     void installRendererEventFilter(QObject*);
+
 private:
     RendererImpl* _impl;
 };

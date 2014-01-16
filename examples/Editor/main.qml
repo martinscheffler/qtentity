@@ -21,6 +21,7 @@ Item {
     }
     ParticleSystem {
         id: particles
+        objectName : "particles"
         anchors.fill: parent
         ImageParticle {
             source: "qrc:///assets/star.png"
@@ -28,9 +29,9 @@ Item {
             colorVariation: 0.6
         }
 
-        Emitter {
+        /*Emitter {
             id: burstEmitter
-            x: 100
+            x: 200
             y: 100
             emitRate: 1000
             lifeSpan: 2000
@@ -43,13 +44,14 @@ Item {
             id: pulseEmitter
             x: 100
             y: 120
-            emitRate: 1000
+            emitRate: 100
             lifeSpan: 2000
+            lifeSpanVariation: 100
             enabled: true
-            velocity: AngleDirection{magnitude: 64; angleVariation: 360}
+            velocity: AngleDirection{angle:90;magnitude: 64; angleVariation: 40}
             size: 24
             sizeVariation: 8
-        }
+        }*/
 
     }
 }

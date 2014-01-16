@@ -1,6 +1,7 @@
 #include "Game"
 
 #include "AttackSystem"
+#include "ParticleEmitterSystem"
 #include "Renderer"
 #include "ShapeSystem"
 #include <QCoreApplication>
@@ -35,6 +36,7 @@ Game::Game(Renderer* renderer)
     , _renderer(renderer)
     , _isRunning(false)    
     , _attacksys(new AttackSystem(&_entityManager))
+    , _particleSystem(new ParticleEmitterSystem(&_entityManager, renderer))
     , _prefabsys(new QtEntityUtils::PrefabSystem(&_entityManager))
     , _shapesys(new ShapeSystem(&_entityManager, renderer))
     , _playerid(0)
@@ -46,6 +48,7 @@ Game::Game(Renderer* renderer)
 void Game::init()
 {
 
+    /** Create Enemy Prefab */
     QVariantMap shape;
     shape["name"] = QString("Enemy");
     shape["position"] = QPoint(GAMEWIDTH / 2, 100);
@@ -113,6 +116,9 @@ void Game::createPlayer()
     m["subTex"] = QRect(374,360,PLAYERWIDTH,PLAYERHEIGHT);
     m["zIndex"] = 10;
     _entityManager.createComponent(_playerid, shape, m);
+
+    ParticleEmitter* emitter;
+    _entityManager.createComponent(_playerid, emitter);
     _attacksys->setTarget(_playerid);
 
 }

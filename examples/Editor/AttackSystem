@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QtEntity/PooledEntitySystem>
-#include <QtEntityUtils/VariantManager>
 
 enum AttackMode
 {

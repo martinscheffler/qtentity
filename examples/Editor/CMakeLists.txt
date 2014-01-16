@@ -16,6 +16,7 @@ set(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/AttackSystem
   ${HEADER_PATH}/Game
   ${HEADER_PATH}/MainWindow
+  ${HEADER_PATH}/ParticleEmitterSystem
   ${HEADER_PATH}/Renderer
   ${HEADER_PATH}/ShapeSystem
 )
@@ -25,8 +26,10 @@ set(LIB_SOURCES
   ${SOURCE_PATH}/Game.cpp
   ${SOURCE_PATH}/MainWindow.cpp
   ${SOURCE_PATH}/main.cpp
+  ${SOURCE_PATH}/ParticleEmitterSystem.cpp
   ${SOURCE_PATH}/Renderer.cpp
   ${SOURCE_PATH}/ShapeSystem.cpp
+  emitter.qml
   main.qml
   shape.qml
 )
@@ -35,6 +38,7 @@ set(MOC_INPUT
    ${HEADER_PATH}/AttackSystem
    ${HEADER_PATH}/Game
    ${HEADER_PATH}/MainWindow
+   ${HEADER_PATH}/ParticleEmitterSystem
    ${HEADER_PATH}/ShapeSystem
 )
 

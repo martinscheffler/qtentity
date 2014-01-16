@@ -30,7 +30,7 @@ namespace QtEntity
 
     /**
      * Base class for all QtEntity components.
-     * Simply holds a type id for identifying the type of the component.
+     * Only a marker interface.
      */
     class Component
     {
