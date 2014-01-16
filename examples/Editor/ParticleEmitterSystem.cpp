@@ -54,13 +54,10 @@ QVariantMap ParticleEmitterSystem::editingAttributes(int) const
     emitter["lifeSpan"] = 500.0f;
     emitter["lifeSpanVariation"] = 500.0f;
     emitter["enabled"] = true;
-
-    QVariantMap velocity;
-    velocity["angle"] = 0;
-    velocity["angleVariation"] = 360;
-    velocity["magnitude"] = 64;
-    velocity["magnitudeVariation"] = 0;
-    emitter["velocity"] = velocity;
+    emitter["velocity.angle"] = 0;
+    emitter["velocity.angleVariation"] = 360;
+    emitter["velocity.magnitude"] = 64;
+    emitter["velocity.magnitudeVariation"] = 0;
 
     emitter["size"] = 24;
     emitter["sizeVariation"] = 8;

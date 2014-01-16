@@ -112,7 +112,7 @@ void Renderer::addEmitter(Shape* shape, const QVariantMap& emitterProps)
     QQmlProperty::write(object, "system", QVariant::fromValue(particles));
     for(auto i = emitterProps.begin(); i != emitterProps.end(); ++i)
     {
-        if(i.key() == "velocity")
+        if(false)//i.key() == "velocity")
         {
 
         }
