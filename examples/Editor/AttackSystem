@@ -11,7 +11,7 @@ enum AttackMode
 
 Q_DECLARE_METATYPE(AttackMode)
 
-class Attack : public QtEntity::Component
+class Attack
 {
 
     friend class AttackSystem;

@@ -28,8 +28,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace QtEntity
 {
  
-    // fwd declaration
-    class Component;
 
     /**
      * Abstract iterator interface for implementing forward iterators.
@@ -40,7 +38,7 @@ namespace QtEntity
     public:
         virtual ~VIterator() {}
         virtual VIterator* clone() = 0;            
-        virtual Component* object() = 0;
+        virtual void* object() = 0;
         virtual bool equal(VIterator* other) = 0;
         virtual void increment() = 0;
     };
@@ -58,7 +56,7 @@ namespace QtEntity
         VIteratorImpl(const U& it) :_iter(it) {}
         virtual VIterator* clone() { return new VIteratorImpl<U>(_iter); }
         virtual EntityId id() { return _iter->first; }
-        virtual Component* object() { return _iter->second; }
+        virtual void* object() { return _iter->second; }
         virtual bool equal(VIterator* other) { return _iter == static_cast<VIteratorImpl<U>*>(other)->_iter; }
         virtual void increment() { ++_iter; }
     };
@@ -67,7 +65,7 @@ namespace QtEntity
         * @brief The Iterator class for iterating through all components of an EntitySystem.
         * Uses a VIterator heap object for accessing the concrete underlying iterator.
         */
-    class PIterator : public std::iterator<std::forward_iterator_tag, Component*> 
+    class PIterator : public std::iterator<std::forward_iterator_tag, void*>
     {
     public:
         PIterator(VIterator* vit) : _viter(vit) {}
@@ -75,8 +73,8 @@ namespace QtEntity
         ~PIterator() { delete _viter; }
         PIterator operator=(const PIterator& other) { delete _viter; _viter = other._viter->clone(); return *this;  }
         bool operator!=(const PIterator& other) { return !(_viter->equal(other._viter)); }
-        Component* operator*() { return _viter->object(); }
-        Component* operator->() { return _viter->object(); }
+        void* operator*() { return _viter->object(); }
+        void* operator->() { return _viter->object(); }
         friend bool operator==(const PIterator &lhs, const PIterator& rhs) { return lhs._viter->equal(rhs._viter); }
         PIterator& operator++()
         {

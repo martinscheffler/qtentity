@@ -20,16 +20,16 @@ private slots:
 		QVariantMap m;
 		m["myint"] = 666;
 
-        Component* c = ts->createComponent(1, m);
+        void* c = ts->createComponent(1, m);
 
-        Component* c2 = ts->component(1);
+        void* c2 = ts->component(1);
         QVERIFY(c == c2);
         QVERIFY(ts->component(1) != nullptr);
 
-        Component* c3 = ts->component(2);
+        void* c3 = ts->component(2);
         QVERIFY(c3 == nullptr);
 
-        Testing* tr = dynamic_cast<Testing*>(c);
+        Testing* tr = static_cast<Testing*>(c);
         QVERIFY(tr != nullptr);
         QCOMPARE(tr->myInt(), 666);
 
@@ -39,13 +39,13 @@ private slots:
     {
         EntityManager em;
         TestingSystem* ts = new TestingSystem(&em);
-        Component* c = ts->createComponent(1);
-        Component* c2 = ts->component(1);
+        void* c = ts->createComponent(1);
+        void* c2 = ts->component(1);
         QVERIFY(c == c2);
         QVERIFY(ts->component(1) != nullptr);
         ts->destroyComponent(1);
         QVERIFY(ts->component(1) == nullptr);
-        Component* c3 = ts->component(1);
+        void* c3 = ts->component(1);
         QVERIFY(c3 == nullptr);
     }
 
@@ -98,8 +98,8 @@ private slots:
         TestingSystem* ts = new TestingSystem(&em);
         ts->createComponent(1);
         auto i = ts->pbegin();
-        Component* o = *i;
-        Component* o2 = ts->component(1);
+        void* o = *i;
+        void* o2 = ts->component(1);
         QCOMPARE(o, o2);
 
     }
@@ -118,7 +118,7 @@ private slots:
         auto end = ts->pend();
         for(auto i = ts->pbegin(); i != end; ++i)
         {
-            Component* o = *i;
+            void* o = *i;
             Testing* t = static_cast<Testing*>(o);
             sum += t->myInt();
         }

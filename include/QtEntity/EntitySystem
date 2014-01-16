@@ -28,17 +28,6 @@ namespace QtEntity
     class EntityManager;
 
     /**
-     * Base class for all QtEntity components.
-     * Only a marker interface.
-     */
-    class Component
-    {
-    public:
-        virtual ~Component() {}
-    };
-
-
-    /**
      * Entity system base class.
      * Entity systems are responsible for storing and managing components.
      * Each entity system instance holds components of a specific type.
@@ -74,7 +63,7 @@ namespace QtEntity
          * @param id EntityId of component to fetch
          * @return component or nullptr if it does not exist
          */
-        virtual Component* component(EntityId id) const = 0;
+        virtual void* component(EntityId id) const = 0;
 
         /**
          * @brief createComponent Construct a component from meta type.
@@ -85,7 +74,7 @@ namespace QtEntity
          *                   Format is: { name of QMetaProperty => value to set }
          * @return newly constructed component
          */
-        virtual Component* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) = 0;
+        virtual void* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) = 0;
 
         /**
          * @brief destroyComponent remove component from system and destruct it

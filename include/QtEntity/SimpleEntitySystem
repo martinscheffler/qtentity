@@ -59,7 +59,7 @@ namespace QtEntity
          * @param id EntityId of component to fetch
          * @return component or nullptr if it does not exist
          */
-        virtual Component* component(EntityId id) const override
+        virtual void* component(EntityId id) const override
         {
             auto i = _components.find(id);
             return (i == _components.end()) ? nullptr : i->second;
@@ -67,7 +67,7 @@ namespace QtEntity
 
         bool component(EntityId id, T*& component) const
         {
-            Component* obj = this->component(id);
+            void* obj = this->component(id);
             component = static_cast<T*>(obj);
             return (component != NULL);
         }
@@ -83,7 +83,7 @@ namespace QtEntity
          *                   Format is: { name of QMetaProperty => value to set }
          * @return newly constructed component
          */
-        virtual Component* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) override
+        virtual void* createComponent(EntityId id, const QVariantMap& properties = QVariantMap()) override
         {
             // check if component already exists
             if(component(id) != nullptr)

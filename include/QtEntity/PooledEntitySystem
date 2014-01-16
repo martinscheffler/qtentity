@@ -139,7 +139,7 @@ namespace QtEntity
 
         size_t capacity() const { return _capacity; }
 
-        virtual Component* component(EntityId id) const
+        virtual void* component(EntityId id) const
         {
             auto i = _indices.find(id);
             if(i == _indices.end()) return nullptr;
@@ -151,12 +151,12 @@ namespace QtEntity
 
         bool component(EntityId id, T*& component) const
         {
-            Component* obj = this->component(id);
+            void* obj = this->component(id);
             component = static_cast<T*>(obj);
             return (component != NULL);
         }
 
-        virtual Component* createComponent(EntityId id, const QVariantMap& properties = QVariantMap())
+        virtual void* createComponent(EntityId id, const QVariantMap& properties = QVariantMap())
         {
             if(component(id) != nullptr)
             {

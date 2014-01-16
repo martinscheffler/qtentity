@@ -33,7 +33,7 @@ public:
     Q_INVOKABLE TestObj2() {}
 };
 
-class Testing : public QtEntity::Component
+class Testing
 {
 public:
 

@@ -26,7 +26,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace QtEntity
 {
     class EntitySystem;
-    class Component;
 
     /**
      * @brief The EntityManager class holds a number of entity systems in a data structure.
@@ -115,7 +114,7 @@ namespace QtEntity
         /**
          * Fetch component by component metatype id
          **/
-        Component* component(EntityId id, int metatypeid) const;
+        void* component(EntityId id, int metatypeid) const;
 
         /**
          * Templated method to get an existing component.
@@ -146,7 +145,7 @@ namespace QtEntity
          * @param cid Class type id of entity system
          * @return nullptr if component could not be created, else the newly created component
          */
-        Component* createComponent(EntityId id, int metatypeid, const QVariantMap& properties = QVariantMap());
+        void* createComponent(EntityId id, int metatypeid, const QVariantMap& properties = QVariantMap());
 
         /**
          * Templated method to create a new component.
@@ -225,7 +224,7 @@ namespace QtEntity
     template <typename T>
     bool EntityManager::component(EntityId id, T*& comp) const
     {
-        Component* c = component(id, qMetaTypeId<T>());
+        void* c = component(id, qMetaTypeId<T>());
         if(c == nullptr)
         {
             comp = nullptr;
@@ -246,7 +245,7 @@ namespace QtEntity
     template <typename T>
     bool EntityManager::createComponent(EntityId id, T*& comp, const QVariantMap& properties)
     {
-        Component* c = createComponent(id, qMetaTypeId<T>(), properties);
+        void* c = createComponent(id, qMetaTypeId<T>(), properties);
         if(c == nullptr)
         {
             comp = nullptr;

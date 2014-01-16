@@ -8,7 +8,7 @@
 
 class ShapeSystem;
 
-class Shape : public QtEntity::Component
+class Shape
 {
 
     friend class ShapeSystem;
@@ -39,7 +39,7 @@ public:
     typedef QtEntity::PooledEntitySystem<Shape> BaseClass;
     ShapeSystem(QtEntity::EntityManager* em, Renderer* renderer);
 
-    virtual QtEntity::Component* createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;
+    virtual void* createComponent(QtEntity::EntityId id, const QVariantMap& propertyVals = QVariantMap()) override;
     virtual bool destroyComponent(QtEntity::EntityId id);
     virtual QVariantMap toVariantMap(QtEntity::EntityId eid, int context = 0) override;
     virtual QVariantMap editingAttributes(int context = 0) const override;

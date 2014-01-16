@@ -16,7 +16,7 @@ ShapeSystem::ShapeSystem(QtEntity::EntityManager* em, Renderer* renderer)
 }
 
 
-QtEntity::Component* ShapeSystem::createComponent(QtEntity::EntityId id, const QVariantMap& properties)
+void* ShapeSystem::createComponent(QtEntity::EntityId id, const QVariantMap& properties)
 {
     Shape* shape = static_cast<Shape*>(PooledEntitySystem::createComponent(id, properties));
     Q_ASSERT(_renderer);

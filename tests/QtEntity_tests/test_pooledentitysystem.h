@@ -75,7 +75,7 @@ private:
             auto end = es.end();
             for(auto j = es.begin(); j != end; ++j)
             {
-                Component* c = j->second;
+                void* c = j->second;
                 Testing* t = static_cast<Testing*>(c);
                 t->setMyInt(t->myInt() + 1);
             }
@@ -111,7 +111,7 @@ private:
             auto end = es.pend();
             for(auto j = es.pbegin(); j != end; ++j)
             {
-                Component* c = *j;
+                void* c = *j;
                 Testing* t = static_cast<Testing*>(c);
                 t->setMyInt(t->myInt() + 1);
             }
@@ -129,13 +129,13 @@ private slots:
 
 		QVariantMap m;
 		m["myint"] = 666;
-        Component* c = ts->createComponent(1, m);
+        void* c = ts->createComponent(1, m);
 
-        Component* c2 = ts->component(1);
+        void* c2 = ts->component(1);
         QVERIFY(c == c2);
         QVERIFY(ts->component(1) != nullptr);
 
-        Component* c3 = ts->component(2);
+        void* c3 = ts->component(2);
         QVERIFY(c3 == nullptr);
 
         Testing* tr = static_cast<Testing*>(c);

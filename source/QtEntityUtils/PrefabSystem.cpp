@@ -221,7 +221,7 @@ namespace QtEntityUtils
     }
 
 
-    QtEntity::Component* PrefabSystem::createComponent(QtEntity::EntityId id, const QVariantMap& properties)
+    void* PrefabSystem::createComponent(QtEntity::EntityId id, const QVariantMap& properties)
     {
         QString path = properties["path"].toString();
         Prefabs::const_iterator i = _prefabs.find(path);
@@ -230,7 +230,7 @@ namespace QtEntityUtils
             return nullptr;
         }
         
-        QtEntity::Component* o = SimpleEntitySystem::createComponent(id, properties);
+        void* o = SimpleEntitySystem::createComponent(id, properties);
         static_cast<PrefabInstance*>(o)->_prefab = *i;
         createPrefabComponents(id, i.value().data());        
         return o;

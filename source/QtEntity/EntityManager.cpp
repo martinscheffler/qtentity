@@ -90,14 +90,14 @@ namespace QtEntity
     }
 
 
-    Component* EntityManager::component(EntityId id, int tid) const
+    void* EntityManager::component(EntityId id, int tid) const
     {
         EntitySystem* s = this->system(tid);
         return (s == nullptr) ? nullptr : s->component(id);
     }
 
 
-    Component* EntityManager::createComponent(EntityId id, int cid, const QVariantMap& properties)
+    void* EntityManager::createComponent(EntityId id, int cid, const QVariantMap& properties)
     {
         EntitySystem* s = this->system(cid);
 

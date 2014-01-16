@@ -54,7 +54,7 @@ namespace QtEntityUtils
 
     class PrefabSystem;
 
-    class QTENTITYUTILS_EXPORT PrefabInstance : public QtEntity::Component
+    class QTENTITYUTILS_EXPORT PrefabInstance
     {
         friend class PrefabSystem;
 
@@ -113,7 +113,7 @@ namespace QtEntityUtils
          */
         const Prefab* prefab(const QString& name) const;
 
-        virtual QtEntity::Component* createComponent(QtEntity::EntityId id, const QVariantMap& properties = QVariantMap()) override;
+        virtual void* createComponent(QtEntity::EntityId id, const QVariantMap& properties = QVariantMap()) override;
 
     signals:
 
