@@ -1,20 +1,20 @@
 QtEntity
 ========
 
-QtEntity is an [entity component system](http://en.wikipedia.org/wiki/Entity_component_system).
+QtEntity is a [component entity system](http://en.wikipedia.org/wiki/Entity_component_system).
 It helps in the creation of games, simulation systems or other applications
 that need to dynamically compose functionality.
 Components of a type are stored in consecutive memory blocks, allowing fast iteration.
 QtEntity uses the [Qt](http://www.qt-project.org) framework. It includes widgets
-and examples that can be used to quickly build tools and editors for handling
-components. Through the QtScript API it is possible to acces components from
+and examples that can be used to quickly build tools and editors for displaying and modifying components.
+Through the QtScript API it is possible to access components from
 the JavaScript language. Serializing components for disk storage or networking
 is also supported.
 QtEntity does not depend on a specific rendering system or game engine.
 
 ![Property List](doc/osgdemo.png "OSG Demo")
 
-Entity Component System Basics
+Component Entity System Basics
 -------------
 From  [http://entity-systems.wikidot.com/]
 	Entity Systems (ES) are a technique/architecture for building complex extensible projects 
@@ -62,14 +62,13 @@ component properties - more on that later.
 
 Components
 -------------
-All components in QtEntity derive from the abstract interface QtEntity::Component.
-That interface defines a single method returning a type id for the component class.
-There is a pair of macros which may be used to create a type id for the component and to implement
-the necessary methods. In the header:
+All components in QtEntity derive from class QtEntity::Component.
+This is simply a marker interface with no functionality.
+Subclasses of QtEntity::Component have to be added to the Qt metatype system
+with the Q_DECLARE_METATYPE macro.
 
     class ExampleComponent : public QtEntity::Component
     {
-        DECLARE_COMPONENT_TYPE(NOEXP)
 
     public:
 
@@ -80,9 +79,7 @@ the necessary methods. In the header:
         double _myValue;
     };
 
-And in the cpp:
-
-    IMPLEMENT_COMPONENT_TYPE(ExampleComponent)
+    Q_DECLARE_METATYPE(ExampleComponent)
 
 Entity Systems
 -------------
