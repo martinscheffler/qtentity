@@ -11,7 +11,7 @@ Through the QtScript API it is possible to access components from
 the JavaScript language. Serializing components for disk storage or networking
 is also supported.
 QtEntity does not depend on a specific rendering system or game engine.
-
+Tested on Visual Studio 2012, SUSE Linux 12.3, Qt 5.1, 5.2
 [![Editor Demo](doc/youtubelink_editordemo.png)](http://www.youtube.com/watch?v=KS12jaT2kKw)
 
 ![Property List](doc/osgdemo.png "OSG Demo")
