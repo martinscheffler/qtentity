@@ -62,7 +62,6 @@ public:
     TestingSystem(QtEntity::EntityManager* em)
         : SimpleEntitySystem<Testing>(em)
     {
-        QtEntity::registerMetaTypes();
     }
 
     virtual QVariantMap toVariantMap(QtEntity::EntityId eid,

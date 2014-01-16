@@ -14,8 +14,6 @@ MainWindow::MainWindow()
 {
     setupUi(this);
 
-    QtEntity::registerMetaTypes();
-
     ////////////////// game ///////////////////////////
     _rendererPos->setLayout(new QHBoxLayout());
     _renderer = new Renderer(_rendererPos);

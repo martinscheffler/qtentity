@@ -35,14 +35,4 @@ namespace QtEntity
 // have to do this in global namespace
 Q_DECLARE_METATYPE(QtEntity::EntityId)
 
-namespace QtEntity
-{
-    /**
-     * @brief This has to be called once in an application to make data types
-     * available for signal/slot connections
-     */
-    inline void registerMetaTypes()
-    {
-        qRegisterMetaType<QtEntity::EntityId>("QtEntity::EntityId");
-    }
-}
+

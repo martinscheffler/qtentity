@@ -27,6 +27,7 @@ public:
 
     ScriptingTest()
     {
+        qRegisterMetaType<QtEntity::EntityId>("QtEntity::EntityId");
         _ts = new TestingSystem(&_em);
         QScriptValue objectValue = _engine.newQObject(&_em);
         _engine.globalObject().setProperty("EM", objectValue);
