@@ -64,12 +64,12 @@ namespace QtEntityUtils
         }
         if (manager->propertyType(property) == VariantManager::listId())
         {
-            ListEdit *editor = new ListEdit(parent);
+            ListEdit *editor = new ListEdit(dynamic_cast<QtVariantProperty*>(property), parent);
 
             _createdListEditors[property].append(editor);
             _listEditorToProperty[editor] = property;
 
-            connect(editor, &ListEdit::listChanged, this, &VariantFactory::slotSetListValue);
+            connect(editor, &ListEdit::addButtonClicked, this, &VariantFactory::listAddButtonClicked);
             connect(editor, &ListEdit::destroyed, this, &VariantFactory::slotEditorDestroyed);
             return editor;
         }

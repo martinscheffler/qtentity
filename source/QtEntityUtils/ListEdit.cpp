@@ -17,25 +17,46 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtEntityUtils/ListEdit>
 #include <QPushButton>
 #include <QHBoxLayout>
+#include <QtWidgets/QStyle>
+#include <QtWidgets/QStyleOptionButton>
+#include <QApplication>
+#include <QPainter>
+#include <QMessageBox>
 
 namespace QtEntityUtils
 {
      
-    ListEdit::ListEdit(QWidget *parent)
+    ListEdit::ListEdit(QtVariantProperty* prop, QWidget *parent)
         : QWidget(parent)
+        , m_property(prop)
     {
-        /*QHBoxLayout* layout = new QHBoxLayout(this);
+        QHBoxLayout* layout = new QHBoxLayout(this);
         layout->setMargin(0);
         layout->setSpacing(0);
-        QPushButton* b1 = new QPushButton(this);
-        b1->setText("+");
-        b1->setMaximumWidth(20);
-        layout->addWidget(b1);
-        QPushButton* b2 = new QPushButton(this);
-        b2->setText("-");
-        b2->setMaximumWidth(20);
-        layout->addWidget(b2);
-        layout->addStretch();*/
+        QPushButton* b = new QPushButton();
+        b->setFlat(true);
+        b->setIcon(drawListButton("+"));
+        layout->addWidget(b);
+        layout->addStretch();
+        connect(b, &QPushButton::clicked, this, &ListEdit::clicked);
+    }
+
+    void ListEdit::clicked()
+    {
+        emit addButtonClicked(m_property);
+    }
+
+
+    QIcon drawListButton(const QString& text)
+    {
+        QPixmap pixmap = QPixmap(18, 18);
+        pixmap.fill(Qt::red);
+        QPainter painter(&pixmap);
+        QPushButton b;
+        b.setText(text);
+        b.resize(18, 18);
+        b.render(&painter);
+        return QIcon(pixmap);
     }
 
 }

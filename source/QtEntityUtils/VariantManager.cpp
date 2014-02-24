@@ -15,6 +15,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include <QtEntityUtils/VariantManager>
+#include <QtEntityUtils/ListEdit>
 #include <QtEntity/DataTypes>
 #include <QTextStream>
 #include <QMetaProperty>
@@ -183,6 +184,17 @@ namespace QtEntityUtils
         {
             return QtVariantPropertyManager::valueText(property);
         }
+    }
+
+
+    QIcon VariantManager::valueIcon(const QtProperty *property) const
+    {
+        const QtVariantProperty* pr = static_cast<const QtVariantProperty*>(property);
+        if(pr->valueType() == listId())
+        {
+            return drawListButton("+");
+        }        
+        return QtVariantPropertyManager::valueIcon(property);
     }
 
 

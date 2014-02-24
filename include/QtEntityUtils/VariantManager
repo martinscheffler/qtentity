@@ -65,6 +65,7 @@ namespace QtEntityUtils
     protected:
 
         virtual QString valueText(const QtProperty *property) const;
+        virtual QIcon valueIcon(const QtProperty *property) const;
         virtual void initializeProperty(QtProperty *property);
         virtual void uninitializeProperty(QtProperty *property);
 

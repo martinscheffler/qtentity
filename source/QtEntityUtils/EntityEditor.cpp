@@ -90,7 +90,11 @@ namespace QtEntityUtils
         , _ignorePropertyChanges(false)
     {
 
-        QtVariantEditorFactory* variantFactory = new VariantFactory();
+        VariantFactory* variantFactory = new VariantFactory();
+
+        connect(variantFactory, &VariantFactory::listAddButtonClicked, [=](QtVariantProperty* prop) {
+            showContextMenu(_editor->mapFromGlobal(QCursor::pos()));
+        });
 
         _editor->setFactoryForManager(_variantManager, variantFactory);
         _editor->setPropertiesWithoutValueMarked(false);
@@ -98,6 +102,8 @@ namespace QtEntityUtils
         _editor->setContextMenuPolicy(Qt::CustomContextMenu);
         _editor->setResizeMode(QtTreePropertyBrowser::Interactive);
         connect(_editor, &QWidget::customContextMenuRequested, this, &EntityEditor::showContextMenu);
+
+        
 
         QHBoxLayout* l = new QHBoxLayout();
         l->setMargin(0);
@@ -253,7 +259,7 @@ namespace QtEntityUtils
             QVariantList items = data.toList();
 
             QtVariantProperty* lst = _variantManager->addProperty(VariantManager::listId(), name);
-
+            
             for(auto k = attributes.begin(); k != attributes.end(); ++k)
             {
                 lst->setAttribute(k.key(), k.value());
