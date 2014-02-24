@@ -299,7 +299,12 @@ namespace QtEntityUtils
         clear();     
 
         _types = QVariantMap();
-        
+
+        if(attributes.contains("__types"))
+        {
+            _types.unite(attributes["__types"].toMap());
+        }
+
         for(auto i = data.begin(); i != data.end(); ++i)
         {
             QVariantMap attrs = attributes.value(i.key(), QVariantMap()).toMap();
@@ -372,11 +377,18 @@ namespace QtEntityUtils
         QtProperty* changedComponent = findComponentProperty(_editor, property);
         Q_ASSERT(changedComponent);
         QtProperty* changedProp = nullptr;
-        foreach(auto prop, changedComponent->subProperties())
+        if(property == changedComponent)
         {
-            if(findSubProperty(prop, property))
+            changedProp = changedComponent;
+        }
+        else
+        {
+            foreach(auto prop, changedComponent->subProperties())
             {
-                changedProp = prop;
+                if(findSubProperty(prop, property))
+                {
+                    changedProp = prop;
+                }
             }
         }
         
