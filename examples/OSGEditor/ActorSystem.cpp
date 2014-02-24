@@ -129,32 +129,47 @@ void ActorSystem::fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, i
 QVariantMap ActorSystem::editingAttributes(int) const
 {
 
-    QVariantMap psphere;
-    psphere["Radius"] = 1.0f;
-    psphere["Color"] = QColor(255,0,0,255);
-    psphere["Center"] = toVarMap(osg::Vec3(0,0,0));
-    QVariantMap sphere;
-    sphere["prototype"] = psphere;
-
-    QVariantMap pbox;
-    pbox["HalfLengths"] = toVarMap(osg::Vec3(0.5f,0.5f,0.5f));
-    pbox["Color"] = QColor(255,0,0,255);
-    pbox["Center"] = toVarMap(osg::Vec3(0,0,0));
-    QVariantMap box;
-    box["prototype"] = pbox;
-
-    QVariantMap types;
-    types["Box"] = box;
-    types["Sphere"] = sphere;
-    
-    QVariantList shapesproto;
-    shapesproto.push_back("Box");
-    shapesproto.push_back("Sphere");
-    QVariantMap shapesattr;
-    shapesattr["prototypes"] = shapesproto;
     QVariantMap ret;
-    ret["__types"] = types;
-    ret["shapes"] = shapesattr;
+    {
+        QVariantMap types;
+        {
+            QVariantMap sphere;
+            {
+                QVariantMap psphere;
+                {
+                    psphere["Radius"] = 1.0f;
+                    psphere["Color"] = QColor(255,0,0,255);
+                    psphere["Center"] = toVarMap(osg::Vec3(0,0,0));
+                }
+                sphere["prototype"] = psphere;
+            }
+            types["Sphere"] = sphere;
+
+            QVariantMap box;
+            {
+                QVariantMap pbox;
+                {
+                    pbox["HalfLengths"] = toVarMap(osg::Vec3(0.5f,0.5f,0.5f));
+                    pbox["Color"] = QColor(255,0,0,255);
+                    pbox["Center"] = toVarMap(osg::Vec3(0,0,0));
+                }            
+                box["prototype"] = pbox;
+            }
+            types["Box"] = box;
+        }
+        ret["__types"] = types;
+
+        QVariantMap shapesattr;
+        {
+            QVariantList shapesproto;
+            {
+                shapesproto.push_back("Box");
+                shapesproto.push_back("Sphere");
+            }
+            shapesattr["prototypes"] = shapesproto;
+        }
+        ret["shapes"] = shapesattr;
+    }
     return ret;
 }
 

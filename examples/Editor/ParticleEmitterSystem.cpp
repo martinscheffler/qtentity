@@ -46,41 +46,56 @@ void ParticleEmitterSystem::fromVariantMap(QtEntity::EntityId eid, const QVarian
 
 QVariantMap ParticleEmitterSystem::editingAttributes(int) const
 {    
+    QVariantMap ret;
+    {
+        QVariantMap types;
+        {
+            QVariantMap emittertype;
+            {
+                QVariantMap emitter;
+                {
+                    emitter["x"] = 0.0f;
+                    emitter["y"] = 0.0f;
+                    emitter["emitRate"] = 10.0f;
+                    emitter["lifeSpan"] = 500.0f;
+                    emitter["lifeSpanVariation"] = 500.0f;
+                    emitter["enabled"] = true;
+                    emitter["velocity.angle"] = 0;
+                    emitter["velocity.angleVariation"] = 360;
+                    emitter["velocity.magnitude"] = 64;
+                    emitter["velocity.magnitudeVariation"] = 0;
 
-    QVariantMap emitter;
-    emitter["x"] = 0.0f;
-    emitter["y"] = 0.0f;
-    emitter["emitRate"] = 10.0f;
-    emitter["lifeSpan"] = 500.0f;
-    emitter["lifeSpanVariation"] = 500.0f;
-    emitter["enabled"] = true;
-    emitter["velocity.angle"] = 0;
-    emitter["velocity.angleVariation"] = 360;
-    emitter["velocity.magnitude"] = 64;
-    emitter["velocity.magnitudeVariation"] = 0;
+                    emitter["size"] = 24;
+                    emitter["sizeVariation"] = 8;
+                }
+                emittertype["prototype"] = emitter;
 
-    emitter["size"] = 24;
-    emitter["sizeVariation"] = 8;
+                QVariantMap emitterattrs;
+                {
+                    QVariantMap sizeattrs;
+                    {
+                        sizeattrs["maximum"] = 10;
+                    }                
+                    emitterattrs["size"] = sizeattrs;
+                }
+                emittertype["attributes"] = emitterattrs;
+            }
+            types["Emitter"] = emittertype;
+        }
+        ret["__types"] = types;
+
+        QVariantMap emitters;
+        {
+            QVariantList prototypes;
+            {
+                prototypes.push_back("Emitter");
+            }
+            emitters["prototypes"] = prototypes;
+        }
+        ret["emitters"] = emitters;
+    }
     
-    QVariantMap sizeattrs;
-    sizeattrs["maximum"] = 10;
-    QVariantMap emitterattrs;
-    emitterattrs["size"] = sizeattrs;
-
-    QVariantMap emittertype;
-    emittertype["prototype"] = emitter;
-    emittertype["attributes"] = emitterattrs;
-    QVariantMap types;
-    types["Emitter"] = emittertype;
-
-    QVariantList prototypes;
-    prototypes.push_back("Emitter");
-    QVariantMap emitters;
-    emitters["prototypes"] = prototypes;
-    QVariantMap m;
-    m["emitters"] = emitters;
-    m["__types"] = types;
-    return m;
+    return ret;
 
 }
 
