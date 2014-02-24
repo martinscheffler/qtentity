@@ -120,6 +120,11 @@ namespace QtEntityUtils
 
         if(prop->valueType() == VariantManager::listId())
         {
+            int maxentries = _variantManager->attributeValue(prop, "maxentries").toInt();
+            if(prop->subProperties().size() >= maxentries)
+            {
+                return;
+            }
             QVariant prototypes = _variantManager->attributeValue(prop, "prototypes");
             QVariantList protos = prototypes.toList();
             if(!protos.isEmpty())
@@ -204,14 +209,41 @@ namespace QtEntityUtils
 
             QtVariantProperty* grp = _variantManager->addProperty(QtVariantPropertyManager::groupTypeId(), name);
 
-            for(auto j = props.begin(); j != props.end(); ++j)
+            for(auto i = props.begin(); i != props.end(); ++i)
             {
-                QVariantMap subattribs = attributes[j.key()].toMap();
-
-                auto prop = this->addWidgetsRecursively(j.key(), j.value(), subattribs);
+                QVariantMap subattribs = attributes[i.key()].toMap();
+                if(subattribs.contains("order"))
+                {
+                    int o = subattribs["order"].toInt();
+                    int x = 0;
+                }
+                auto prop = this->addWidgetsRecursively(i.key(), i.value(), subattribs);
                 if(prop)
                 {
-                    grp->addSubProperty(prop);
+                    if(grp->subProperties().empty())
+                    {
+                        grp->addSubProperty(prop);
+                    } 
+                    else
+                    {
+                        // insert sorted by order property
+
+                        int enterorder = _variantManager->attributeValue(prop, "order").toInt();
+
+                        QtProperty* before = nullptr;
+                        for(QtProperty* sub : grp->subProperties())
+                        {
+                            int suborder = _variantManager->attributeValue(sub, "order").toInt();
+                            if(suborder >= enterorder)
+                            {
+                                break;
+                            }
+                            else
+                            before = sub;
+                        }                        
+                        grp->insertSubProperty(prop, before);                       
+                    }
+                                       
                 }
             }
             return grp;
@@ -248,7 +280,6 @@ namespace QtEntityUtils
                     }
                 }
                 QtVariantProperty* prop = this->addWidgetsRecursively(prototype, val, entryattrs);
-                prop->setAttribute("prototype", prototype);
                 if(prop)
                 {
                     lst->addSubProperty(prop);

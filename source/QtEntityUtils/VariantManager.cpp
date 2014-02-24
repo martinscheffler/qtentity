@@ -114,6 +114,7 @@ namespace QtEntityUtils
         if (propertyType == listId())
         {            
             attr << QLatin1String("prototypes");
+            attr << QLatin1String("maxentries");
         }
 
         // available for all properties:
@@ -138,6 +139,8 @@ namespace QtEntityUtils
         {
             if (attribute == QLatin1String("prototypes"))
                return QVariant::Map;
+            if (attribute == QLatin1String("maxentries"))
+                return QVariant::Int;
             return 0;
         }
         return QtVariantPropertyManager::attributeType(propertyType, attribute);
@@ -145,11 +148,7 @@ namespace QtEntityUtils
 
 
     QVariant VariantManager::attributeValue(const QtProperty *property, const QString &attribute) const
-    {
-        if (attribute == QLatin1String("prototype"))
-        {
-            return _prototypeValues.contains(property) ? _prototypeValues[property] : "";
-        }
+    {        
 
         if (_filePathValues.contains(property))
         {
@@ -157,11 +156,19 @@ namespace QtEntityUtils
                 return _filePathValues[property].filter;
             return QVariant();
         }
-        if (_prototypesValues.contains(property) &&
-                attribute == QLatin1String("prototypes"))
+        if (_prototypesValues.contains(property) && attribute == QLatin1String("prototypes"))
         {
             return _prototypesValues[property];
         }
+        if (_maxentriesValues.contains(property) && attribute == QLatin1String("maxentries"))
+        {
+            return _maxentriesValues[property];
+        }
+        if (_orderValues.contains(property) && attribute == QLatin1String("order"))
+        {
+            return _orderValues[property];
+        }
+        
         return QtVariantPropertyManager::attributeValue(property, attribute);
     }
 
@@ -200,11 +207,7 @@ namespace QtEntityUtils
     void VariantManager::setAttribute(QtProperty *property,
                     const QString &attribute, const QVariant &val)
     {
-        if(attribute == QLatin1String("prototype"))
-        {
-            _prototypeValues[property] = val.toString();
-            return;
-        }
+        
         if (_filePathValues.contains(property))
         {
             if (attribute == QLatin1String("filter")) {
@@ -227,6 +230,18 @@ namespace QtEntityUtils
             return;
         }
 
+        if(_maxentriesValues.contains(property) && attribute == QLatin1String("maxentries"))
+        {
+            _maxentriesValues[property] = val.toInt();
+            return;
+        }
+
+        if(_orderValues.contains(property) && attribute == QLatin1String("order"))
+        {
+            _orderValues[property] = val.toInt();
+            return;
+        }
+
 
         QtVariantPropertyManager::setAttribute(property, attribute, val);
     }
@@ -234,12 +249,16 @@ namespace QtEntityUtils
 
     void VariantManager::initializeProperty(QtProperty *property)
     {
+        // for all properties, set order to very high value
+        _orderValues[property] = INT_MAX / 2;
+
         int t = propertyType(property);
         if (t == filePathTypeId())
             _filePathValues[property] = FilePathData();
         if (t == listId())
-         {
+        {
             _prototypesValues[property] = QVariantList();
+            _maxentriesValues[property] = INT_MAX;
         }
         QtVariantPropertyManager::initializeProperty(property);
     }
@@ -247,9 +266,10 @@ namespace QtEntityUtils
 
     void VariantManager::uninitializeProperty(QtProperty *property)
     {
+        _orderValues.remove(property);
         _filePathValues.remove(property);
+        _maxentriesValues.remove(property);
         _prototypesValues.remove(property);
-        _prototypeValues.remove(property);
         QtVariantPropertyManager::uninitializeProperty(property);
     }
 

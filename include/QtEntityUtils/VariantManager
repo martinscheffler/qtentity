@@ -75,9 +75,20 @@ namespace QtEntityUtils
             QString filter;
         };
 
+        // file path data, available for file path entries
         QMap<const QtProperty *, FilePathData> _filePathValues;
+
+        // stores which prototypes can be chosen, available for editable list entries
         QMap<const QtProperty *, QVariantList> _prototypesValues;
-        QMap<const QtProperty *, QString> _prototypeValues;
+
+        // stores max entries, available for editable list entries
+        QMap<const QtProperty *, int> _maxentriesValues; 
+
+        // stores order id, available for all properties. This is used to order
+        // elements in map entries / groups. If no order is set,
+        // alphabetical ordering is used.
+        QMap<const QtProperty *, int> _orderValues;
+        
 
     }; 
 }

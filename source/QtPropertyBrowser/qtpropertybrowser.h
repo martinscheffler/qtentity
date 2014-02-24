@@ -79,6 +79,7 @@ public:
 
     void addSubProperty(QtProperty *property);
     void insertSubProperty(QtProperty *property, QtProperty *afterProperty);
+    void insertSubPropertyBefore(QtProperty *property, QtProperty *beforeProperty);
     void removeSubProperty(QtProperty *property);
 protected:
     explicit QtProperty(QtAbstractPropertyManager *manager);
