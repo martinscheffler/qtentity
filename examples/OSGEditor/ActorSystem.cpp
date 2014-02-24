@@ -129,26 +129,33 @@ void ActorSystem::fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, i
 QVariantMap ActorSystem::editingAttributes(int) const
 {
 
+    QVariantMap psphere;
+    psphere["Radius"] = 1.0f;
+    psphere["Color"] = QColor(255,0,0,255);
+    psphere["Center"] = toVarMap(osg::Vec3(0,0,0));
     QVariantMap sphere;
-    sphere["Radius"] = 1.0f;
-    sphere["Color"] = QColor(255,0,0,255);
-    sphere["Center"] = toVarMap(osg::Vec3(0,0,0));
+    sphere["prototype"] = psphere;
 
+    QVariantMap pbox;
+    pbox["HalfLengths"] = toVarMap(osg::Vec3(0.5f,0.5f,0.5f));
+    pbox["Color"] = QColor(255,0,0,255);
+    pbox["Center"] = toVarMap(osg::Vec3(0,0,0));
     QVariantMap box;
-    box["HalfLengths"] = toVarMap(osg::Vec3(0.5f,0.5f,0.5f));
-    box["Color"] = QColor(255,0,0,255);
-    box["Center"] = toVarMap(osg::Vec3(0,0,0));
+    box["prototype"] = pbox;
 
-    QVariantMap prototypes;
-    prototypes["Box"] = box;
-    prototypes["Sphere"] = sphere;
+    QVariantMap types;
+    types["Box"] = box;
+    types["Sphere"] = sphere;
     
-    QVariantMap attribs;
-    attribs["prototypes"] = prototypes;
-
-    QVariantMap shapes;
-    shapes["shapes"] = attribs;
-    return shapes;
+    QVariantList shapesproto;
+    shapesproto.push_back("Box");
+    shapesproto.push_back("Sphere");
+    QVariantMap shapesattr;
+    shapesattr["prototypes"] = shapesproto;
+    QVariantMap ret;
+    ret["__types"] = types;
+    ret["shapes"] = shapesattr;
+    return ret;
 }
 
 

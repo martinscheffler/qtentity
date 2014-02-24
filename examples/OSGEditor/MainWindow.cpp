@@ -125,7 +125,7 @@ void MainWindow::changeEntityData(QtEntity::EntityId id, const QVariantMap& valu
     QtEntityUtils::EntityEditor::applyEntityData(_game->entityManager(), id, values);
 
     //re-send changed component properties to editor
-    entitySelectionChanged();
+    //entitySelectionChanged();
 }
 
 

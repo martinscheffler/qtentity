@@ -61,14 +61,25 @@ QVariantMap ParticleEmitterSystem::editingAttributes(int) const
 
     emitter["size"] = 24;
     emitter["sizeVariation"] = 8;
+    
+    QVariantMap sizeattrs;
+    sizeattrs["maximum"] = 10;
+    QVariantMap emitterattrs;
+    emitterattrs["size"] = sizeattrs;
 
-    QVariantMap prototypes;
-    prototypes["Emitter"] = emitter;
+    QVariantMap emittertype;
+    emittertype["prototype"] = emitter;
+    emittertype["attributes"] = emitterattrs;
+    QVariantMap types;
+    types["Emitter"] = emittertype;
 
+    QVariantList prototypes;
+    prototypes.push_back("Emitter");
     QVariantMap emitters;
     emitters["prototypes"] = prototypes;
     QVariantMap m;
     m["emitters"] = emitters;
+    m["__types"] = types;
     return m;
 
 }

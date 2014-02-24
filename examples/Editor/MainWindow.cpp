@@ -141,7 +141,7 @@ int frameNumber = 0;
 void MainWindow::stepGame()
 {
     ++frameNumber;
-    _game->step(frameNumber, frameNumber * 20, 0.02);
+    _game->step(frameNumber, frameNumber * 20, 0.02f);
 }
 
 

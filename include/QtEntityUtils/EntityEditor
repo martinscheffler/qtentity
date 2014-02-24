@@ -125,5 +125,6 @@ namespace QtEntityUtils
         QtVariantPropertyManager* _variantManager;
         QtTreePropertyBrowser* _editor;
         bool _ignorePropertyChanges;
+        QVariantMap _types;
     };
 }
