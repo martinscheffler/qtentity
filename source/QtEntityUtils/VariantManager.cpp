@@ -169,7 +169,11 @@ namespace QtEntityUtils
         {
             return _orderValues[property];
         }
-        
+        if (attribute == QLatin1String("expanded"))
+        {
+            if(!_expandedValues.contains(property)) return true;
+            return _expandedValues[property];
+        }
         return QtVariantPropertyManager::attributeValue(property, attribute);
     }
 
@@ -254,6 +258,11 @@ namespace QtEntityUtils
             return;
         }
 
+        if(attribute == QLatin1String("expanded"))
+        {
+            _expandedValues[property] = val.toBool();
+            return;
+        }
 
         QtVariantPropertyManager::setAttribute(property, attribute, val);
     }
@@ -262,7 +271,7 @@ namespace QtEntityUtils
     void VariantManager::initializeProperty(QtProperty *property)
     {
         // for all properties, set order to very high value
-        _orderValues[property] = INT_MAX / 2;
+        _orderValues[property] = INT_MAX / 2;        
 
         int t = propertyType(property);
         if (t == filePathTypeId())
@@ -279,6 +288,7 @@ namespace QtEntityUtils
     void VariantManager::uninitializeProperty(QtProperty *property)
     {
         _orderValues.remove(property);
+        _expandedValues.remove(property);
         _filePathValues.remove(property);
         _maxentriesValues.remove(property);
         _prototypesValues.remove(property);

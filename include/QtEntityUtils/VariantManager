@@ -90,6 +90,7 @@ namespace QtEntityUtils
         // alphabetical ordering is used.
         QMap<const QtProperty *, int> _orderValues;
         
-
+        // Stores if group property should be shown expanded initially
+        QMap<const QtProperty *, bool> _expandedValues;
     }; 
 }

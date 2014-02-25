@@ -27,6 +27,7 @@ class QtVariantPropertyManager;
 class QtTreePropertyBrowser;
 class QtProperty;
 class QtVariantProperty;
+class QtBrowserItem;
 
 namespace QtEntity
 {
@@ -121,6 +122,9 @@ namespace QtEntityUtils
     private:
 
         QtVariantProperty* addWidgetsRecursively(const QString& name, const QVariant& data, const QVariantMap& schema);
+        
+        // check which properties are marked as expanded=false and collapse their browser entries
+        void collapseCollapsedEntries(QList<QtBrowserItem *>&);
         QtEntity::EntityId _entityId;
         QtVariantPropertyManager* _variantManager;
         QtTreePropertyBrowser* _editor;

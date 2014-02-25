@@ -29,7 +29,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMetaProperty>
 #include <QUuid>
 #include <qttreepropertybrowser.h>
-
+#include <QMessageBox>
 
 namespace QtEntityUtils
 {
@@ -58,6 +58,8 @@ namespace QtEntityUtils
         }
         return nullptr;
     }
+
+
 
     QtProperty* findParentPropertyRec(const QtProperty* property, QtProperty* tree)
     {
@@ -102,9 +104,7 @@ namespace QtEntityUtils
         _editor->setContextMenuPolicy(Qt::CustomContextMenu);
         _editor->setResizeMode(QtTreePropertyBrowser::Interactive);
         connect(_editor, &QWidget::customContextMenuRequested, this, &EntityEditor::showContextMenu);
-
         
-
         QHBoxLayout* l = new QHBoxLayout();
         l->setMargin(0);
         l->setSpacing(0);
@@ -173,12 +173,10 @@ namespace QtEntityUtils
 
         QVariantMap typeentry = _types[prototypename].toMap();
         QVariantMap prototype = typeentry["prototype"].toMap();
-        QVariantMap prototypeAttributes = typeentry["attributes"].toMap();
-        
+        QVariantMap prototypeAttributes = typeentry["attributes"].toMap();        
 
         _ignorePropertyChanges = true;
         QtVariantProperty* item = this->addWidgetsRecursively(prototypename, prototype, prototypeAttributes);
-        item->setAttribute("prototype", prototypename);
         prop->addSubProperty(item);
 
         _ignorePropertyChanges = false;
@@ -209,26 +207,22 @@ namespace QtEntityUtils
                                                     const QVariant& data,
                                                     const QVariantMap& attributes)
     {
+        QtVariantProperty* createdprop;
         if(data.type() == QVariant::Map)
         {
             QVariantMap props = data.toMap();
 
-            QtVariantProperty* grp = _variantManager->addProperty(QtVariantPropertyManager::groupTypeId(), name);
+            createdprop = _variantManager->addProperty(QtVariantPropertyManager::groupTypeId(), name);
 
             for(auto i = props.begin(); i != props.end(); ++i)
             {
                 QVariantMap subattribs = attributes[i.key()].toMap();
-                if(subattribs.contains("order"))
-                {
-                    int o = subattribs["order"].toInt();
-                    int x = 0;
-                }
                 auto prop = this->addWidgetsRecursively(i.key(), i.value(), subattribs);
                 if(prop)
                 {
-                    if(grp->subProperties().empty())
+                    if(createdprop->subProperties().empty())
                     {
-                        grp->addSubProperty(prop);
+                        createdprop->addSubProperty(prop);
                     } 
                     else
                     {
@@ -237,7 +231,7 @@ namespace QtEntityUtils
                         int enterorder = _variantManager->attributeValue(prop, "order").toInt();
 
                         QtProperty* before = nullptr;
-                        for(QtProperty* sub : grp->subProperties())
+                        for(QtProperty* sub : createdprop->subProperties())
                         {
                             int suborder = _variantManager->attributeValue(sub, "order").toInt();
                             if(suborder >= enterorder)
@@ -247,24 +241,16 @@ namespace QtEntityUtils
                             else
                             before = sub;
                         }                        
-                        grp->insertSubProperty(prop, before);                       
-                    }
-                                       
+                        createdprop->insertSubProperty(prop, before);                       
+                    }                    
                 }
             }
-            return grp;
         }
         else if(data.type() == QVariant::List)
         {
             QVariantList items = data.toList();
-
-            QtVariantProperty* lst = _variantManager->addProperty(VariantManager::listId(), name);
-            
-            for(auto k = attributes.begin(); k != attributes.end(); ++k)
-            {
-                lst->setAttribute(k.key(), k.value());
-            }
-
+            createdprop = _variantManager->addProperty(VariantManager::listId(), name);
+           
             for(auto j = items.begin(); j != items.end(); ++j)
             {
                 QVariantMap entry = j->toMap();
@@ -275,6 +261,7 @@ namespace QtEntityUtils
                 }
                 QString prototype = entry["prototype"].toString();
                 QVariant val = entry["value"];
+
                 QVariantMap entryattrs;
 
                 if(_types.contains(prototype))
@@ -285,13 +272,14 @@ namespace QtEntityUtils
                         entryattrs = t["attributes"].toMap();
                     }
                 }
+
                 QtVariantProperty* prop = this->addWidgetsRecursively(prototype, val, entryattrs);
+                
                 if(prop)
                 {
-                    lst->addSubProperty(prop);
+                    createdprop->addSubProperty(prop);
                 }
             }
-            return lst;
         }
         else
         {
@@ -303,24 +291,24 @@ namespace QtEntityUtils
                 tid = VariantManager::enumTypeId();
             }
 
-            QtVariantProperty* propitem = _variantManager->addProperty(tid, name);
-            if(propitem)
+            createdprop = _variantManager->addProperty(tid, name);
+            if(createdprop)
             {
-
-                propitem->setValue(data);
-
-                // set property attributes
-                for(auto k = attributes.begin(); k != attributes.end(); ++k)
-                {
-                    propitem->setAttribute(k.key(), k.value());
-                }
+                createdprop->setValue(data);               
             }
             else
             {
                 qDebug() << "Could not create property editor for property " << name;
             }
-            return propitem;
+            
         }
+
+         // set property attributes
+        for(auto k = attributes.begin(); k != attributes.end(); ++k)
+        {
+            createdprop->setAttribute(k.key(), k.value());
+        }
+        return createdprop;
     }
 
 
@@ -356,6 +344,8 @@ namespace QtEntityUtils
             if(item)
             {
                 _editor->addProperty(item);
+
+                collapseCollapsedEntries(_editor->topLevelItems());
             }
         }
         _ignorePropertyChanges = false;
@@ -437,5 +427,18 @@ namespace QtEntityUtils
         components[changedComponent->propertyName()] = prop;
         emit entityDataChanged(_entityId, components);
 
+    }
+
+    void EntityEditor::collapseCollapsedEntries(QList<QtBrowserItem *>& entries)
+    {
+        foreach(auto entry, entries)
+        {
+            bool expanded = _variantManager->attributeValue(entry->property(), "expanded").toBool();
+            if(!expanded)
+            {
+                _editor->setExpanded(entry, false);
+            }
+            collapseCollapsedEntries(entry->children());
+        }        
     }
 }
