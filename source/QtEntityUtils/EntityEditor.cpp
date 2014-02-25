@@ -441,4 +441,25 @@ namespace QtEntityUtils
             collapseCollapsedEntries(entry->children());
         }        
     }
+
+    void setAllExpanded(QtTreePropertyBrowser* editor, QtVariantPropertyManager* variantManager, QList<QtBrowserItem *>& entries, bool expanded)
+    {
+        foreach(auto entry, entries)
+        {
+            editor->setExpanded(entry, expanded);            
+            setAllExpanded(editor, variantManager, entry->children(), expanded);
+        }   
+    }
+
+
+    void EntityEditor::expandAll()
+    {
+        setAllExpanded(_editor, _variantManager, _editor->topLevelItems(), true);
+    }
+
+
+    void EntityEditor::collapseAll()
+    {
+        setAllExpanded(_editor, _variantManager, _editor->topLevelItems(), false);
+    }
 }
