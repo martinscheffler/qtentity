@@ -80,7 +80,10 @@ namespace QtEntityUtils
         QMap<const QtProperty *, FilePathData> _filePathValues;
 
         // stores which prototypes can be chosen, available for editable list entries
-        QMap<const QtProperty *, QVariantList> _prototypesValues;
+        QMap<const QtProperty *, QStringList> _prototypesValues;
+
+        // stores which prototype a property was created from, available for all entries
+        QMap<const QtProperty *, QString> _prototypeValues;
 
         // stores max entries, available for editable list entries
         QMap<const QtProperty *, int> _maxentriesValues; 

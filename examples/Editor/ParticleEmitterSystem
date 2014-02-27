@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtEntity/PooledEntitySystem>
-
+#include <QtEntityUtils/ItemList>
 
 class ParticleEmitter
 {
@@ -13,7 +13,7 @@ public:
     ParticleEmitter();
 
 private:
-    QVariantList _emitters;
+    QtEntityUtils::ItemList _emitters;
 
 };
 
@@ -34,7 +34,7 @@ public:
     virtual QVariantMap editingAttributes(int context = 0) const override;
     virtual void fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, int context = 0) override;
 
-    void setEmitters(QtEntity::EntityId id, const QVariantList& emitters);
+    void setEmitters(QtEntity::EntityId id, const QtEntityUtils::ItemList& emitters);
 
 private:
 

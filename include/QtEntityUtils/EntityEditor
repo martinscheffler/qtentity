@@ -77,6 +77,11 @@ namespace QtEntityUtils
          */
         QtTreePropertyBrowser* propertyBrowser() const { return _editor; }
 
+        /** 
+         * Get all property data as variant structure
+         */
+        QVariantMap entityData();
+
     public slots:
 
         /**

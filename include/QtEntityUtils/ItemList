@@ -16,33 +16,28 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include <QIcon>
-#include <QWidget>
-
-class QtVariantProperty;
+#include <QVariantList>
+#include <QtEntityUtils/Export>
 
 namespace QtEntityUtils
 {
-
-    QIcon drawListButton(const QString& text);
-
-    /**
-     * A widget showing lists of things (QVariantList).
-     * No editing attributes.
-     */
-    class ListEdit : public QWidget
+    struct QTENTITYUTILS_EXPORT Item
     {
-        Q_OBJECT
+        QString _prototype;
+        QVariant _value;
+
+        Item();
+        Item(const QString& prototype, const QVariant& value);
+    };
+
+    class ItemList : public QList<Item>
+    {
     public:
-        ListEdit(QtVariantProperty* prop, QWidget *parent = 0);
-
-    protected slots:
-        void clicked();
-
-    signals:
-        void addButtonClicked(QtVariantProperty *property);
-
-    private:
-        QtVariantProperty* m_property;
-     };
+        ItemList();
+        ItemList(const QString& prototypeName);
+        ~ItemList();
+    };
+    
 }
+
+Q_DECLARE_METATYPE(QtEntityUtils::ItemList)

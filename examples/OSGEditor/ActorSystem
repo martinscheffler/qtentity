@@ -2,6 +2,7 @@
 
 #include <QtEntity/PooledEntitySystem>
 #include <QtEntity/DataTypes>
+#include <QtEntityUtils/ItemList>
 #include <osg/Group>
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
@@ -34,8 +35,8 @@ public:
     void setPosition(const osg::Vec3d& p);
     osg::Vec3d position() const;
 
-    void setShapes(const QVariantList& v);
-    QVariantList shapes() const  { return _shapes; }
+    void setShapes(const QtEntityUtils::ItemList& v);
+    QtEntityUtils::ItemList shapes() const  { return _shapes; }
 
 private:
 
@@ -44,7 +45,7 @@ private:
     osg::ref_ptr<osg::Geode> _geode;
     osg::ref_ptr<osg::PositionAttitudeTransform> _transform;
     ActorSystem* _system;
-    QVariantList _shapes;
+    QtEntityUtils::ItemList _shapes;
 };
 
 Q_DECLARE_METATYPE(Actor)

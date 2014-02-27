@@ -1,5 +1,3 @@
-#pragma once
-
 /*
 Copyright (c) 2013 Martin Scheffler
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -16,33 +14,36 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include <QIcon>
-#include <QWidget>
-
-class QtVariantProperty;
+#include <QtEntityUtils/ItemList>
 
 namespace QtEntityUtils
 {
 
-    QIcon drawListButton(const QString& text);
-
-    /**
-     * A widget showing lists of things (QVariantList).
-     * No editing attributes.
-     */
-    class ListEdit : public QWidget
+    Item::Item()
     {
-        Q_OBJECT
-    public:
-        ListEdit(QtVariantProperty* prop, QWidget *parent = 0);
+    }
 
-    protected slots:
-        void clicked();
 
-    signals:
-        void addButtonClicked(QtVariantProperty *property);
+    Item::Item(const QString& prototype, const QVariant& value)
+        : _prototype(prototype)
+        , _value(value)
+    {
+    }
 
-    private:
-        QtVariantProperty* m_property;
-     };
+
+    ItemList::ItemList()
+    {
+    }
+
+    
+    ItemList::ItemList(const QString& prototypeName)
+    {
+    }
+
+
+    ItemList::~ItemList()
+    {
+    }
+
+ 
 }

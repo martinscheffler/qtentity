@@ -13,6 +13,7 @@ set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/EntityEditor
   ${HEADER_PATH}/FileEdit
+  ${HEADER_PATH}/ItemList
   ${HEADER_PATH}/ListEdit
   ${HEADER_PATH}/PrefabSystem
   ${HEADER_PATH}/VariantFactory
@@ -22,6 +23,7 @@ set(LIB_PUBLIC_HEADERS
 set(LIB_SOURCES
   ${SOURCE_PATH}/EntityEditor.cpp
   ${SOURCE_PATH}/FileEdit.cpp
+  ${SOURCE_PATH}/ItemList.cpp
   ${SOURCE_PATH}/ListEdit.cpp
   ${SOURCE_PATH}/PrefabSystem.cpp
   ${SOURCE_PATH}/VariantFactory.cpp

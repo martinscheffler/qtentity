@@ -18,6 +18,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtEntity/EntityManager>
 #include <QtEntity/EntitySystem>
+#include <QtEntityUtils/ItemList>
 #include <QtEntityUtils/VariantFactory>
 #include <QtEntityUtils/VariantManager>
 #include <QDate>
@@ -116,6 +117,29 @@ namespace QtEntityUtils
 
     }
 
+    QVariant toVariant(const QtProperty* prop)
+    {
+        const QtVariantProperty* p = dynamic_cast<const QtVariantProperty*>(prop);
+        Q_ASSERT(p);
+        QVariant value = p->value();
+        return value;
+
+    }
+
+
+    QVariantMap EntityEditor::entityData()
+    {
+        QVariantMap ret;
+
+        foreach(QtProperty* prop, _editor->properties())
+        {
+            ret[prop->propertyName()] = toVariant(prop);
+        }
+
+        return ret;
+    }
+
+
     void EntityEditor::showContextMenu(const QPoint& pos)
     {
         QtVariantProperty* prop = dynamic_cast<QtVariantProperty*>(_editor->propertyAt(pos));
@@ -124,7 +148,7 @@ namespace QtEntityUtils
             return;
         }
 
-        if(prop->valueType() == VariantManager::listId())
+        if(prop->propertyType() == VariantManager::listId())
         {
             int maxentries = _variantManager->attributeValue(prop, "maxentries").toInt();
             if(prop->subProperties().size() >= maxentries)
@@ -148,7 +172,7 @@ namespace QtEntityUtils
             }
         }
         QtVariantProperty* parent = dynamic_cast<QtVariantProperty*>(findParentProperty(_editor, prop));
-        if(parent && parent->valueType() == VariantManager::listId())
+        if(parent && parent->propertyType() == VariantManager::listId())
         {
             QMenu menu(this);
             QAction* action = menu.addAction("Remove entry");
@@ -164,7 +188,7 @@ namespace QtEntityUtils
     void EntityEditor::addListItem(const QString& prototypename, QtVariantProperty* prop)
     {
         QVariant prototypes = _variantManager->attributeValue(prop, "prototypes");
-        QVariantList protos = prototypes.toList();
+        QStringList protos = prototypes.toStringList();
         if(!protos.contains(prototypename) || !_types.contains(prototypename))
         {
             qDebug() << "Unexpected: Prototype " << prototypename << " not found!";
@@ -172,11 +196,13 @@ namespace QtEntityUtils
         }
 
         QVariantMap typeentry = _types[prototypename].toMap();
+
         QVariantMap prototype = typeentry["prototype"].toMap();
         QVariantMap prototypeAttributes = typeentry["attributes"].toMap();        
 
         _ignorePropertyChanges = true;
         QtVariantProperty* item = this->addWidgetsRecursively(prototypename, prototype, prototypeAttributes);
+        item->setAttribute("prototype", prototypename);
         prop->addSubProperty(item);
 
         _ignorePropertyChanges = false;
@@ -214,6 +240,12 @@ namespace QtEntityUtils
 
             createdprop = _variantManager->addProperty(QtVariantPropertyManager::groupTypeId(), name);
 
+            // set property attributes
+            for(auto k = attributes.begin(); k != attributes.end(); ++k)
+            {
+                createdprop->setAttribute(k.key(), k.value());
+            }
+
             for(auto i = props.begin(); i != props.end(); ++i)
             {
                 QVariantMap subattribs = attributes[i.key()].toMap();
@@ -246,37 +278,35 @@ namespace QtEntityUtils
                 }
             }
         }
-        else if(data.type() == QVariant::List)
+        else if(data.userType() == VariantManager::listId())
         {
-            QVariantList items = data.toList();
+            ItemList items = data.value<ItemList>();
             createdprop = _variantManager->addProperty(VariantManager::listId(), name);
            
-            for(auto j = items.begin(); j != items.end(); ++j)
+            // set property attributes
+            for(auto k = attributes.begin(); k != attributes.end(); ++k)
             {
-                QVariantMap entry = j->toMap();
-                if(!entry.contains("prototype") || !entry.contains("value"))
-                {
-                    qDebug("QList properties need entries of format QVariantMap(\"prototype\"=>\"value\"");
-                    continue;
-                }
-                QString prototype = entry["prototype"].toString();
-                QVariant val = entry["value"];
+                createdprop->setAttribute(k.key(), k.value());
+            }
 
+            foreach(const Item& item, items)
+            {               
                 QVariantMap entryattrs;
 
-                if(_types.contains(prototype))
+                if(_types.contains(item._prototype))
                 {
-                    QVariantMap t = _types[prototype].toMap();
+                    QVariantMap t = _types[item._prototype].toMap();
                     if(t.contains("attributes"))
                     {
                         entryattrs = t["attributes"].toMap();
                     }
                 }
 
-                QtVariantProperty* prop = this->addWidgetsRecursively(prototype, val, entryattrs);
+                QtVariantProperty* prop = this->addWidgetsRecursively(item._prototype, item._value, entryattrs);
                 
                 if(prop)
                 {
+                    prop->setAttribute("prototype", item._prototype);
                     createdprop->addSubProperty(prop);
                 }
             }
@@ -290,8 +320,16 @@ namespace QtEntityUtils
             {
                 tid = VariantManager::enumTypeId();
             }
+            
 
             createdprop = _variantManager->addProperty(tid, name);
+            // set property attributes
+            
+            for(auto k = attributes.begin(); k != attributes.end(); ++k)
+            {
+                createdprop->setAttribute(k.key(), k.value());
+            }
+           
             if(createdprop)
             {
                 createdprop->setValue(data);               
@@ -303,11 +341,7 @@ namespace QtEntityUtils
             
         }
 
-         // set property attributes
-        for(auto k = attributes.begin(); k != attributes.end(); ++k)
-        {
-            createdprop->setAttribute(k.key(), k.value());
-        }
+        
         return createdprop;
     }
 

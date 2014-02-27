@@ -15,6 +15,8 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include <QtEntityUtils/VariantManager>
+
+#include <QtEntityUtils/ItemList>
 #include <QtEntityUtils/ListEdit>
 #include <QtEntity/DataTypes>
 #include <QTextStream>
@@ -41,7 +43,7 @@ namespace QtEntityUtils
 
     int VariantManager::listId()
     {
-        return QVariant::List;
+        return qMetaTypeId<QtEntityUtils::ItemList>();
     }
 
 
@@ -85,16 +87,12 @@ namespace QtEntityUtils
         if(propertyType(property) == listId())
         {
             QList<QtProperty *> subs = property->subProperties();
-            QVariantList ret;
+            ItemList ret;
             for(auto i = subs.begin(); i != subs.end(); ++i)
             {
-                QVariantMap entry;
-                entry["prototype"] = attributeValue(*i, "prototype");
-                std::string v = entry["prototype"].toString().toStdString();
-                entry["value"] = value(*i);
-                ret.push_back(entry);
+                ret.push_back(Item(attributeValue(*i, "prototype").toString(), value(*i)));
             }
-            return ret;
+            return QVariant::fromValue(ret);
         }
         if (_filePathValues.contains(property))
         {
@@ -139,7 +137,7 @@ namespace QtEntityUtils
         if (propertyType == listId())
         {
             if (attribute == QLatin1String("prototypes"))
-               return QVariant::Map;
+                return QVariant::StringList;
             if (attribute == QLatin1String("maxentries"))
                 return QVariant::Int;
             return 0;
@@ -160,6 +158,10 @@ namespace QtEntityUtils
         if (_prototypesValues.contains(property) && attribute == QLatin1String("prototypes"))
         {
             return _prototypesValues[property];
+        }
+        if (_prototypeValues.contains(property) && attribute == QLatin1String("prototype"))
+        {
+            return _prototypeValues[property];
         }
         if (_maxentriesValues.contains(property) && attribute == QLatin1String("maxentries"))
         {
@@ -242,7 +244,13 @@ namespace QtEntityUtils
 
         if(_prototypesValues.contains(property) && attribute == QLatin1String("prototypes"))
         {
-            _prototypesValues[property] = val.toList();
+            _prototypesValues[property] = val.toStringList();
+            return;
+        }
+
+        if(attribute == QLatin1String("prototype"))
+        {
+            _prototypeValues[property] = val.toString();
             return;
         }
 
@@ -278,7 +286,7 @@ namespace QtEntityUtils
             _filePathValues[property] = FilePathData();
         if (t == listId())
         {
-            _prototypesValues[property] = QVariantList();
+            _prototypesValues[property] = QStringList();
             _maxentriesValues[property] = INT_MAX;
         }
         QtVariantPropertyManager::initializeProperty(property);
@@ -291,6 +299,7 @@ namespace QtEntityUtils
         _expandedValues.remove(property);
         _filePathValues.remove(property);
         _maxentriesValues.remove(property);
+        _prototypeValues.remove(property);
         _prototypesValues.remove(property);
         QtVariantPropertyManager::uninitializeProperty(property);
     }

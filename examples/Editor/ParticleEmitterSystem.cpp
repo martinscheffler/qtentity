@@ -23,8 +23,7 @@ QVariantMap ParticleEmitterSystem::toVariantMap(QtEntity::EntityId eid, int)
     ParticleEmitter* e;
     if(component(eid, e))
     {
-        //m["attackMode"] = QVariant::fromValue(attackMode(eid));
-        m["emitters"] = e->_emitters;
+        m["emitters"] = QVariant::fromValue(e->_emitters);
     }
     return m;
 }
@@ -38,7 +37,7 @@ void ParticleEmitterSystem::fromVariantMap(QtEntity::EntityId eid, const QVarian
 
         if(m.contains("emitters"))
         {
-            setEmitters(eid, m["emitters"].toList());
+            setEmitters(eid, m["emitters"].value<QtEntityUtils::ItemList>());
         }
     }
 }
@@ -85,12 +84,8 @@ QVariantMap ParticleEmitterSystem::editingAttributes(int) const
         ret["__types"] = types;
 
         QVariantMap emitters;
-        {
-            QVariantList prototypes;
-            {
-                prototypes.push_back("Emitter");
-            }
-            emitters["prototypes"] = prototypes;
+        {            
+            emitters["prototypes"] = QStringList("Emitter");
         }
         ret["emitters"] = emitters;
     }
@@ -100,7 +95,7 @@ QVariantMap ParticleEmitterSystem::editingAttributes(int) const
 }
 
 
-void ParticleEmitterSystem::setEmitters(QtEntity::EntityId eid, const QVariantList &emitters)
+void ParticleEmitterSystem::setEmitters(QtEntity::EntityId eid, const QtEntityUtils::ItemList& emitters)
 {
     ParticleEmitter* e;
     if(component(eid, e))
@@ -111,10 +106,9 @@ void ParticleEmitterSystem::setEmitters(QtEntity::EntityId eid, const QVariantLi
         if(!entityManager()->component(eid, shape)) return;
         _renderer->clearEmitters(shape);
 
-        for(auto i = emitters.begin(); i != emitters.end(); ++i)
+        foreach(QtEntityUtils::Item i, emitters)
         {
-            QVariantMap entry = i->toMap()["value"].toMap();
-            _renderer->addEmitter(shape, entry);
+            _renderer->addEmitter(shape, i._value.toMap());
         }
     }
 }

@@ -52,34 +52,29 @@ osg::Vec3d Actor::position() const
 }
 
 
-void Actor::setShapes(const QVariantList& shapes)
+void Actor::setShapes(const QtEntityUtils::ItemList& shapes)
 {
     _shapes = shapes;
     _geode->removeDrawables(0, _geode->getNumDrawables());
 
     for(auto i = shapes.begin(); i != shapes.end(); ++i)
     {
-        QVariantMap entry = i->toMap();
-        if(!entry.contains("prototype"))
-        {
-            qDebug() << "Shape contains no prototype name!?!";
-            continue;
-        }
-        QString prototype = entry["prototype"].toString();
-        QVariantMap val = entry["value"].toMap();
+        QtEntityUtils::Item entry = *i;
 
         osg::ref_ptr<osg::ShapeDrawable> sd = new osg::ShapeDrawable();
         
         using namespace QtEntity;
 
-        if(prototype == "Box")
+        QVariantMap val = entry._value.toMap();
+
+        if(entry._prototype == "Box")
         {
             osg::Vec3 hl = toVec(val["HalfLengths"]);
             osg::Vec3 c = toVec(val["Center"]);
             sd->setShape(new osg::Box(c, hl[0],hl[1],hl[2]));
             
         }
-        else if(prototype == "Sphere")
+        else if(entry._prototype == "Sphere")
         {
             osg::Vec3 c = toVec(val["Center"]);
             float radius = val["Radius"].toFloat();
@@ -108,7 +103,7 @@ QVariantMap ActorSystem::toVariantMap(QtEntity::EntityId eid, int)
     {
         m["name"]     = a->name();
         m["position"] = toVarMap(a->position());
-        m["shapes"]   = a->shapes();
+        m["shapes"]   = QVariant::fromValue(a->shapes());
     }
     return m;    
 }
@@ -121,7 +116,7 @@ void ActorSystem::fromVariantMap(QtEntity::EntityId eid, const QVariantMap& m, i
     {
         if(m.contains("name"))     a->setName(m["name"].toString());
         if(m.contains("position")) a->setPosition(toVec(m["position"]));
-        if(m.contains("shapes"))   a->setShapes(m["shapes"].toList());
+        if(m.contains("shapes"))   a->setShapes(m["shapes"].value<QtEntityUtils::ItemList>());
     }
 }
 
@@ -137,9 +132,9 @@ QVariantMap ActorSystem::editingAttributes(int) const
             {
                 QVariantMap psphere;
                 {
-                    psphere["Radius"] = 1.0f;
-                    psphere["Color"] = QColor(255,0,0,255);
-                    psphere["Center"] = toVarMap(osg::Vec3(0,0,0));
+                    psphere["Radius"] = 0.5f;
+                    psphere["Color"] = QColor(0,255,0,255);
+                    psphere["Center"] = toVarMap(osg::Vec3(0.5f,0,0));
                 }
                 sphere["prototype"] = psphere;
             }
@@ -151,7 +146,7 @@ QVariantMap ActorSystem::editingAttributes(int) const
                 {
                     pbox["HalfLengths"] = toVarMap(osg::Vec3(0.5f,0.5f,0.5f));
                     pbox["Color"] = QColor(255,0,0,255);
-                    pbox["Center"] = toVarMap(osg::Vec3(0,0,0));
+                    pbox["Center"] = toVarMap(osg::Vec3(-0.5f,0,0));
                 }            
                 box["prototype"] = pbox;
             }
